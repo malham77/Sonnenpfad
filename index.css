@@ -1,0 +1,362 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-script: "Caveat", cursive;
+
+  --color-forest: #073F27;
+  --color-forest-deep: #042617;
+  --color-forest-surface: #0a4d30;
+  --color-gold: #D99A00;
+  --color-gold-light: #F4B41A;
+  --color-gold-subtle: rgba(217, 154, 0, 0.2);
+  --color-ivory: #F7F4EC;
+  --color-charcoal: #171A17;
+  --color-charcoal-deep: #101210;
+  --color-charcoal-light: #222622;
+  --color-sand: #D9C8A6;
+}
+
+:root {
+  color-scheme: dark;
+  --theme-bg-main: #0B0E0B;
+  --theme-bg-deep: #050705;
+  --theme-bg-card: #121612;
+  --theme-text-main: #F7F4EC;
+  --theme-text-muted: rgba(247, 244, 236, 0.75);
+  --theme-border: rgba(217, 154, 0, 0.25);
+}
+
+html.light {
+  color-scheme: light;
+  --theme-bg-main: #FFFFFF !important;
+  --theme-bg-deep: #F8FAFC !important;
+  --theme-bg-card: #FFFFFF !important;
+  --theme-text-main: #0F172A !important;
+  --theme-text-muted: #475569 !important;
+  --theme-border: rgba(217, 154, 0, 0.45) !important;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--theme-bg-main);
+  color: var(--theme-text-main);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.light body {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+/* Light Theme Color Adaptations for Pure White Daylight */
+html.light .bg-\[\#171A17\],
+html.light .bg-\[\#101210\],
+html.light .bg-\[\#042617\] {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+html.light .bg-\[\#073F27\] {
+  background-color: #0A4D30 !important;
+  color: #FFFFFF !important;
+}
+
+html.light .text-\[\#F7F4EC\] {
+  color: #0F172A !important;
+}
+
+html.light .text-\[\#F7F4EC\]\/85,
+html.light .text-\[\#F7F4EC\]\/80,
+html.light .text-\[\#F7F4EC\]\/75,
+html.light .text-\[\#F7F4EC\]\/70,
+html.light .text-\[\#F7F4EC\]\/65,
+html.light .text-\[\#F7F4EC\]\/60 {
+  color: #475569 !important;
+}
+
+html.light .border-white\/10,
+html.light .border-white\/15,
+html.light .border-white\/20,
+html.light .border-white\/25 {
+  border-color: #E2E8F0 !important;
+}
+
+html.light .bg-white\/5,
+html.light .bg-white\/10 {
+  background-color: #F8FAFC !important;
+}
+
+h1, h2, h3, h4, .font-editorial {
+  font-family: var(--font-serif);
+}
+
+.font-script {
+  font-family: "Caveat", cursive;
+}
+
+/* Fancy Multi-directional Keyframes */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translate3d(-60px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translate3d(60px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 50px, 0) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -40px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes zoomSubtle {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulseGold {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(217, 154, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(244, 180, 26, 0.4);
+  }
+}
+
+.animate-slide-left {
+  animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-right {
+  animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-up {
+  animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-down {
+  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-zoom-bg {
+  animation: zoomSubtle 24s ease-in-out infinite alternate;
+}
+
+.animate-pulse-gold {
+  animation: pulseGold 3s infinite;
+}
+
+/* 3D Frosted Liquid Glass Capsule Pill Buttons (Matches Attachment image_f81cfcf4.png) */
+.btn-vision-pill,
+.btn-glass-gold,
+.btn-glass-forest,
+.btn-glass-dark,
+.btn-glass-whatsapp {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.875rem 2.25rem;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 1. Crystal Clear Vision Glass (Exact Match to image_f81cfcf4.png) */
+.btn-vision-glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(235, 240, 245, 0.45) 50%, rgba(220, 228, 235, 0.3) 100%);
+  color: #073F27;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 2px 2px 0 rgba(255, 255, 255, 1),
+    inset 0 6px 14px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.15),
+    0 12px 30px -4px rgba(0, 0, 0, 0.3);
+}
+
+.btn-vision-glass:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 248, 252, 0.6) 100%);
+  box-shadow:
+    inset 0 2.5px 3px 0 #FFFFFF,
+    inset 0 8px 20px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.1),
+    0 18px 36px -4px rgba(0, 0, 0, 0.4);
+}
+
+/* 2. Amber Gold 3D Glass Pill */
+.btn-glass-gold {
+  color: #073F27;
+  background: linear-gradient(180deg, rgba(255, 204, 64, 0.95) 0%, rgba(244, 180, 26, 0.9) 45%, rgba(217, 154, 0, 0.95) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 2px 2px 0 rgba(255, 255, 255, 1),
+    inset 0 6px 16px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.25),
+    0 14px 32px -4px rgba(217, 154, 0, 0.5);
+}
+
+.btn-glass-gold:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: linear-gradient(180deg, #FFE17D 0%, #F4B41A 45%, #E5A500 100%);
+  box-shadow:
+    inset 0 3px 3px 0 #FFFFFF,
+    inset 0 8px 20px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.15),
+    0 20px 40px -4px rgba(244, 180, 26, 0.65);
+}
+
+.btn-glass-gold:active,
+.btn-glass-forest:active,
+.btn-glass-whatsapp:active,
+.btn-glass-dark:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* 3. Forest Green 3D Glass Pill */
+.btn-glass-forest {
+  color: #F7F4EC;
+  background: linear-gradient(180deg, rgba(12, 90, 56, 0.92) 0%, rgba(7, 63, 39, 0.95) 50%, rgba(4, 38, 23, 0.98) 100%);
+  border: 1.5px solid rgba(244, 180, 26, 0.85);
+  box-shadow:
+    inset 0 2px 2px 0 rgba(255, 255, 255, 0.8),
+    inset 0 6px 14px 0 rgba(244, 180, 26, 0.35),
+    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.4),
+    0 14px 32px -4px rgba(0, 0, 0, 0.6);
+}
+
+.btn-glass-forest:hover {
+  transform: translateY(-2px) scale(1.02);
+  color: #F4B41A;
+  background: linear-gradient(180deg, rgba(18, 115, 72, 0.95) 0%, rgba(10, 77, 48, 0.98) 50%, rgba(7, 63, 39, 1) 100%);
+  border-color: #F4B41A;
+  box-shadow:
+    inset 0 2.5px 3px 0 rgba(255, 255, 255, 0.95),
+    inset 0 8px 20px 0 rgba(244, 180, 26, 0.5),
+    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.3),
+    0 20px 38px -4px rgba(7, 63, 39, 0.7);
+}
+
+/* 4. Dark Translucent 3D Glass Pill */
+.btn-glass-dark {
+  color: #F7F4EC;
+  background: linear-gradient(180deg, rgba(40, 45, 40, 0.85) 0%, rgba(23, 26, 23, 0.9) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 4px 10px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -2px 3px 0 rgba(0, 0, 0, 0.3),
+    0 10px 24px -2px rgba(0, 0, 0, 0.45);
+}
+
+.btn-glass-dark:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(244, 180, 26, 0.9);
+  color: #F4B41A;
+  background: linear-gradient(180deg, rgba(10, 77, 48, 0.9) 0%, rgba(7, 63, 39, 0.95) 100%);
+  box-shadow:
+    inset 0 2px 2px 0 rgba(255, 255, 255, 0.8),
+    inset 0 6px 14px 0 rgba(244, 180, 26, 0.3),
+    0 14px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* 5. WhatsApp Green 3D Glass Pill */
+.btn-glass-whatsapp {
+  color: #042617;
+  background: linear-gradient(180deg, #44F087 0%, #25D366 50%, #1DB954 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 2px 2px 0 #FFFFFF,
+    inset 0 6px 16px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.2),
+    0 14px 30px -4px rgba(37, 211, 102, 0.55);
+}
+
+.btn-glass-whatsapp:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: linear-gradient(180deg, #57F594 0%, #27DE6D 50%, #20BA59 100%);
+  box-shadow:
+    inset 0 3px 3px 0 #FFFFFF,
+    inset 0 8px 20px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.15),
+    0 20px 38px -4px rgba(37, 211, 102, 0.7);
+}
+
+/* Wavy SVG divider animation */
+@keyframes floatWavy {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float-wavy {
+  animation: floatWavy 6s ease-in-out infinite;
+}
+
+/* Shimmer wipe effect */
+.shine-overlay {
+  position: relative;
+  overflow: hidden;
+}
+.shine-overlay::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 70%
+  );
+  transform: rotate(30deg) translateY(-100%);
+  transition: transform 0.75s ease;
+}
+.shine-overlay:hover::after {
+  transform: rotate(30deg) translateY(100%);
+}
