@@ -1,0 +1,3400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonnenpfad Safaris Uganda Ltd — Discover the Pearl of Africa</title>
+<meta name="description" content="Premium Uganda safari experiences. Gorilla trekking in Bwindi, wildlife in Queen Elizabeth, Murchison Falls, chimpanzees in Kibale and tailor-made journeys through the Pearl of Africa.">
+<meta name="theme-color" content="#073F27">
+<meta property="og:title" content="Sonnenpfad Safaris Uganda Ltd — Discover the Pearl of Africa">
+<meta property="og:description" content="Premium Uganda safari experiences. Gorilla trekking, wildlife, chimpanzees and tailor-made journeys.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23073F27'/%3E%3Ccircle cx='50' cy='45' r='25' fill='%23F4B41A'/%3E%3C/svg%3E">
+
+<style>
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --green-deep: #073F27;
+  --green-mid: #0A5435;
+  --gold: #D99A00;
+  --gold-warm: #F4B41A;
+  --gold-soft: rgba(217,154,0,0.15);
+  --ivory: #F7F4EC;
+  --ivory-warm: #EFE9DB;
+  --charcoal: #171A17;
+  --sand: #D9C8A6;
+  --white: #FFFFFF;
+
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-3d: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --header-height: 80px;
+  --container: 1280px;
+  --container-narrow: 900px;
+}
+
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--ivory);
+  color: var(--charcoal);
+  line-height: 1.7;
+  overflow-x: hidden;
+  font-size: 16px;
+}
+
+body.no-scroll { overflow: hidden; }
+
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+h1,h2,h3,h4,h5 { font-family: var(--font-serif); font-weight: 500; line-height: 1.15; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.5rem, 6vw, 5.5rem); font-weight: 400; }
+h2 { font-size: clamp(2rem, 4.5vw, 3.75rem); font-weight: 400; }
+h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 500; }
+h4 { font-size: clamp(1.25rem, 2vw, 1.75rem); font-weight: 500; }
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.section-label { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; }
+.section-label::before { content:''; width:40px; height:1px; background: var(--gold); }
+
+.lead {
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  line-height: 1.8;
+  color: rgba(23,26,23,0.75);
+  font-weight: 300;
+}
+
+.container { max-width: var(--container); margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3rem); }
+.container-narrow { max-width: var(--container-narrow); margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3rem); }
+.section { padding: clamp(4rem, 10vw, 8rem) 0; }
+.section-dark { background: var(--green-deep); color: var(--ivory); }
+.section-dark .lead { color: rgba(247,244,236,0.7); }
+.section-dark .section-label::before { background: var(--gold-warm); }
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  transition: all 0.4s var(--ease-smooth);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s var(--ease-smooth);
+  pointer-events: none;
+}
+.btn:hover::before { transform: translateX(100%); }
+
+.btn-primary { background: var(--gold); color: var(--green-deep); border-color: var(--gold); }
+.btn-primary:hover {
+  background: var(--gold-warm);
+  border-color: var(--gold-warm);
+  transform: translateY(-3px) rotateX(4deg);
+  box-shadow: 0 15px 40px rgba(217,154,0,0.35);
+}
+
+.btn-outline { background: transparent; color: var(--ivory); border-color: rgba(247,244,236,0.4); }
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(217,154,0,0.08);
+  transform: translateY(-3px) rotateX(4deg);
+}
+
+.btn-outline-dark { background: transparent; color: var(--green-deep); border-color: rgba(7,63,39,0.3); }
+.btn-outline-dark:hover { border-color: var(--gold); color: var(--gold); background: rgba(217,154,0,0.05); transform: translateY(-3px); }
+
+.btn-whatsapp { background: #25D366; color: white; border-color: #25D366; }
+.btn-whatsapp:hover {
+  background: #1ebe5b;
+  transform: translateY(-3px) rotateX(4deg);
+  box-shadow: 0 15px 40px rgba(37,211,102,0.35);
+}
+
+.btn svg { width: 16px; height: 16px; transition: transform 0.3s var(--ease-smooth); }
+.btn:hover svg.arrow { transform: translateX(4px); }
+
+/* ============================================
+   HEADER
+   ============================================ */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  transition: all 0.5s var(--ease-smooth);
+}
+.header-inner {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 4vw, 3rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header.scrolled {
+  height: 68px;
+  background: rgba(7,63,39,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(217,154,0,0.15);
+}
+
+.logo { display: flex; align-items: center; gap: 0.75rem; z-index: 1001; }
+.logo-mark {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: var(--green-deep);
+  border: 2px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: transform 0.6s var(--ease-3d);
+}
+.logo:hover .logo-mark { transform: rotateY(360deg); }
+.logo-text { display: flex; flex-direction: column; line-height: 1; }
+.logo-text .name { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; color: var(--ivory); letter-spacing: 0.02em; }
+.logo-text .sub { font-family: var(--font-sans); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.3em; color: var(--gold-warm); text-transform: uppercase; margin-top: 3px; }
+
+.nav { display: flex; align-items: center; gap: 2rem; }
+.nav-links { display: flex; align-items: center; gap: 1.75rem; list-style: none; }
+.nav-links a {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(247,244,236,0.85);
+  transition: color 0.3s;
+  position: relative;
+  padding: 0.25rem 0;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 0.4s var(--ease-smooth);
+}
+.nav-links a:hover { color: var(--gold-warm); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-actions { display: flex; align-items: center; gap: 1rem; }
+.nav-actions .btn { padding: 0.7rem 1.4rem; font-size: 0.65rem; }
+
+.whatsapp-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ivory);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(37,211,102,0.4);
+  border-radius: 100px;
+  transition: all 0.3s;
+}
+.whatsapp-btn:hover { background: rgba(37,211,102,0.15); border-color: #25D366; }
+.whatsapp-btn svg { width: 16px; height: 16px; fill: #25D366; }
+
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 1001;
+  padding: 8px;
+}
+.menu-toggle span {
+  display: block;
+  width: 26px; height: 1.5px;
+  background: var(--ivory);
+  transition: all 0.4s var(--ease-smooth);
+  transform-origin: center;
+}
+.menu-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  background: var(--green-deep);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease-smooth);
+}
+.mobile-menu.open { opacity: 1; pointer-events: auto; }
+.mobile-menu a {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  color: var(--ivory);
+  font-weight: 400;
+  padding: 0.5rem 1rem;
+  transition: all 0.4s;
+  opacity: 0;
+  transform: translateY(20px) rotateX(-20deg);
+}
+.mobile-menu.open a { opacity: 1; transform: translateY(0) rotateX(0); }
+.mobile-menu a:hover { color: var(--gold-warm); }
+
+/* ============================================
+   HERO — 3D LAYERED
+   ============================================ */
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 650px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-deep);
+  perspective: 1200px;
+}
+
+.hero-scene {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.hero-layer {
+  position: absolute;
+  inset: -5%;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+.hero-sky {
+  background: linear-gradient(180deg, #1a2f4a 0%, #7a4a1e 40%, #d99a00 75%, #f4b41a 100%);
+  z-index: 1;
+}
+.hero-sun {
+  z-index: 2;
+  background: radial-gradient(circle 320px at 68% 42%, #fff5cc 0%, #f4b41a 35%, transparent 75%);
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+.hero-mountains {
+  z-index: 3;
+  background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=80') center bottom/cover no-repeat;
+  opacity: 0.55;
+  mask-image: linear-gradient(180deg, transparent 0%, black 30%, black 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 30%, black 70%, transparent 100%);
+}
+.hero-savannah {
+  z-index: 4;
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 55%, rgba(7,30,20,0.4) 70%, rgba(7,20,14,0.85) 100%),
+    url('https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1920&q=80') center 60%/cover no-repeat;
+}
+.hero-trees {
+  z-index: 5;
+  background: url('https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1920&q=80') center bottom/cover no-repeat;
+  opacity: 0.7;
+  mask-image: linear-gradient(180deg, transparent 30%, black 80%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 30%, black 80%);
+}
+.hero-vignette {
+  z-index: 6;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(7,20,14,0.65) 100%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  color: var(--ivory);
+  max-width: 900px;
+  padding: 0 1.5rem;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 1s var(--ease-out) 0.3s forwards;
+}
+.hero-eyebrow::before, .hero-eyebrow::after { content:''; width:30px; height:1px; background: var(--gold); }
+.hero-eyebrow span { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold-warm); }
+
+.hero h1 {
+  font-size: clamp(2.75rem, 7vw, 6rem);
+  font-weight: 300;
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 4px 40px rgba(0,0,0,0.4);
+  opacity: 0;
+  animation: fadeUp 1.2s var(--ease-out) 0.5s forwards;
+}
+.hero h1 em { font-style: italic; color: var(--gold-warm); font-weight: 400; }
+
+.hero-sub {
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  font-weight: 300;
+  color: rgba(247,244,236,0.85);
+  max-width: 620px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.8;
+  opacity: 0;
+  animation: fadeUp 1.2s var(--ease-out) 0.7s forwards;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 1.2s var(--ease-out) 0.9s forwards;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(247,244,236,0.6);
+  opacity: 0;
+  animation: fadeUp 1s var(--ease-out) 1.3s forwards;
+}
+.scroll-indicator .line {
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-indicator .line::after {
+  content:'';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 20px;
+  background: var(--gold-warm);
+  animation: scrollDown 2s ease-in-out infinite;
+}
+.scroll-indicator span { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 500; }
+
+@keyframes scrollDown { 0% { transform: translateY(-100%); } 100% { transform: translateY(250%); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============================================
+   3D CARD SYSTEM
+   ============================================ */
+.tilt-wrap {
+  perspective: 1400px;
+  perspective-origin: center;
+  transform-style: preserve-3d;
+}
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.5s var(--ease-smooth), box-shadow 0.5s var(--ease-smooth);
+  will-change: transform;
+  position: relative;
+}
+.tilt-card .tilt-shine {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.18), transparent 55%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+  z-index: 5;
+}
+.tilt-card:hover .tilt-shine { opacity: 1; }
+.tilt-card .tilt-layer {
+  transform: translateZ(30px);
+  transition: transform 0.5s var(--ease-smooth);
+}
+.tilt-card .tilt-layer-deep {
+  transform: translateZ(60px);
+  transition: transform 0.5s var(--ease-smooth);
+}
+
+/* ============================================
+   INTRO
+   ============================================ */
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: center;
+}
+.intro-image {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+.intro-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease-out); }
+.intro-image:hover img { transform: scale(1.06); }
+.intro-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(217,154,0,0.3);
+  pointer-events: none;
+  margin: 1.5rem;
+  transform: translateZ(40px);
+}
+.intro-content h2 { margin-bottom: 1.5rem; }
+.intro-content .lead { margin-bottom: 1.25rem; }
+
+.intro-signature {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(217,154,0,0.3);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.intro-signature .mark {
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--gold);
+  font-style: italic;
+}
+.intro-signature .text { font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; color: var(--green-deep); }
+.intro-signature .text small {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-style: normal;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 3px;
+}
+
+/* ============================================
+   SAFARIS
+   ============================================ */
+.safaris-header { text-align: center; margin-bottom: clamp(3rem, 6vw, 5rem); }
+.safaris-header h2 { margin-bottom: 1rem; }
+
+.safari-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 1.5rem;
+}
+
+.safari-card {
+  position: relative;
+  background: var(--white);
+  overflow: hidden;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(7,63,39,0.06);
+}
+.safari-card:hover { box-shadow: 0 30px 60px rgba(7,63,39,0.18); }
+
+.safari-card-image {
+  position: relative;
+  aspect-ratio: 16/11;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+.safari-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease-out); }
+.safari-card:hover .safari-card-image img { transform: scale(1.08) translateZ(20px); }
+.safari-card-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(7,20,14,0.75) 0%, transparent 55%);
+}
+
+.safari-card-badge {
+  position: absolute;
+  top: 1rem; left: 1rem;
+  z-index: 2;
+  background: rgba(7,63,39,0.9);
+  backdrop-filter: blur(10px);
+  color: var(--gold-warm);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.9rem;
+  transform: translateZ(30px);
+}
+
+.safari-card-title {
+  position: absolute;
+  bottom: 1rem;
+  left: 1.25rem;
+  right: 1.25rem;
+  z-index: 2;
+  color: var(--ivory);
+  transform: translateZ(30px);
+}
+.safari-card-title h3 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+.safari-card-title .dest { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold-warm); font-weight: 500; }
+
+.safari-card-body {
+  padding: 1.5rem 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  transform: translateZ(10px);
+}
+.safari-card-body p {
+  font-size: 0.9rem;
+  color: rgba(23,26,23,0.7);
+  margin-bottom: 1.25rem;
+  line-height: 1.7;
+}
+
+.safari-highlights { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+.safari-highlights span {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  background: var(--ivory-warm);
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgba(217,154,0,0.2);
+}
+
+.safari-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(7,63,39,0.08);
+  margin-top: auto;
+}
+.safari-card-footer .duration { font-family: var(--font-serif); font-size: 1.1rem; color: var(--green-deep); font-weight: 600; }
+.safari-card-footer .duration small {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+}
+.safari-card-footer .link {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: gap 0.3s;
+}
+.safari-card:hover .safari-card-footer .link { gap: 0.7rem; }
+
+.safari-card.flagship { grid-column: 1 / -1; display: grid; grid-template-columns: 1.2fr 1fr; }
+.safari-card.flagship .safari-card-image { aspect-ratio: auto; height: 100%; min-height: 420px; }
+.safari-card.flagship .safari-card-body {
+  padding: clamp(2rem, 4vw, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--green-deep);
+  color: var(--ivory);
+}
+.safari-card.flagship .safari-card-body h3 { color: var(--ivory); font-size: clamp(1.75rem, 3vw, 2.5rem); margin-bottom: 1rem; }
+.safari-card.flagship .safari-card-body p { color: rgba(247,244,236,0.75); }
+.safari-card.flagship .safari-highlights span { background: rgba(217,154,0,0.15); color: var(--gold-warm); border-color: rgba(217,154,0,0.3); }
+.safari-card.flagship .safari-card-footer { border-top-color: rgba(247,244,236,0.15); }
+.safari-card.flagship .safari-card-footer .duration { color: var(--gold-warm); }
+.flagship-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-warm);
+  margin-bottom: 1rem;
+}
+.flagship-label::before { content: ''; width: 20px; height: 1px; background: var(--gold-warm); }
+
+/* ============================================
+   DESTINATIONS
+   ============================================ */
+.destinations { background: var(--green-deep); color: var(--ivory); position: relative; overflow: hidden; }
+.destinations::before {
+  content: '';
+  position: absolute;
+  top: -20%; right: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(217,154,0,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.destinations-header { text-align: center; margin-bottom: clamp(3rem, 6vw, 4rem); position: relative; z-index: 2; }
+.destinations-header h2 { color: var(--ivory); margin-bottom: 1rem; }
+.destinations-header .lead { max-width: 600px; margin: 0 auto; }
+
+.destination-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 1.25rem;
+  position: relative;
+  z-index: 2;
+}
+
+.destination-card {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--green-mid);
+  transform-style: preserve-3d;
+}
+.destination-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease-out); opacity: 0.85; }
+.destination-card:hover img { transform: scale(1.1); opacity: 1; }
+.destination-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(7,20,14,0.92) 0%, rgba(7,20,14,0.2) 55%, transparent 100%);
+  transition: opacity 0.5s;
+}
+.destination-content {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 1.75rem;
+  z-index: 2;
+  transform: translateZ(40px);
+  transition: transform 0.5s var(--ease-smooth);
+}
+.destination-card:hover .destination-content { transform: translateZ(60px) translateY(-8px); }
+.destination-content .tagline {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-warm);
+  margin-bottom: 0.5rem;
+}
+.destination-content h3 { font-size: 1.5rem; color: var(--ivory); margin-bottom: 0.5rem; line-height: 1.2; }
+.destination-content p {
+  font-size: 0.85rem;
+  color: rgba(247,244,236,0.7);
+  line-height: 1.6;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.5s var(--ease-smooth);
+}
+.destination-card:hover .destination-content p { max-height: 130px; opacity: 1; margin-top: 0.75rem; }
+.destination-content .explore-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold-warm);
+  margin-top: 0.75rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.4s var(--ease-smooth) 0.1s;
+}
+.destination-card:hover .explore-link { opacity: 1; transform: translateY(0); }
+
+/* ============================================
+   EXPERIENCES
+   ============================================ */
+.experiences-header { text-align: center; margin-bottom: clamp(3rem, 6vw, 5rem); }
+.experience-panel {
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 2px;
+  transform-style: preserve-3d;
+}
+.experience-panel-bg { position: absolute; inset: 0; }
+.experience-panel-bg img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease-out); }
+.experience-panel:hover .experience-panel-bg img { transform: scale(1.05); }
+.experience-panel-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(7,20,14,0.88) 0%, rgba(7,20,14,0.55) 60%, rgba(7,20,14,0.35) 100%);
+}
+.experience-panel.reverse .experience-panel-bg::after {
+  background: linear-gradient(270deg, rgba(7,20,14,0.88) 0%, rgba(7,20,14,0.55) 60%, rgba(7,20,14,0.35) 100%);
+}
+.experience-content {
+  position: relative;
+  z-index: 2;
+  max-width: 520px;
+  padding: clamp(2rem, 6vw, 5rem);
+  color: var(--ivory);
+  transform: translateZ(50px);
+  transform-style: preserve-3d;
+}
+.experience-panel.reverse .experience-content { margin-left: auto; }
+.experience-content h3 { font-size: clamp(1.75rem, 3.5vw, 2.75rem); color: var(--ivory); margin-bottom: 1rem; }
+.experience-content p { font-size: 1rem; color: rgba(247,244,236,0.8); line-height: 1.8; margin-bottom: 1.5rem; }
+.experience-content .btn { font-size: 0.7rem; }
+
+/* ============================================
+   GORILLA FEATURE
+   ============================================ */
+.gorilla-feature {
+  position: relative;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  background: var(--green-deep);
+  perspective: 1200px;
+}
+.gorilla-feature-bg {
+  position: absolute;
+  inset: 0;
+  background: url('https://images.unsplash.com/photo-1544911845-1a7c6b8f4b1e?w=1920&q=80') center/cover no-repeat;
+  opacity: 0.55;
+  transform: scale(1.1);
+  will-change: transform;
+}
+.gorilla-feature-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(7,20,14,0.5) 0%, rgba(7,20,14,0.3) 50%, rgba(7,20,14,0.75) 100%);
+}
+.gorilla-mist {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(247,244,236,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 30%, rgba(247,244,236,0.05) 0%, transparent 50%);
+  animation: mistDrift 20s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes mistDrift {
+  0% { transform: translateX(0) scale(1); opacity: 0.6; }
+  100% { transform: translateX(40px) scale(1.05); opacity: 0.9; }
+}
+.gorilla-content {
+  position: relative;
+  z-index: 2;
+  max-width: 750px;
+  padding: 0 1.5rem;
+  color: var(--ivory);
+  transform: translateZ(60px);
+}
+.gorilla-content h2 {
+  color: var(--ivory);
+  margin: 1rem 0 1.5rem;
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 300;
+}
+.gorilla-content p {
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  color: rgba(247,244,236,0.8);
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+/* ============================================
+   WHY
+   ============================================ */
+.why-header { text-align: center; margin-bottom: clamp(3rem, 6vw, 5rem); }
+.why-header h2 { margin-bottom: 1.25rem; }
+.why-header .lead { max-width: 700px; margin: 0 auto; }
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 1px;
+  background: rgba(217,154,0,0.2);
+  border: 1px solid rgba(217,154,0,0.2);
+  perspective: 1400px;
+}
+.why-item {
+  background: var(--ivory);
+  padding: clamp(2rem, 3vw, 3rem) clamp(1.5rem, 2.5vw, 2.5rem);
+  transition: all 0.4s var(--ease-smooth);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.why-item:hover { background: var(--white); transform: translateZ(30px) rotateX(-3deg); box-shadow: 0 30px 60px rgba(7,63,39,0.12); }
+.why-item .num {
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  color: var(--gold);
+  font-style: italic;
+  line-height: 1;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+}
+.why-item h4 {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  margin-bottom: 0.75rem;
+}
+.why-item p { font-size: 0.9rem; color: rgba(23,26,23,0.65); line-height: 1.7; }
+
+/* ============================================
+   BUILDER
+   ============================================ */
+.builder { background: var(--green-deep); color: var(--ivory); position: relative; overflow: hidden; }
+.builder::before {
+  content: '';
+  position: absolute;
+  bottom: -30%; left: -10%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(217,154,0,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.builder-header { text-align: center; margin-bottom: clamp(3rem, 6vw, 4rem); position: relative; z-index: 2; }
+.builder-header h2 { color: var(--ivory); margin-bottom: 1rem; }
+.builder-header .lead { max-width: 600px; margin: 0 auto; }
+
+.builder-form { max-width: 800px; margin: 0 auto; position: relative; z-index: 2; }
+.builder-progress { display: flex; gap: 0.5rem; margin-bottom: 3rem; justify-content: center; }
+.builder-progress .step { width: 40px; height: 2px; background: rgba(247,244,236,0.15); transition: background 0.4s; }
+.builder-progress .step.active { background: var(--gold); }
+.builder-progress .step.done { background: var(--gold-warm); }
+
+.builder-step { display: none; animation: fadeUp 0.6s var(--ease-out); }
+.builder-step.active { display: block; }
+.builder-step h3 { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--ivory); text-align: center; margin-bottom: 0.5rem; }
+.builder-step .step-hint { text-align: center; font-size: 0.85rem; color: rgba(247,244,236,0.5); margin-bottom: 2.5rem; }
+
+.option-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; }
+.option-chip {
+  padding: 1rem;
+  border: 1px solid rgba(247,244,236,0.15);
+  background: rgba(247,244,236,0.03);
+  color: rgba(247,244,236,0.8);
+  font-size: 0.8rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-smooth);
+  letter-spacing: 0.05em;
+  transform-style: preserve-3d;
+}
+.option-chip:hover { border-color: rgba(217,154,0,0.5); background: rgba(217,154,0,0.08); transform: translateZ(10px); }
+.option-chip.selected { border-color: var(--gold); background: rgba(217,154,0,0.15); color: var(--gold-warm); transform: translateZ(20px); }
+
+.builder-nav { display: flex; justify-content: space-between; margin-top: 2.5rem; gap: 1rem; }
+.builder-form .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.builder-form .form-group { margin-bottom: 1rem; }
+.builder-form .form-group.full { grid-column: 1 / -1; }
+.builder-form label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(247,244,236,0.6);
+  margin-bottom: 0.5rem;
+}
+.builder-form input, .builder-form textarea, .builder-form select {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  background: rgba(247,244,236,0.05);
+  border: 1px solid rgba(247,244,236,0.15);
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  transition: border-color 0.3s;
+  outline: none;
+}
+.builder-form input:focus, .builder-form textarea:focus, .builder-form select:focus { border-color: var(--gold); }
+.builder-form input::placeholder, .builder-form textarea::placeholder { color: rgba(247,244,236,0.3); }
+.builder-form select option { background: var(--green-deep); color: var(--ivory); }
+.builder-form textarea { resize: vertical; min-height: 100px; }
+
+/* ============================================
+   GALLERY
+   ============================================ */
+.gallery-header { text-align: center; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+.gallery-filters { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 3rem; }
+.filter-btn {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(23,26,23,0.5);
+  border: 1px solid rgba(7,63,39,0.15);
+  background: transparent;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.filter-btn:hover, .filter-btn.active {
+  color: var(--green-deep);
+  border-color: var(--gold);
+  background: rgba(217,154,0,0.08);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 200px;
+  gap: 0.75rem;
+  perspective: 1400px;
+}
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--green-deep);
+  transform-style: preserve-3d;
+  transition: transform 0.5s var(--ease-smooth), box-shadow 0.5s;
+}
+.gallery-item:hover {
+  transform: translateZ(40px) rotateY(-3deg) rotateX(3deg);
+  box-shadow: 0 30px 60px rgba(7,63,39,0.3);
+  z-index: 5;
+}
+.gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+.gallery-item:nth-child(2) { grid-row: span 1; }
+.gallery-item:nth-child(3) { grid-column: span 1; grid-row: span 1; }
+.gallery-item:nth-child(4) { grid-row: span 2; }
+.gallery-item:nth-child(5) { grid-column: span 2; grid-row: span 1; }
+.gallery-item:nth-child(6) { grid-column: span 1; grid-row: span 1; }
+.gallery-item:nth-child(7) { grid-column: span 1; grid-row: span 1; }
+.gallery-item:nth-child(8) { grid-column: span 2; grid-row: span 1; }
+
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease-out), opacity 0.5s; }
+.gallery-item:hover img { transform: scale(1.08); opacity: 0.85; }
+.gallery-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(7,20,14,0.6) 0%, transparent 55%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.gallery-item:hover::after { opacity: 1; }
+.gallery-item .caption {
+  position: absolute;
+  bottom: 1rem; left: 1rem; right: 1rem;
+  z-index: 2;
+  color: var(--ivory);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  transform: translateY(10px) translateZ(20px);
+  transition: all 0.4s var(--ease-smooth);
+}
+.gallery-item:hover .caption { opacity: 1; transform: translateY(0) translateZ(20px); }
+
+/* ============================================
+   TESTIMONIALS
+   ============================================ */
+.testimonials { background: var(--ivory-warm); }
+.testimonials-header { text-align: center; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+.testimonial-carousel { max-width: 800px; margin: 0 auto; position: relative; perspective: 1200px; }
+.testimonial-slide { display: none; text-align: center; animation: fadeUp 0.6s var(--ease-out); }
+.testimonial-slide.active { display: block; }
+.testimonial-slide blockquote {
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--green-deep);
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+.testimonial-slide .author {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.testimonial-slide .author small {
+  display: block;
+  font-size: 0.7rem;
+  color: rgba(23,26,23,0.5);
+  letter-spacing: 0.1em;
+  margin-top: 0.3rem;
+  font-weight: 400;
+  text-transform: none;
+}
+.testimonial-nav { display: flex; justify-content: center; gap: 0.5rem; margin-top: 2.5rem; }
+.testimonial-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(7,63,39,0.2);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  padding: 0;
+}
+.testimonial-dot.active { background: var(--gold); transform: scale(1.3); }
+
+/* ============================================
+   ABOUT
+   ============================================ */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+.about-image { position: relative; aspect-ratio: 4/5; overflow: hidden; transform-style: preserve-3d; }
+.about-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease-out); }
+.about-image:hover img { transform: scale(1.05); }
+.about-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(217,154,0,0.4);
+  margin: 1.5rem;
+  z-index: 2;
+  pointer-events: none;
+  transform: translateZ(40px);
+}
+.about-content h2 { margin-bottom: 1.5rem; }
+.about-content p { margin-bottom: 1.25rem; color: rgba(23,26,23,0.7); line-height: 1.8; }
+.about-content .editable-note {
+  font-size: 0.75rem;
+  color: var(--gold);
+  font-style: italic;
+  border-left: 2px solid var(--gold);
+  padding-left: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* ============================================
+   RESPONSIBLE
+   ============================================ */
+.responsible { background: var(--green-deep); color: var(--ivory); }
+.responsible-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+.responsible-content h2 { color: var(--ivory); margin-bottom: 1.5rem; }
+.responsible-content p { color: rgba(247,244,236,0.7); line-height: 1.8; margin-bottom: 1rem; }
+.responsible-values { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; perspective: 1200px; }
+.responsible-value {
+  padding: 1.5rem;
+  border: 1px solid rgba(217,154,0,0.2);
+  background: rgba(247,244,236,0.02);
+  transition: all 0.4s var(--ease-smooth);
+  transform-style: preserve-3d;
+}
+.responsible-value:hover { transform: translateZ(20px) rotateX(-3deg); border-color: rgba(217,154,0,0.5); background: rgba(247,244,236,0.05); }
+.responsible-value h4 {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold-warm);
+  margin-bottom: 0.5rem;
+}
+.responsible-value p { font-size: 0.85rem; color: rgba(247,244,236,0.6); line-height: 1.6; margin: 0; }
+
+/* ============================================
+   CTA
+   ============================================ */
+.cta-section {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  background: var(--green-deep);
+  perspective: 1200px;
+}
+.cta-bg {
+  position: absolute;
+  inset: 0;
+  background: url('https://images.unsplash.com/photo-1504006833117-8886a355efbf?w=1920&q=80') center/cover no-repeat;
+  opacity: 0.45;
+  transform: scale(1.1);
+  will-change: transform;
+}
+.cta-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(7,20,14,0.5) 0%, rgba(7,20,14,0.3) 50%, rgba(7,20,14,0.75) 100%);
+}
+.cta-content { position: relative; z-index: 2; max-width: 750px; padding: 0 1.5rem; color: var(--ivory); transform: translateZ(50px); }
+.cta-content h2 {
+  color: var(--ivory);
+  font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+.cta-content h2 em { font-style: italic; color: var(--gold-warm); }
+.cta-content p {
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  color: rgba(247,244,236,0.8);
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  font-weight: 300;
+}
+.cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* ============================================
+   CONTACT
+   ============================================ */
+.contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(2rem, 6vw, 5rem); }
+.contact-info h2 { margin-bottom: 1.25rem; }
+.contact-info .lead { margin-bottom: 2.5rem; }
+
+.contact-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid rgba(7,63,39,0.08);
+}
+.contact-detail:last-child { border-bottom: none; }
+.contact-detail .icon {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  border: 1px solid rgba(217,154,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold);
+}
+.contact-detail .icon svg { width: 18px; height: 18px; }
+.contact-detail h4 {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+}
+.contact-detail p { font-size: 0.95rem; color: var(--green-deep); font-weight: 500; }
+.contact-detail p a { transition: color 0.3s; }
+.contact-detail p a:hover { color: var(--gold); }
+
+.contact-form {
+  background: var(--white);
+  padding: clamp(2rem, 4vw, 3rem);
+  border: 1px solid rgba(7,63,39,0.06);
+  box-shadow: 0 20px 60px rgba(7,63,39,0.06);
+  transform-style: preserve-3d;
+}
+.contact-form .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.contact-form .form-group { margin-bottom: 1rem; }
+.contact-form .form-group.full { grid-column: 1 / -1; }
+.contact-form label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(23,26,23,0.5);
+  margin-bottom: 0.5rem;
+}
+.contact-form input, .contact-form textarea, .contact-form select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: var(--ivory);
+  border: 1px solid rgba(7,63,39,0.1);
+  color: var(--charcoal);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  transition: border-color 0.3s, background 0.3s;
+  outline: none;
+}
+.contact-form input:focus, .contact-form textarea:focus, .contact-form select:focus {
+  border-color: var(--gold);
+  background: var(--white);
+}
+.contact-form input.error, .contact-form textarea.error { border-color: #d32f2f; background: #fff5f5; }
+.contact-form textarea { resize: vertical; min-height: 110px; }
+.contact-form .btn { width: 100%; margin-top: 0.5rem; }
+.form-error-msg { font-size: 0.7rem; color: #d32f2f; margin-top: 0.35rem; display: none; }
+.form-error-msg.visible { display: block; }
+
+/* ============================================
+   TIKTOK
+   ============================================ */
+.tiktok-section { background: var(--charcoal); color: var(--ivory); overflow: hidden; position: relative; }
+.tiktok-section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(217,154,0,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.tiktok-header { text-align: center; margin-bottom: clamp(2.5rem, 5vw, 4rem); position: relative; z-index: 2; }
+.tiktok-header h2 { color: var(--ivory); margin-bottom: 1rem; }
+.tiktok-header p { color: rgba(247,244,236,0.6); max-width: 500px; margin: 0 auto; }
+
+.tiktok-reels {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  padding: 1rem 0;
+  perspective: 1400px;
+}
+.tiktok-reel {
+  width: 200px;
+  aspect-ratio: 9/16;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  background: var(--green-deep);
+  border: 1px solid rgba(217,154,0,0.15);
+  transition: all 0.5s var(--ease-out);
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+.tiktok-reel img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: opacity 0.4s, transform 0.6s; }
+.tiktok-reel:hover img { opacity: 1; transform: scale(1.05); }
+.tiktok-reel.center { width: 240px; transform: scale(1.05) translateZ(40px); box-shadow: 0 30px 80px rgba(0,0,0,0.5); border-color: rgba(217,154,0,0.4); }
+.tiktok-reel.center:hover { transform: scale(1.08) translateZ(60px) rotateY(-3deg); }
+.tiktok-reel:hover { transform: translateZ(30px) rotateY(3deg); }
+.tiktok-reel .reel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(7,20,14,0.85) 0%, transparent 55%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem;
+  transform: translateZ(20px);
+}
+.tiktok-reel .reel-overlay .handle { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; color: var(--gold-warm); text-transform: uppercase; }
+.tiktok-reel .reel-overlay .caption { font-size: 0.75rem; color: var(--ivory); margin-top: 0.25rem; }
+.tiktok-cta { text-align: center; margin-top: 3rem; position: relative; z-index: 2; }
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.footer { background: var(--green-deep); color: var(--ivory); position: relative; overflow: hidden; }
+.footer::before {
+  content: '';
+  position: absolute;
+  bottom: -100px; right: -100px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(217,154,0,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.footer-main { padding: clamp(3rem, 6vw, 5rem) 0 3rem; position: relative; z-index: 2; }
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 3rem;
+}
+.footer-brand .logo { margin-bottom: 1.25rem; }
+.footer-brand p { font-size: 0.85rem; color: rgba(247,244,236,0.6); line-height: 1.7; margin-bottom: 1.5rem; max-width: 300px; }
+.footer-brand .tagline { font-family: var(--font-serif); font-style: italic; font-size: 1.05rem; color: var(--gold-warm); }
+
+.footer-col h4 {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(217,154,0,0.2);
+}
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 0.6rem; }
+.footer-col a { font-size: 0.85rem; color: rgba(247,244,236,0.6); transition: color 0.3s, padding-left 0.3s; }
+.footer-col a:hover { color: var(--gold-warm); padding-left: 4px; }
+
+.footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.85rem;
+  color: rgba(247,244,236,0.6);
+}
+.footer-contact-item svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 3px; color: var(--gold); }
+.footer-contact-item a:hover { color: var(--gold-warm); }
+.footer-editable { font-size: 0.7rem; color: rgba(247,244,236,0.35); font-style: italic; }
+
+.footer-bottom {
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(217,154,0,0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  position: relative;
+  z-index: 2;
+}
+.footer-bottom p { font-size: 0.75rem; color: rgba(247,244,236,0.4); }
+.footer-bottom .socials { display: flex; gap: 0.75rem; }
+.footer-bottom .socials a {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(217,154,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(247,244,236,0.6);
+  transition: all 0.3s;
+}
+.footer-bottom .socials a:hover { border-color: var(--gold); color: var(--gold); background: rgba(217,154,0,0.08); transform: translateY(-3px); }
+.footer-bottom .socials svg { width: 16px; height: 16px; }
+
+/* ============================================
+   FLOATING WHATSAPP
+   ============================================ */
+.whatsapp-float {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 900;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 30px rgba(37,211,102,0.4);
+  transition: all 0.4s var(--ease-smooth);
+  animation: pulseWhatsapp 3s ease-in-out infinite;
+}
+.whatsapp-float:hover { transform: scale(1.1) rotateY(360deg); box-shadow: 0 12px 40px rgba(37,211,102,0.5); }
+.whatsapp-float svg { width: 28px; height: 28px; fill: white; }
+@keyframes pulseWhatsapp {
+  0%, 100% { box-shadow: 0 8px 30px rgba(37,211,102,0.4); }
+  50% { box-shadow: 0 8px 40px rgba(37,211,102,0.65); }
+}
+
+/* ============================================
+   MODAL SYSTEM — 3D
+   ============================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7,20,14,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-smooth);
+  perspective: 1600px;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: auto; }
+
+.modal {
+  background: var(--ivory);
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: rotateX(-15deg) translateY(40px) scale(0.95);
+  opacity: 0;
+  transition: all 0.5s var(--ease-3d);
+  transform-style: preserve-3d;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+}
+.modal-backdrop.open .modal {
+  transform: rotateX(0) translateY(0) scale(1);
+  opacity: 1;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(7,63,39,0.9);
+  color: var(--ivory);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.modal-close:hover { background: var(--gold); color: var(--green-deep); transform: rotate(90deg) scale(1.1); }
+.modal-close svg { width: 18px; height: 18px; }
+
+.modal-hero {
+  position: relative;
+  aspect-ratio: 21/9;
+  overflow: hidden;
+  background: var(--green-deep);
+}
+.modal-hero img { width: 100%; height: 100%; object-fit: cover; }
+.modal-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(7,20,14,0.85) 0%, transparent 60%);
+}
+.modal-hero-content {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.75rem;
+  right: 1.75rem;
+  z-index: 2;
+  color: var(--ivory);
+}
+.modal-hero-content .badge {
+  display: inline-block;
+  background: rgba(217,154,0,0.9);
+  color: var(--green-deep);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.85rem;
+  margin-bottom: 0.75rem;
+}
+.modal-hero-content h2 {
+  color: var(--ivory);
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  margin-bottom: 0.35rem;
+}
+.modal-hero-content .dest {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold-warm);
+  font-weight: 500;
+}
+
+.modal-body { padding: clamp(1.75rem, 4vw, 3rem); }
+.modal-body h3 {
+  font-size: 1.35rem;
+  margin-bottom: 1rem;
+  color: var(--green-deep);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(217,154,0,0.25);
+}
+.modal-body h3:not(:first-child) { margin-top: 2rem; }
+.modal-body p { color: rgba(23,26,23,0.75); line-height: 1.75; margin-bottom: 1rem; font-size: 0.95rem; }
+.modal-body ul { list-style: none; margin-bottom: 1.5rem; }
+.modal-body ul li {
+  padding: 0.5rem 0 0.5rem 1.75rem;
+  position: relative;
+  color: rgba(23,26,23,0.75);
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(7,63,39,0.06);
+}
+.modal-body ul li:last-child { border-bottom: none; }
+.modal-body ul li::before {
+  content: '◆';
+  position: absolute;
+  left: 0.35rem;
+  top: 0.5rem;
+  color: var(--gold);
+  font-size: 0.7rem;
+}
+
+.modal-itinerary { margin-top: 1rem; }
+.modal-itinerary .day {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(7,63,39,0.08);
+}
+.modal-itinerary .day:last-child { border-bottom: none; }
+.modal-itinerary .day-label {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--gold);
+  font-weight: 600;
+}
+.modal-itinerary .day-detail h5 {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  margin-bottom: 0.35rem;
+}
+.modal-itinerary .day-detail p { font-size: 0.85rem; margin: 0; line-height: 1.65; }
+
+.modal-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.modal-highlights span {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  background: var(--ivory-warm);
+  padding: 0.4rem 0.85rem;
+  border: 1px solid rgba(217,154,0,0.25);
+}
+
+.modal-included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+.modal-included-grid ul li::before { content: '✓'; color: #2e7d32; font-weight: 700; }
+.modal-excluded-grid ul li::before { content: '✕'; color: #c62828; font-weight: 700; }
+
+.modal-cta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(217,154,0,0.25);
+}
+.modal-cta .btn { flex: 1; min-width: 200px; }
+
+/* ============================================
+   TOAST
+   ============================================ */
+.toast-container {
+  position: fixed;
+  top: 100px;
+  right: 1.5rem;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+.toast {
+  background: var(--green-deep);
+  color: var(--ivory);
+  padding: 1rem 1.5rem;
+  min-width: 280px;
+  max-width: 380px;
+  border-left: 3px solid var(--gold);
+  box-shadow: 0 20px 50px rgba(7,20,14,0.4);
+  transform: translateX(400px) rotateY(-30deg);
+  opacity: 0;
+  transition: all 0.5s var(--ease-3d);
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+.toast.show { transform: translateX(0) rotateY(0); opacity: 1; }
+.toast.success { border-left-color: #25D366; }
+.toast.error { border-left-color: #d32f2f; }
+.toast svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; color: var(--gold-warm); }
+.toast.success svg { color: #25D366; }
+.toast.error svg { color: #ff6b6b; }
+.toast .title { font-weight: 600; margin-bottom: 0.15rem; font-size: 0.85rem; }
+.toast .msg { font-size: 0.8rem; color: rgba(247,244,236,0.75); line-height: 1.5; }
+
+/* ============================================
+   REVEAL
+   ============================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px) rotateX(-8deg);
+  transform-origin: center top;
+  transition: opacity 1s var(--ease-out), transform 1s var(--ease-out);
+}
+.reveal.visible { opacity: 1; transform: translateY(0) rotateX(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1024px) {
+  .nav-links { display: none; }
+  .menu-toggle { display: flex; }
+  .intro-grid, .about-grid, .contact-grid, .responsible-grid { grid-template-columns: 1fr; }
+  .intro-image, .about-image { aspect-ratio: 16/10; }
+  .safari-card.flagship { grid-template-columns: 1fr; }
+  .safari-card.flagship .safari-card-image { min-height: 300px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .modal-included-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  :root { --header-height: 68px; }
+  .header-inner .nav-actions .btn { display: none; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 160px; }
+  .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+  .gallery-item:nth-child(4) { grid-row: span 1; }
+  .gallery-item:nth-child(5) { grid-column: span 2; grid-row: span 1; }
+  .gallery-item:nth-child(8) { grid-column: span 2; grid-row: span 1; }
+  .responsible-values { grid-template-columns: 1fr; }
+  .tiktok-reel { width: 140px; }
+  .tiktok-reel.center { width: 170px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .builder-form .form-grid { grid-template-columns: 1fr; }
+  .experience-panel { min-height: 60vh; }
+  .experience-content { max-width: 100%; }
+  .contact-form .form-grid { grid-template-columns: 1fr; }
+  .modal-itinerary .day { grid-template-columns: 1fr; gap: 0.5rem; }
+  .toast-container { right: 1rem; left: 1rem; }
+  .toast { min-width: auto; max-width: none; }
+}
+
+@media (max-width: 480px) {
+  .hero-ctas, .cta-buttons { flex-direction: column; align-items: center; }
+  .hero-ctas .btn, .cta-buttons .btn { width: 100%; max-width: 280px; }
+  .tiktok-reels { gap: 0.75rem; }
+  .tiktok-reel { width: 100px; }
+  .tiktok-reel.center { width: 125px; }
+  .modal-cta .btn { min-width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; }
+}
+
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HEADER
+     ============================================ -->
+<header class="header" id="header">
+  <div class="header-inner">
+    <a href="#home" class="logo" aria-label="Sonnenpfad Safaris Uganda Ltd — Home" data-nav>
+      <div class="logo-mark">
+        <svg viewBox="0 0 46 46" width="46" height="46" aria-hidden="true">
+          <circle cx="23" cy="23" r="22" fill="#073F27"/>
+          <circle cx="23" cy="20" r="10" fill="#F4B41A" opacity="0.9"/>
+          <path d="M8 32 Q23 22 38 32" stroke="#D99A00" stroke-width="1.5" fill="none"/>
+          <ellipse cx="23" cy="34" rx="14" ry="4" fill="#0A5435" opacity="0.6"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="name">Sonnenpfad</span>
+        <span class="sub">Safaris Uganda</span>
+      </div>
+    </a>
+
+    <nav class="nav" aria-label="Main navigation">
+      <ul class="nav-links">
+        <li><a href="#home" data-nav>Home</a></li>
+        <li><a href="#about" data-nav>About</a></li>
+        <li><a href="#safaris" data-nav>Safaris</a></li>
+        <li><a href="#destinations" data-nav>Destinations</a></li>
+        <li><a href="#experiences" data-nav>Experiences</a></li>
+        <li><a href="#builder" data-nav>Plan Your Safari</a></li>
+        <li><a href="#gallery" data-nav>Gallery</a></li>
+        <li><a href="#contact" data-nav>Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="https://wa.me/256773333108?text=Hello%20Sonnenpfad%20Safaris%2C%20I%27d%20like%20to%20enquire%20about%20a%20Uganda%20safari." class="whatsapp-btn" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <span>WhatsApp</span>
+        </a>
+        <a href="#contact" class="btn btn-primary" data-nav>Book Your Safari</a>
+      </div>
+    </nav>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <a href="#home" data-nav>Home</a>
+  <a href="#about" data-nav>About</a>
+  <a href="#safaris" data-nav>Safaris</a>
+  <a href="#destinations" data-nav>Destinations</a>
+  <a href="#experiences" data-nav>Experiences</a>
+  <a href="#builder" data-nav>Plan Your Safari</a>
+  <a href="#gallery" data-nav>Gallery</a>
+  <a href="#contact" data-nav>Contact</a>
+  <a href="https://wa.me/256773333108" class="btn btn-whatsapp" style="margin-top:1rem;font-size:0.7rem;" target="_blank" rel="noopener">Chat on WhatsApp</a>
+</div>
+
+<!-- ============================================
+     HERO
+     ============================================ -->
+<section class="hero" id="home">
+  <div class="hero-scene" id="heroScene">
+    <div class="hero-layer hero-sky" data-depth="0.015"></div>
+    <div class="hero-layer hero-sun" data-depth="0.03"></div>
+    <div class="hero-layer hero-mountains" data-depth="0.05"></div>
+    <div class="hero-layer hero-trees" data-depth="0.08"></div>
+    <div class="hero-layer hero-savannah" data-depth="0.1"></div>
+    <div class="hero-layer hero-vignette"></div>
+  </div>
+
+  <div class="hero-content" data-depth="0.04">
+    <div class="hero-eyebrow"><span>Welcome to the Pearl of Africa</span></div>
+    <h1>Discover Uganda.<br><em>Follow the Path</em> to Adventure.</h1>
+    <p class="hero-sub">Journey through wild savannahs, ancient rainforests, legendary rivers and vibrant communities with Sonnenpfad Safaris Uganda Ltd.</p>
+    <div class="hero-ctas">
+      <a href="#safaris" class="btn btn-primary" data-nav>
+        Explore Safaris
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#builder" class="btn btn-outline" data-nav>
+        Plan My Journey
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="scroll-indicator" aria-hidden="true">
+    <div class="line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ============================================
+     INTRO
+     ============================================ -->
+<section class="section" id="about-intro">
+  <div class="container">
+    <div class="intro-grid">
+      <div class="intro-image tilt-wrap reveal">
+        <div class="tilt-card">
+          <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&q=80" alt="Ugandan savannah landscape with acacia trees at golden hour" loading="lazy">
+          <div class="tilt-shine"></div>
+        </div>
+      </div>
+      <div class="intro-content reveal reveal-delay-1">
+        <div class="section-label"><span class="eyebrow">The Journey Begins Here</span></div>
+        <h2>Where extraordinary landscapes meet remarkable wildlife</h2>
+        <p class="lead">Uganda is a land where extraordinary landscapes, remarkable wildlife and rich cultures meet.</p>
+        <p class="lead">At Sonnenpfad Safaris Uganda Ltd, we create carefully planned journeys that bring travellers closer to the heart of the Pearl of Africa. From encounters with mountain gorillas in mist-covered forests to game drives across open savannahs and boat journeys along the Nile, every safari is designed around discovery, comfort and meaningful experiences.</p>
+        <p class="lead">Whether you are visiting Uganda for the first time, returning for another adventure or planning a private journey for your family or group, we help turn your travel ideas into an unforgettable African experience.</p>
+        <div class="intro-signature">
+          <div class="mark">S</div>
+          <div class="text">Sonnenpfad Safaris<small>Uganda Ltd</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     SIGNATURE SAFARIS
+     ============================================ -->
+<section class="section" id="safaris" style="background: var(--ivory-warm);">
+  <div class="container">
+    <div class="safaris-header reveal">
+      <div class="section-label" style="justify-content:center;"><span class="eyebrow">Signature Journeys</span></div>
+      <h2>Choose your path through Uganda</h2>
+      <p class="lead" style="max-width:600px;margin:0 auto;">Each journey is crafted around discovery, comfort and meaningful experiences. Click any safari to see the full itinerary.</p>
+    </div>
+
+    <div class="safari-grid" id="safariGrid"><!-- Dynamically rendered --></div>
+  </div>
+</section>
+
+<!-- ============================================
+     DESTINATIONS
+     ============================================ -->
+<section class="section destinations" id="destinations">
+  <div class="container">
+    <div class="destinations-header reveal">
+      <div class="section-label" style="justify-content:center;"><span class="eyebrow" style="color:var(--gold-warm);">Explore Uganda</span></div>
+      <h2>Discover the Pearl of Africa</h2>
+      <p class="lead">From ancient rainforests to open savannahs, Uganda's national parks and natural wonders offer extraordinary experiences. Click any destination for details.</p>
+    </div>
+    <div class="destination-grid" id="destinationGrid"><!-- Dynamically rendered --></div>
+  </div>
+</section>
+
+<!-- ============================================
+     EXPERIENCES
+     ============================================ -->
+<section class="section" id="experiences" style="padding-bottom:0;">
+  <div class="container">
+    <div class="experiences-header reveal">
+      <div class="section-label" style="justify-content:center;"><span class="eyebrow">Experience Uganda Differently</span></div>
+      <h2>More than a safari</h2>
+      <p class="lead" style="max-width:600px;margin:0 auto;">From gorilla trekking to cultural encounters, discover the experiences that make Uganda unforgettable.</p>
+    </div>
+  </div>
+
+  <div class="experience-panel reveal">
+    <div class="experience-panel-bg">
+      <img src="https://images.unsplash.com/photo-1544911845-1a7c6b8f4b1e?w=1600&q=80" alt="Mountain gorilla in the forest" loading="lazy">
+    </div>
+    <div class="experience-content">
+      <div class="section-label"><span class="eyebrow" style="color:var(--gold-warm);">Gorilla Trekking</span></div>
+      <h3>Face to Face with the Wild</h3>
+      <p>Walk beneath an ancient forest canopy in search of one of the world's most remarkable primates. A gorilla trek is not simply another wildlife sighting — the forest journey, anticipation and eventual encounter combine to create an experience many travellers remember for the rest of their lives.</p>
+      <button class="btn btn-primary" data-action="open-safari" data-safari="gorilla-3">Explore Gorilla Safaris</button>
+    </div>
+  </div>
+
+  <div class="experience-panel reverse reveal">
+    <div class="experience-panel-bg">
+      <img src="https://images.unsplash.com/photo-1570481662006-a3a1374699e8?w=1600&q=80" alt="Chimpanzee in Kibale forest" loading="lazy">
+    </div>
+    <div class="experience-content">
+      <div class="section-label"><span class="eyebrow" style="color:var(--gold-warm);">Chimpanzee Experiences</span></div>
+      <h3>Into the Primate Forest</h3>
+      <p>Discover the energy of Uganda's tropical forests while searching for chimpanzees and other primates. Combine your chimpanzee experience with birding, nature and photography for a deeper exploration of Uganda's forest ecosystems.</p>
+      <button class="btn btn-outline" data-action="open-safari" data-safari="primates-7">Request a Quote</button>
+    </div>
+  </div>
+
+  <div class="experience-panel reveal">
+    <div class="experience-panel-bg">
+      <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1600&q=80" alt="Wildlife on the savannah" loading="lazy">
+    </div>
+    <div class="experience-content">
+      <div class="section-label"><span class="eyebrow" style="color:var(--gold-warm);">Wildlife Safaris</span></div>
+      <h3>Africa in Motion</h3>
+      <p>Watch elephants move across open landscapes, encounter buffalo, antelope and other wildlife, and search for predators while travelling through some of Uganda's most beautiful protected areas.</p>
+      <button class="btn btn-outline" data-action="open-safari" data-safari="wildlife-8">Plan Your Safari</button>
+    </div>
+  </div>
+
+  <div class="experience-panel reverse reveal">
+    <div class="experience-panel-bg">
+      <img src="https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=1600&q=80" alt="Boat safari on the Nile" loading="lazy">
+    </div>
+    <div class="experience-content">
+      <div class="section-label"><span class="eyebrow" style="color:var(--gold-warm);">Boat Safaris</span></div>
+      <h3>See Uganda from the Water</h3>
+      <p>Some of Uganda's most memorable wildlife encounters happen from the water. Journey along iconic waterways while watching hippos, crocodiles, elephants and abundant birdlife along the banks.</p>
+      <button class="btn btn-outline" data-action="open-safari" data-safari="pearl-10">Request a Quote</button>
+    </div>
+  </div>
+
+  <div class="experience-panel reveal">
+    <div class="experience-panel-bg">
+      <img src="https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=1600&q=80" alt="Ugandan cultural experience" loading="lazy">
+    </div>
+    <div class="experience-content">
+      <div class="section-label"><span class="eyebrow" style="color:var(--gold-warm);">Cultural Experiences</span></div>
+      <h3>Meet the People Behind the Destination</h3>
+      <p>Uganda is much more than its wildlife. Responsible cultural experiences give travellers opportunities to learn about local traditions, food, music, crafts and everyday life while respecting the communities being visited.</p>
+      <button class="btn btn-outline" data-action="open-safari" data-safari="grand-14">Explore Cultural Tours</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     GORILLA FEATURE
+     ============================================ -->
+<section class="gorilla-feature" id="gorilla-feature">
+  <div class="gorilla-feature-bg" id="gorillaBg"></div>
+  <div class="gorilla-mist"></div>
+  <div class="gorilla-content reveal">
+    <div class="section-label" style="justify-content:center;"><span class="eyebrow" style="color:var(--gold-warm);">Into the Forest</span></div>
+    <h2>Meet Uganda's Mountain Gorillas</h2>
+    <p>Walk beneath the canopy of Uganda's ancient mountain forests and experience one of Africa's most remarkable wildlife encounters. A guided gorilla trek brings travellers into the natural habitat of these extraordinary primates while supporting conservation and responsible tourism.</p>
+    <button class="btn btn-primary" data-action="open-safari" data-safari="gorilla-3">Explore Gorilla Safaris</button>
+  </div>
+</section>
+
+<!-- ============================================
+     WHY
+     ============================================ -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="why-header reveal">
+      <div class="section-label" style="justify-content:center;"><span class="eyebrow">Why Sonnenpfad</span></div>
+      <h2>A great safari begins long before the vehicle enters the park</h2>
+      <p class="lead">We combine local knowledge, careful planning and personal attention to create journeys suited to each traveller's interests, schedule and expectations.</p>
+    </div>
+    <div class="why-grid reveal">
+      <div class="why-item"><div class="num">01</div><h4>Local Knowledge</h4><p>Discover Uganda through people who understand the destination, its wildlife, cultures and hidden treasures.</p></div>
+      <div class="why-item"><div class="num">02</div><h4>Tailor-Made Safaris</h4><p>Your journey can be adapted around your interests, available time and preferred travel style.</p></div>
+      <div class="why-item"><div class="num">03</div><h4>Personal Attention</h4><p>From your first enquiry until the end of your safari, communication remains simple and personal.</p></div>
+      <div class="why-item"><div class="num">04</div><h4>Diverse Experiences</h4><p>Combine wildlife, primates, landscapes, culture, adventure and relaxation in one journey.</p></div>
+      <div class="why-item"><div class="num">05</div><h4>Responsible Travel</h4><p>Journeys that respect Uganda's wildlife, environment and communities for future generations.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     BUILDER
+     ============================================ -->
+<section class="section builder" id="builder">
+  <div class="container">
+    <div class="builder-header reveal">
+      <div class="section-label" style="justify-content:center;"><span class="eyebrow" style="color:var(--gold-warm);">Custom Safari Builder</span></div>
+      <h2>Design Your Journey</h2>
+      <p class="lead">Tell us what you're looking for and we'll create a personalised safari proposal for you.</p>
+    </div>
+
+    <form class="builder-form reveal" id="safariBuilder" novalidate>
+      <div class="builder-progress" aria-hidden="true">
+        <div class="step active" data-step="1"></div>
+        <div class="step" data-step="2"></div>
+        <div class="step" data-step="3"></div>
+        <div class="step" data-step="4"></div>
+        <div class="step" data-step="5"></div>
+        <div class="step" data-step="6"></div>
+      </div>
+
+      <div class="builder-step active" data-step="1">
+        <h3>What interests you?</h3>
+        <p class="step-hint">Select all that apply</p>
+        <div class="option-grid" data-step="1">
+          <button type="button" class="option-chip" data-value="Gorillas">Gorillas</button>
+          <button type="button" class="option-chip" data-value="Chimpanzees">Chimpanzees</button>
+          <button type="button" class="option-chip" data-value="Wildlife">Wildlife</button>
+          <button type="button" class="option-chip" data-value="Birding">Birding</button>
+          <button type="button" class="option-chip" data-value="Culture">Culture</button>
+          <button type="button" class="option-chip" data-value="Hiking">Hiking</button>
+          <button type="button" class="option-chip" data-value="Photography">Photography</button>
+          <button type="button" class="option-chip" data-value="Adventure">Adventure</button>
+          <button type="button" class="option-chip" data-value="Relaxation">Relaxation</button>
+        </div>
+      </div>
+
+      <div class="builder-step" data-step="2">
+        <h3>How long would you like to travel?</h3>
+        <p class="step-hint">Choose your preferred duration</p>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-value="1-3 days">1–3 days</button>
+          <button type="button" class="option-chip" data-value="4-6 days">4–6 days</button>
+          <button type="button" class="option-chip" data-value="7-10 days">7–10 days</button>
+          <button type="button" class="option-chip" data-value="11-14 days">11–14 days</button>
+          <button type="button" class="option-chip" data-value="15+ days">15+ days</button>
+        </div>
+      </div>
+
+      <div class="builder-step" data-step="3">
+        <h3>What travel style suits you?</h3>
+        <p class="step-hint">Select your preferred level of comfort</p>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-value="Comfort">Comfort</button>
+          <button type="button" class="option-chip" data-value="Premium">Premium</button>
+          <button type="button" class="option-chip" data-value="Luxury">Luxury</button>
+        </div>
+      </div>
+
+      <div class="builder-step" data-step="4">
+        <h3>Who is travelling?</h3>
+        <p class="step-hint">Tell us about your group</p>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-value="Solo">Solo</button>
+          <button type="button" class="option-chip" data-value="Couple">Couple</button>
+          <button type="button" class="option-chip" data-value="Family">Family</button>
+          <button type="button" class="option-chip" data-value="Friends">Friends</button>
+          <button type="button" class="option-chip" data-value="Private Group">Private Group</button>
+        </div>
+      </div>
+
+      <div class="builder-step" data-step="5">
+        <h3>When would you like to travel?</h3>
+        <p class="step-hint">Approximate travel period</p>
+        <div class="option-grid">
+          <button type="button" class="option-chip" data-value="Jan-Mar">Jan–Mar</button>
+          <button type="button" class="option-chip" data-value="Apr-Jun">Apr–Jun</button>
+          <button type="button" class="option-chip" data-value="Jul-Sep">Jul–Sep</button>
+          <button type="button" class="option-chip" data-value="Oct-Dec">Oct–Dec</button>
+          <button type="button" class="option-chip" data-value="Flexible">Flexible</button>
+        </div>
+      </div>
+
+      <div class="builder-step" data-step="6">
+        <h3>Your details</h3>
+        <p class="step-hint">We'll use these to send your personalised safari plan</p>
+        <div class="form-grid">
+          <div class="form-group"><label for="bName">Full Name *</label><input type="text" id="bName" placeholder="Your name" required></div>
+          <div class="form-group"><label for="bCountry">Country</label><input type="text" id="bCountry" placeholder="Your country"></div>
+          <div class="form-group"><label for="bEmail">Email *</label><input type="email" id="bEmail" placeholder="you@example.com" required></div>
+          <div class="form-group"><label for="bPhone">Phone / WhatsApp</label><input type="tel" id="bPhone" placeholder="+256 ..."></div>
+          <div class="form-group full"><label for="bNotes">Special Requirements</label><textarea id="bNotes" placeholder="Dietary needs, mobility considerations, special occasions..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="builder-nav">
+        <button type="button" class="btn btn-outline" id="builderPrev" style="visibility:hidden;">← Previous</button>
+        <button type="button" class="btn btn-primary" id="builderNext">Next →</button>
+        <button type="submit" class="btn btn-primary" id="builderSubmit" style="display:none;">Request My Safari Plan</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ============================================
+     GALLERY
+     ============================================ -->
+<section class="section" id="gallery">
+  <div class="container">
+    <div class="gallery-header reveal">
+      <div class="section-label" style="justify-content:center;"><span class="eyebrow">Gallery</span></div>
+      <h2>Moments from Uganda</h2>
+      <p class="lead" style="max-width:600px;margin:0 auto;">A glimpse into the extraordinary experiences that await you in the Pearl of Africa.</p>
+    </div>
+    <div class="gallery-filters reveal">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="wildlife">Wildlife</button>
+      <button class="filter-btn" data-filter="gorillas">Gorillas</button>
+      <button class="filter-btn" data-filter="landscapes">Landscapes</button>
+      <button class="filter-btn" data-filter="culture">Culture</button>
+      <button class="filter-btn" data-filter="adventure">Adventure</button>
+    </div>
+    <div class="gallery-grid reveal" id="galleryGrid"><!-- Dynamically rendered --></div>
+  </div>
+</section>
+
+<!-- ============================================
+     TESTIMONIALS
+     ============================================ -->
+<section class="section testimonials" id="testimonials">
+  <div class="container-narrow">
+    <div class="testimonials-header reveal">
+      <div class="section-label" style="justify-content:center;"><span class="eyebrow">Traveller Stories</span></div>
+      <h2>What our guests say</h2>
+    </div>
+    <div class="testimonial-carousel reveal">
+      <div class="testimonial-slide active">
+        <blockquote>"Your testimonial here. We're waiting for genuine reviews from our travellers to share their Sonnenpfad experience."</blockquote>
+        <div class="author">Traveller Name<small>Editable placeholder</small></div>
+      </div>
+      <div class="testimonial-slide">
+        <blockquote>"Your testimonial here. We're waiting for genuine reviews from our travellers to share their Sonnenpfad experience."</blockquote>
+        <div class="author">Traveller Name<small>Editable placeholder</small></div>
+      </div>
+      <div class="testimonial-slide">
+        <blockquote>"Your testimonial here. We're waiting for genuine reviews from our travellers to share their Sonnenpfad experience."</blockquote>
+        <div class="author">Traveller Name<small>Editable placeholder</small></div>
+      </div>
+      <div class="testimonial-nav">
+        <button class="testimonial-dot active" data-index="0" aria-label="Testimonial 1"></button>
+        <button class="testimonial-dot" data-index="1" aria-label="Testimonial 2"></button>
+        <button class="testimonial-dot" data-index="2" aria-label="Testimonial 3"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     ABOUT
+     ============================================ -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-image tilt-wrap reveal">
+        <div class="tilt-card">
+          <img src="https://images.unsplash.com/photo-1504006833117-8886a355efbf?w=800&q=80" alt="Ugandan landscape at sunset" loading="lazy">
+          <div class="tilt-shine"></div>
+        </div>
+      </div>
+      <div class="about-content reveal reveal-delay-1">
+        <div class="section-label"><span class="eyebrow">Our Story</span></div>
+        <h2>The sun path to discovery</h2>
+        <p>Sonnenpfad means "sun path" — a name that reflects our belief that travel is a journey toward discovery.</p>
+        <p>Sonnenpfad Safaris Uganda Ltd was created to introduce travellers to the extraordinary landscapes, wildlife and cultures of Uganda through carefully designed safari experiences.</p>
+        <p>Our goal is simple: to help every traveller experience Uganda in a way that feels personal, authentic and unforgettable.</p>
+        <p>Every journey can be adapted around the traveller — from short wildlife escapes to extended expeditions combining primates, national parks, landscapes, culture and adventure.</p>
+        <p class="editable-note">Company history, founding dates and verified details will be added by the founders.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     RESPONSIBLE
+     ============================================ -->
+<section class="section responsible" id="responsible">
+  <div class="container">
+    <div class="responsible-grid">
+      <div class="responsible-content reveal">
+        <div class="section-label"><span class="eyebrow" style="color:var(--gold-warm);">Responsible Tourism</span></div>
+        <h2>Travel with Purpose</h2>
+        <p>We believe that travel should enrich both the visitor and the visited. Responsible tourism means making choices that respect Uganda's natural and cultural heritage.</p>
+        <p>Every Sonnenpfad journey is designed with care for the places and communities we visit.</p>
+      </div>
+      <div class="responsible-values reveal reveal-delay-1">
+        <div class="responsible-value"><h4>Wildlife</h4><p>Respecting animals in their natural habitats and supporting conservation efforts.</p></div>
+        <div class="responsible-value"><h4>Protected Areas</h4><p>Supporting Uganda's national parks and the vital work of wildlife authorities.</p></div>
+        <div class="responsible-value"><h4>Local Communities</h4><p>Creating meaningful benefits for the people who call these landscapes home.</p></div>
+        <div class="responsible-value"><h4>Natural Environments</h4><p>Minimising our impact and encouraging sustainable travel practices.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     CTA
+     ============================================ -->
+<section class="cta-section" id="cta">
+  <div class="cta-bg" id="ctaBg"></div>
+  <div class="cta-content reveal">
+    <h2>Your African Story<br><em>Starts Here.</em></h2>
+    <p>Tell us where you want to go, what you want to experience and how long you have. We'll help you begin planning your journey through Uganda.</p>
+    <div class="cta-buttons">
+      <a href="#contact" class="btn btn-primary" data-nav>Plan My Safari</a>
+      <a href="https://wa.me/256773333108?text=Hello%20Sonnenpfad%20Safaris%2C%20I%27d%20like%20to%20plan%20a%20Uganda%20safari." class="btn btn-whatsapp" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp Us
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     CONTACT
+     ============================================ -->
+<section class="section" id="contact" style="background:var(--ivory-warm);">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div class="section-label"><span class="eyebrow">Contact</span></div>
+        <h2>Let's Plan Your Journey</h2>
+        <p class="lead">Your next adventure may begin with a simple conversation. Whether you already know exactly where you want to go or need help choosing the right itinerary, contact Sonnenpfad Safaris Uganda Ltd and start planning your journey through the Pearl of Africa.</p>
+
+        <div class="contact-detail">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div><h4>Telephone / WhatsApp</h4><p><a href="tel:+256773333108">+256 773 333108</a></p></div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg></div>
+          <div><h4>Email</h4><p class="footer-editable">Email to be added — editable placeholder</p></div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div><h4>Office</h4><p class="footer-editable">Office address to be added — editable placeholder</p></div>
+        </div>
+      </div>
+
+      <form class="contact-form reveal reveal-delay-1" id="contactForm" novalidate>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="cName">Full Name *</label>
+            <input type="text" id="cName" placeholder="Your full name" required>
+            <div class="form-error-msg" data-error="cName">Please enter your name</div>
+          </div>
+          <div class="form-group">
+            <label for="cCountry">Country</label>
+            <input type="text" id="cCountry" placeholder="Your country">
+          </div>
+          <div class="form-group">
+            <label for="cEmail">Email *</label>
+            <input type="email" id="cEmail" placeholder="you@example.com" required>
+            <div class="form-error-msg" data-error="cEmail">Please enter a valid email</div>
+          </div>
+          <div class="form-group">
+            <label for="cPhone">WhatsApp / Phone</label>
+            <input type="tel" id="cPhone" placeholder="+256 ...">
+          </div>
+          <div class="form-group">
+            <label for="cDates">Travel Dates</label>
+            <input type="text" id="cDates" placeholder="e.g. July 2026">
+          </div>
+          <div class="form-group">
+            <label for="cTravellers">Number of Travellers</label>
+            <input type="text" id="cTravellers" placeholder="e.g. 2 adults">
+          </div>
+          <div class="form-group full">
+            <label for="cInterests">Safari Interests</label>
+            <input type="text" id="cInterests" placeholder="Gorillas, wildlife, culture...">
+          </div>
+          <div class="form-group full">
+            <label for="cMessage">Message *</label>
+            <textarea id="cMessage" placeholder="Tell us about your dream Uganda safari..." required></textarea>
+            <div class="form-error-msg" data-error="cMessage">Please tell us a little about your trip</div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Safari Enquiry</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     TIKTOK
+     ============================================ -->
+<section class="section tiktok-section" id="tiktok">
+  <div class="container">
+    <div class="tiktok-header reveal">
+      <div class="section-label" style="justify-content:center;"><span class="eyebrow" style="color:var(--gold-warm);">Follow Our Journey</span></div>
+      <h2>See Uganda through our lens</h2>
+      <p>Follow @kisacathy1900 on TikTok for safari moments, wildlife encounters and behind-the-scenes adventures.</p>
+    </div>
+
+    <div class="tiktok-reels reveal">
+      <a href="https://www.tiktok.com/@kisacathy1900?_r=1&_t=ZS-9AJFAoC3tqs" class="tiktok-reel" target="_blank" rel="noopener">
+        <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?w=400&q=80" alt="Safari reel thumbnail" loading="lazy">
+        <div class="reel-overlay"><span class="handle">@kisacathy1900</span><span class="caption">Savannah moments</span></div>
+      </a>
+      <a href="https://www.tiktok.com/@kisacathy1900?_r=1&_t=ZS-9AJFAoC3tqs" class="tiktok-reel center" target="_blank" rel="noopener">
+        <img src="https://images.unsplash.com/photo-1544911845-1a7c6b8f4b1e?w=500&q=80" alt="Gorilla trekking reel thumbnail" loading="lazy">
+        <div class="reel-overlay"><span class="handle">@kisacathy1900</span><span class="caption">Gorilla encounter</span></div>
+      </a>
+      <a href="https://www.tiktok.com/@kisacathy1900?_r=1&_t=ZS-9AJFAoC3tqs" class="tiktok-reel" target="_blank" rel="noopener">
+        <img src="https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=80" alt="Nile safari reel thumbnail" loading="lazy">
+        <div class="reel-overlay"><span class="handle">@kisacathy1900</span><span class="caption">Nile adventures</span></div>
+      </a>
+    </div>
+
+    <div class="tiktok-cta reveal">
+      <a href="https://www.tiktok.com/@kisacathy1900?_r=1&_t=ZS-9AJFAoC3tqs" class="btn btn-primary" target="_blank" rel="noopener">
+        Follow on TikTok
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTER
+     ============================================ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-main">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#home" class="logo" data-nav>
+            <div class="logo-mark">
+              <svg viewBox="0 0 46 46" width="46" height="46" aria-hidden="true">
+                <circle cx="23" cy="23" r="22" fill="#073F27"/>
+                <circle cx="23" cy="20" r="10" fill="#F4B41A" opacity="0.9"/>
+                <path d="M8 32 Q23 22 38 32" stroke="#D99A00" stroke-width="1.5" fill="none"/>
+                <ellipse cx="23" cy="34" rx="14" ry="4" fill="#0A5435" opacity="0.6"/>
+              </svg>
+            </div>
+            <div class="logo-text"><span class="name">Sonnenpfad</span><span class="sub">Safaris Uganda</span></div>
+          </a>
+          <p>Premium Uganda safari experiences. Gorilla trekking, wildlife, chimpanzees and tailor-made journeys through the Pearl of Africa.</p>
+          <p class="tagline">Discover Uganda. Follow the Path to Adventure.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="#home" data-nav>Home</a></li>
+            <li><a href="#about" data-nav>About Sonnenpfad</a></li>
+            <li><a href="#safaris" data-nav>Our Safaris</a></li>
+            <li><a href="#destinations" data-nav>Destinations</a></li>
+            <li><a href="#experiences" data-nav>Experiences</a></li>
+            <li><a href="#gallery" data-nav>Gallery</a></li>
+            <li><a href="#builder" data-nav>Plan Your Safari</a></li>
+            <li><a href="#contact" data-nav>Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Safaris</h4>
+          <ul>
+            <li><a href="#safaris" data-nav data-open-safari="gorilla-3">Gorilla Safaris</a></li>
+            <li><a href="#safaris" data-nav data-open-safari="primates-7">Chimpanzee Safaris</a></li>
+            <li><a href="#safaris" data-nav data-open-safari="wildlife-8">Wildlife Safaris</a></li>
+            <li><a href="#experiences" data-nav>Cultural Experiences</a></li>
+            <li><a href="#experiences" data-nav>Hiking Adventures</a></li>
+            <li><a href="#experiences" data-nav>Birding Safaris</a></li>
+            <li><a href="#safaris" data-nav data-open-safari="grand-14">Private Safaris</a></li>
+            <li><a href="#builder" data-nav>Tailor-Made Journeys</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Destinations</h4>
+          <ul>
+            <li><a href="#destinations" data-nav data-open-destination="bwindi">Bwindi</a></li>
+            <li><a href="#destinations" data-nav data-open-destination="murchison">Murchison Falls</a></li>
+            <li><a href="#destinations" data-nav data-open-destination="queen">Queen Elizabeth</a></li>
+            <li><a href="#destinations" data-nav data-open-destination="kibale">Kibale</a></li>
+            <li><a href="#destinations" data-nav data-open-destination="kidepo">Kidepo Valley</a></li>
+            <li><a href="#destinations" data-nav data-open-destination="mburo">Lake Mburo</a></li>
+            <li><a href="#destinations" data-nav data-open-destination="rwenzori">Rwenzori Mountains</a></li>
+            <li><a href="#destinations" data-nav data-open-destination="mgahinga">Mgahinga</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+            <a href="tel:+256773333108">+256 773 333108</a>
+          </div>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+            <span class="footer-editable">Email — editable placeholder</span>
+          </div>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span class="footer-editable">Office — editable placeholder</span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Follow Our Journey</h4>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="color:var(--gold);"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/></svg>
+            <a href="https://www.tiktok.com/@kisacathy1900?_r=1&_t=ZS-9AJFAoC3tqs" target="_blank" rel="noopener">@kisacathy1900</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Social</h4>
+          <div class="footer-contact-item"><span class="footer-editable">Facebook — editable placeholder</span></div>
+          <div class="footer-contact-item"><span class="footer-editable">Instagram — editable placeholder</span></div>
+          <div class="footer-contact-item"><span class="footer-editable">YouTube — editable placeholder</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Sonnenpfad Safaris Uganda Ltd. All rights reserved.</p>
+      <div class="socials">
+        <a href="https://www.tiktok.com/@kisacathy1900?_r=1&_t=ZS-9AJFAoC3tqs" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/></svg>
+        </a>
+        <a href="https://wa.me/256773333108" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/256773333108?text=Hello%20Sonnenpfad%20Safaris%2C%20I%27d%20like%20to%20enquire%20about%20a%20Uganda%20safari." class="whatsapp-float" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- Modal Container -->
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ============================================
+   DATA
+   ============================================ */
+const SAFARIS = {
+  'gorilla-3': {
+    id: 'gorilla-3',
+    duration: '3 Days',
+    title: 'Gorilla Encounter',
+    destination: 'Bwindi Impenetrable National Park',
+    image: 'https://images.unsplash.com/photo-1544911845-1a7c6b8f4b1e?w=1200&q=80',
+    shortDesc: "Enter one of Africa's most extraordinary rainforests for an intimate encounter with Uganda's mountain gorillas.",
+    overview: "A focused 3-day journey into the heart of Bwindi Impenetrable National Park — one of the last remaining habitats of the mountain gorilla. This is an intimate, life-changing encounter that many travellers describe as the highlight of their African journey.",
+    highlights: ['Scenic journey through southwestern Uganda','Gorilla trekking','Bwindi rainforest','Local community experience','Photography'],
+    itinerary: [
+      { day: 'Day 1', title: 'Journey to Bwindi', desc: 'Meet your Sonnenpfad safari guide and begin your journey towards southwestern Uganda. Travel through Uganda\'s beautiful countryside before arriving in the Bwindi region. Check into your lodge and prepare for the following day\'s adventure.' },
+      { day: 'Day 2', title: 'Gorilla Trekking', desc: 'After an early breakfast, proceed to the park briefing point. Accompanied by experienced guides and trackers, enter the forest in search of a habituated gorilla family. After the trek, return to your lodge and enjoy the surroundings.' },
+      { day: 'Day 3', title: 'Return Journey', desc: 'Enjoy breakfast before beginning your journey back, carrying with you memories of one of Africa\'s most remarkable wildlife experiences.' }
+    ],
+    included: ['Gorilla trekking permit','Professional English-speaking driver-guide','4x4 safari vehicle with fuel','Park entry fees','All meals as per itinerary','Accommodation as per itinerary','Bottled drinking water'],
+    excluded: ['International flights','Uganda visa fees','Travel insurance','Alcoholic beverages','Tips and gratuities','Personal shopping and laundry','Optional activities not in itinerary'],
+    cta: 'Request This Safari'
+  },
+  'savannah-5': {
+    id: 'savannah-5',
+    duration: '5 Days',
+    title: 'Gorillas & Savannah',
+    destination: 'Bwindi + Queen Elizabeth National Park',
+    image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1200&q=80',
+    shortDesc: "A beautiful combination of Uganda's ancient rainforest and open African savannah.",
+    overview: "A perfect introduction to Uganda's extraordinary diversity. Begin in the open savannah of Queen Elizabeth National Park with classic game drives and a Kazinga Channel boat safari, then travel through the famous Ishasha sector before finishing with a mountain gorilla trek in Bwindi.",
+    highlights: ['Gorilla trekking','Game drives','Elephants','Lions','Kazinga Channel','Hippos','Birdlife'],
+    itinerary: [
+      { day: 'Day 1', title: 'Journey to Queen Elizabeth National Park', desc: 'Depart from Kampala or Entebbe and travel west towards Queen Elizabeth National Park, arriving in time for an evening at your lodge.' },
+      { day: 'Day 2', title: 'Morning Game Drive & Afternoon Boat', desc: 'An early morning game drive through the Kasenyi plains searching for lions, elephants and antelope. In the afternoon, enjoy a boat safari along the Kazinga Channel — one of the highest concentrations of hippos in the world.' },
+      { day: 'Day 3', title: 'Ishasha Region to Bwindi', desc: 'Travel through the famous Ishasha sector, home to tree-climbing lions. Continue towards Bwindi, arriving at your lodge in the late afternoon.' },
+      { day: 'Day 4', title: 'Mountain Gorilla Trekking', desc: 'A full day gorilla trek in Bwindi Impenetrable National Park. Return to your lodge in the evening.' },
+      { day: 'Day 5', title: 'Return Journey', desc: 'Begin your journey back to Kampala or Entebbe, with a stop for lunch along the way.' }
+    ],
+    included: ['Gorilla trekking permit','All park entry fees','Professional driver-guide','4x4 safari vehicle with fuel','Boat safari on Kazinga Channel','All meals as per itinerary','Accommodation as per itinerary','Bottled drinking water'],
+    excluded: ['International flights','Uganda visa fees','Travel insurance','Alcoholic beverages','Tips and gratuities','Personal shopping'],
+    cta: 'Explore This Journey'
+  },
+  'primates-7': {
+    id: 'primates-7',
+    duration: '7 Days',
+    title: 'Primates & Wildlife',
+    destination: 'Kibale + Queen Elizabeth + Bwindi',
+    image: 'https://images.unsplash.com/photo-1570481662006-a3a1374699e8?w=1200&q=80',
+    shortDesc: 'Three very different ecosystems. One unforgettable journey.',
+    overview: 'Begin among the primates and tropical forests of Kibale before continuing into Queen Elizabeth National Park for classic African wildlife experiences. Finish deep inside the forests of Bwindi with Uganda\'s mountain gorillas.',
+    highlights: ['Chimpanzees','Game drives','Boat safari','Gorillas','Rainforest','Savannah'],
+    itinerary: [
+      { day: 'Day 1', title: 'Kampala / Entebbe to Kibale', desc: 'Travel west towards Kibale Forest, passing through tea plantations and rolling hills.' },
+      { day: 'Day 2', title: 'Chimpanzee Experience', desc: 'Morning chimpanzee tracking in Kibale Forest — home to the highest concentration of primates in East Africa. Afternoon nature walk or crater lakes visit.' },
+      { day: 'Day 3', title: 'Kibale to Queen Elizabeth', desc: 'Travel south to Queen Elizabeth National Park, arriving in time for an evening game drive.' },
+      { day: 'Day 4', title: 'Game Drive & Boat Experience', desc: 'Morning game drive followed by an afternoon boat safari on the Kazinga Channel.' },
+      { day: 'Day 5', title: 'Queen Elizabeth to Bwindi', desc: 'Travel through the Ishasha sector to Bwindi, arriving in the late afternoon.' },
+      { day: 'Day 6', title: 'Gorilla Trekking', desc: 'Full day mountain gorilla trekking in Bwindi Impenetrable National Park.' },
+      { day: 'Day 7', title: 'Return', desc: 'Return journey to Kampala or Entebbe.' }
+    ],
+    included: ['Chimpanzee permit','Gorilla trekking permit','All park entry fees','Professional driver-guide','4x4 safari vehicle with fuel','Boat safaris','All meals as per itinerary','Accommodation as per itinerary'],
+    excluded: ['International flights','Uganda visa fees','Travel insurance','Alcoholic beverages','Tips and gratuities','Personal shopping'],
+    cta: 'Request a Quote'
+  },
+  'wildlife-8': {
+    id: 'wildlife-8',
+    duration: '8 Days',
+    title: 'Uganda Wildlife & Primates',
+    destination: 'Kibale + Queen Elizabeth + Bwindi + Lake Mburo',
+    image: 'https://images.unsplash.com/photo-1535941339077-2dd1c7963098?w=1200&q=80',
+    shortDesc: "Designed for travellers who want to experience Uganda's remarkable diversity within one carefully planned journey.",
+    overview: 'Experience primates in tropical forest, classic safari landscapes, mountain gorillas and the beautiful environment of Lake Mburo. A comprehensive journey through Uganda\'s most beloved destinations.',
+    highlights: ['Chimpanzees','Gorillas','Wildlife','Boat experiences','Nature','Photography'],
+    itinerary: [
+      { day: 'Day 1', title: 'Arrival & Transfer to Kibale', desc: 'Arrive in Uganda and transfer to Kibale Forest region.' },
+      { day: 'Day 2', title: 'Chimpanzee Tracking', desc: 'Chimpanzee tracking in Kibale Forest, plus afternoon crater lakes visit.' },
+      { day: 'Day 3', title: 'Kibale to Queen Elizabeth', desc: 'Travel to Queen Elizabeth National Park with an evening game drive.' },
+      { day: 'Day 4', title: 'Game Drive & Kazinga Channel', desc: 'Morning game drive and afternoon boat safari on the Kazinga Channel.' },
+      { day: 'Day 5', title: 'Ishasha to Bwindi', desc: 'Travel through Ishasha, searching for tree-climbing lions, then to Bwindi.' },
+      { day: 'Day 6', title: 'Gorilla Trekking', desc: 'Full day gorilla trekking in Bwindi Impenetrable National Park.' },
+      { day: 'Day 7', title: 'Bwindi to Lake Mburo', desc: 'Travel to Lake Mburo National Park for an afternoon boat safari and evening game drive.' },
+      { day: 'Day 8', title: 'Return to Kampala / Entebbe', desc: 'Morning nature walk, then return journey with a stop at the Equator.' }
+    ],
+    included: ['Chimpanzee permit','Gorilla trekking permit','All park entry fees','Professional driver-guide','4x4 safari vehicle','All boat safaris','All meals as per itinerary','Accommodation'],
+    excluded: ['International flights','Uganda visa fees','Travel insurance','Alcoholic beverages','Tips and gratuities','Personal items'],
+    cta: 'Request a Quote'
+  },
+  'pearl-10': {
+    id: 'pearl-10',
+    duration: '10 Days',
+    title: 'Pearl of Africa Explorer',
+    destination: 'Murchison Falls + Kibale + Queen Elizabeth + Bwindi',
+    image: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=1200&q=80',
+    shortDesc: 'Four legendary destinations. One extraordinary Uganda safari.',
+    overview: 'Follow the Nile into Murchison Falls, explore the forests around Kibale, search for wildlife in Queen Elizabeth and finish with mountain gorillas in Bwindi. The complete Ugandan experience.',
+    highlights: ['Murchison Falls','Nile boat safari','Chimpanzees','Gorillas','Wildlife','Savannah'],
+    itinerary: [
+      { day: 'Day 1', title: 'Arrival & Welcome', desc: 'Arrive in Entebbe, meet your guide and transfer to your hotel.' },
+      { day: 'Day 2', title: 'Journey to Murchison Falls', desc: 'Travel north to Murchison Falls National Park.' },
+      { day: 'Day 3', title: 'Game Drive & Nile Boat', desc: 'Morning game drive, afternoon boat safari to the base of Murchison Falls.' },
+      { day: 'Day 4', title: 'Murchison Falls to Kibale', desc: 'Travel south to Kibale Forest region.' },
+      { day: 'Day 5', title: 'Chimpanzee Experience', desc: 'Chimpanzee tracking in Kibale Forest and afternoon swamp walk.' },
+      { day: 'Day 6', title: 'Kibale to Queen Elizabeth', desc: 'Travel to Queen Elizabeth National Park.' },
+      { day: 'Day 7', title: 'Game Drive & Kazinga Channel', desc: 'Morning game drive, afternoon Kazinga Channel boat safari.' },
+      { day: 'Day 8', title: 'Queen Elizabeth to Bwindi', desc: 'Travel via Ishasha to Bwindi.' },
+      { day: 'Day 9', title: 'Gorilla Trekking', desc: 'Full day gorilla trekking in Bwindi Impenetrable National Park.' },
+      { day: 'Day 10', title: 'Return / Departure', desc: 'Return journey to Kampala or Entebbe for onward departure.' }
+    ],
+    included: ['Gorilla permit','Chimpanzee permit','All park entry fees','Professional driver-guide','4x4 safari vehicle','All boat safaris','All meals as per itinerary','Accommodation'],
+    excluded: ['International flights','Uganda visa fees','Travel insurance','Alcoholic beverages','Tips and gratuities','Personal items'],
+    cta: 'Request a Quote'
+  },
+  'grand-14': {
+    id: 'grand-14',
+    duration: '14 Days',
+    title: 'Grand Uganda Expedition',
+    destination: 'Murchison Falls + Kibale + Queen Elizabeth + Bwindi + Lake Mburo',
+    image: 'https://images.unsplash.com/photo-1504006833117-8886a355efbf?w=1200&q=80',
+    shortDesc: 'The flagship journey. Four legendary destinations. One extraordinary Uganda safari.',
+    overview: 'The complete Ugandan journey — our flagship expedition. From the power of Murchison Falls to the misty forests of Bwindi, experience the full diversity of the Pearl of Africa including wildlife game drives, Nile experiences, chimpanzee trekking, gorilla trekking, boat safaris, nature walks, cultural encounters, photography and premium lodge experiences.',
+    highlights: ['Wildlife game drives','Nile experience','Chimpanzee trekking','Gorilla trekking','Boat safaris','Nature walks','Cultural encounters','Photography','Scenic drives','Premium lodges'],
+    itinerary: [
+      { day: 'Day 1', title: 'Arrival & Welcome', desc: 'Arrive in Entebbe, meet your guide and transfer to your hotel.' },
+      { day: 'Day 2', title: 'Journey to Murchison Falls', desc: 'Travel north to Murchison Falls National Park.' },
+      { day: 'Day 3', title: 'Game Drive & Nile Boat', desc: 'Morning game drive, afternoon Nile boat safari to the base of the falls.' },
+      { day: 'Day 4', title: 'Murchison Falls to Kibale', desc: 'Travel south to Kibale Forest region.' },
+      { day: 'Day 5', title: 'Chimpanzee Experience', desc: 'Chimpanzee tracking and afternoon crater lakes walk.' },
+      { day: 'Day 6', title: 'Kibale to Queen Elizabeth', desc: 'Travel to Queen Elizabeth National Park.' },
+      { day: 'Day 7', title: 'Game Drive & Kazinga Channel', desc: 'Morning game drive, afternoon boat safari on Kazinga Channel.' },
+      { day: 'Day 8', title: 'Queen Elizabeth to Bwindi', desc: 'Travel via Ishasha sector to Bwindi.' },
+      { day: 'Day 9', title: 'Gorilla Trekking', desc: 'Full day mountain gorilla trekking in Bwindi.' },
+      { day: 'Day 10', title: 'Bwindi Community & Forest', desc: 'Cultural community experience and forest walk.' },
+      { day: 'Day 11', title: 'Bwindi to Lake Mburo', desc: 'Travel to Lake Mburo National Park.' },
+      { day: 'Day 12', title: 'Lake Mburo Activities', desc: 'Boat safari, game drive and nature walk.' },
+      { day: 'Day 13', title: 'Lake Mburo to Entebbe', desc: 'Return journey with Equator stop.' },
+      { day: 'Day 14', title: 'Departure', desc: 'Transfer to Entebbe International Airport for onward departure.' }
+    ],
+    included: ['Gorilla permit','Chimpanzee permit','All park entry fees','Professional driver-guide','4x4 safari vehicle','All boat safaris','All meals as per itinerary','Premium lodge accommodation','Bottled drinking water'],
+    excluded: ['International flights','Uganda visa fees','Travel insurance','Alcoholic beverages','Tips and gratuities','Personal items'],
+    cta: 'Design My 14-Day Journey'
+  }
+};
+
+const DESTINATIONS = {
+  'bwindi': {
+    id: 'bwindi',
+    name: 'Bwindi Impenetrable National Park',
+    tagline: 'Enter the ancient forest.',
+    image: 'https://images.unsplash.com/photo-1544911845-1a7c6b8f4b1e?w=1200&q=80',
+    copy: "Deep in southwestern Uganda lies one of Africa's most extraordinary rainforest environments. Bwindi is internationally renowned for its mountain gorillas and provides one of the defining wildlife experiences of a Ugandan safari.",
+    bestFor: ['Gorilla trekking','Forest experiences','Photography','Culture'],
+    experiences: 'Gorilla trekking, forest walks, birdwatching, community visits to local Batwa and Bakiga villages.',
+    relatedSafari: 'gorilla-3'
+  },
+  'murchison': {
+    id: 'murchison',
+    name: 'Murchison Falls National Park',
+    tagline: 'Feel the power of the Nile.',
+    image: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=1200&q=80',
+    copy: "Experience dramatic landscapes, wildlife and the River Nile in one of Uganda's best-known protected areas. Combine wildlife viewing with boat experiences and spectacular waterfall scenery.",
+    bestFor: ['Game drives','Nile cruises','Waterfalls','Wildlife','Birding'],
+    experiences: 'Game drives on the Buligi plains, Nile boat safari to the base of the falls, top of the falls hike, chimpanzee tracking in Budongo Forest.',
+    relatedSafari: 'pearl-10'
+  },
+  'queen': {
+    id: 'queen',
+    name: 'Queen Elizabeth National Park',
+    tagline: 'Where savannah meets water.',
+    image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1200&q=80',
+    copy: "Discover diverse landscapes, rich wildlife and beautiful waterways. Search the plains for wildlife, explore the Ishasha area and experience the famous Kazinga Channel environment.",
+    bestFor: ['Lions','Elephants','Hippos','Boat safari','Photography'],
+    experiences: 'Kasenyi plains game drives, Kazinga Channel boat safari, Ishasha tree-climbing lions, chimpanzee tracking in Kyambura Gorge.',
+    relatedSafari: 'savannah-5'
+  },
+  'kibale': {
+    id: 'kibale',
+    name: 'Kibale National Park',
+    tagline: 'Enter the world of primates.',
+    image: 'https://images.unsplash.com/photo-1570481662006-a3a1374699e8?w=1200&q=80',
+    copy: "Dense tropical forest and remarkable biodiversity make Kibale an essential destination for travellers interested in chimpanzees and forest adventures.",
+    bestFor: ['Chimpanzees','Primates','Forest walks','Birding','Photography'],
+    experiences: 'Chimpanzee tracking, habituation experiences, nocturnal primate walks, crater lakes exploration, swamp walks.',
+    relatedSafari: 'primates-7'
+  },
+  'kidepo': {
+    id: 'kidepo',
+    name: 'Kidepo Valley National Park',
+    tagline: 'Africa, wild and remote.',
+    image: 'https://images.unsplash.com/photo-1535941339077-2dd1c7963098?w=1200&q=80',
+    copy: "Far from Uganda's busiest safari routes lies a spectacular wilderness of sweeping plains, rugged mountains and dramatic skies.",
+    bestFor: ['Wilderness','Game drives','Landscapes','Culture','Photography'],
+    experiences: 'Game drives in Narus Valley, Kidepo Valley excursions, cultural visits to Karamojong communities, hiking in the Morungole Mountains.',
+    relatedSafari: 'grand-14'
+  },
+  'mburo': {
+    id: 'mburo',
+    name: 'Lake Mburo National Park',
+    tagline: 'Slow down and listen to the wild.',
+    image: 'https://images.unsplash.com/photo-1504006833117-8886a355efbf?w=1200&q=80',
+    copy: "A beautiful destination for travellers wanting a more intimate connection with Uganda's landscapes and wildlife.",
+    bestFor: ['Nature','Wildlife','Walking experiences','Scenic landscapes','Photography'],
+    experiences: 'Boat safari on Lake Mburo, guided nature walks, horseback safaris, zebra and impala viewing, birdwatching.',
+    relatedSafari: 'wildlife-8'
+  },
+  'rwenzori': {
+    id: 'rwenzori',
+    name: 'Rwenzori Mountains',
+    tagline: 'Rise above Africa.',
+    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80',
+    copy: "For travellers looking beyond the traditional safari, the Rwenzori Mountains offer dramatic high-altitude scenery and challenging trekking.",
+    bestFor: ['Hiking','Mountains','Adventure','Landscapes','Photography'],
+    experiences: 'Multi-day treks to Margherita Peak, shorter forest walks, glacier viewing, unique high-altitude flora.',
+    relatedSafari: 'grand-14'
+  },
+  'mgahinga': {
+    id: 'mgahinga',
+    name: 'Mgahinga Gorilla National Park',
+    tagline: 'Mountains and gorillas.',
+    image: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1200&q=80',
+    copy: "Uganda's smallest national park offers mountain landscapes, gorillas and golden monkey experiences in a stunning volcanic setting.",
+    bestFor: ['Gorillas','Golden monkeys','Volcano hiking','Culture','Photography'],
+    experiences: 'Gorilla trekking, golden monkey tracking, volcano hikes (Mt. Gahinga, Mt. Sabyinyo), Batwa cultural experience.',
+    relatedSafari: 'gorilla-3'
+  }
+};
+
+const GALLERY = [
+  { category: 'gorillas', img: 'https://images.unsplash.com/photo-1544911845-1a7c6b8f4b1e?w=800&q=80', caption: 'Mountain Gorilla · Bwindi' },
+  { category: 'wildlife', img: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=600&q=80', caption: 'Elephants · Queen Elizabeth' },
+  { category: 'landscapes', img: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=600&q=80', caption: 'Murchison Falls' },
+  { category: 'wildlife', img: 'https://images.unsplash.com/photo-1535941339077-2dd1c7963098?w=600&q=80', caption: 'Zebra · Lake Mburo' },
+  { category: 'landscapes', img: 'https://images.unsplash.com/photo-1504006833117-8886a355efbf?w=800&q=80', caption: 'Savannah Sunset' },
+  { category: 'culture', img: 'https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=600&q=80', caption: 'Cultural Encounters' },
+  { category: 'adventure', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80', caption: 'Rwenzori Trekking' },
+  { category: 'wildlife', img: 'https://images.unsplash.com/photo-1570481662006-a3a1374699e8?w=800&q=80', caption: 'Chimpanzee · Kibale' }
+];
+
+/* ============================================
+   RENDER SAFARIS
+   ============================================ */
+function renderSafaris() {
+  const grid = document.getElementById('safariGrid');
+  const order = ['gorilla-3','savannah-5','primates-7','wildlife-8','pearl-10','grand-14'];
+  grid.innerHTML = order.map((id, idx) => {
+    const s = SAFARIS[id];
+    const isFlagship = id === 'grand-14';
+    const delay = idx % 2 === 1 ? ' reveal-delay-1' : '';
+    if (isFlagship) {
+      return `
+        <article class="safari-card flagship reveal tilt-wrap" data-safari="${s.id}" role="button" tabindex="0" aria-label="Open ${s.title} details">
+          <div class="safari-card-image">
+            <span class="safari-card-badge">${s.duration}</span>
+            <img src="${s.image}" alt="${s.title} — ${s.destination}" loading="lazy">
+          </div>
+          <div class="safari-card-body">
+            <div class="flagship-label">Flagship Safari</div>
+            <h3>${s.title}</h3>
+            <p>${s.shortDesc}</p>
+            <div class="safari-highlights">${s.highlights.slice(0,6).map(h=>`<span>${h}</span>`).join('')}</div>
+            <div class="safari-card-footer">
+              <div class="duration">${s.duration.replace(' Days','')}<small>Days</small></div>
+              <span class="link">${s.cta} →</span>
+            </div>
+          </div>
+        </article>`;
+    }
+    return `
+      <article class="safari-card reveal${delay} tilt-wrap" data-safari="${s.id}" role="button" tabindex="0" aria-label="Open ${s.title} details">
+        <div class="safari-card-image">
+          <span class="safari-card-badge">${s.duration}</span>
+          <img src="${s.image}" alt="${s.title} — ${s.destination}" loading="lazy">
+          <div class="safari-card-title">
+            <span class="dest">${s.destination}</span>
+            <h3>${s.title}</h3>
+          </div>
+        </div>
+        <div class="safari-card-body">
+          <p>${s.shortDesc}</p>
+          <div class="safari-highlights">${s.highlights.slice(0,4).map(h=>`<span>${h}</span>`).join('')}</div>
+          <div class="safari-card-footer">
+            <div class="duration">${s.duration.replace(' Days','')} Days<small>Duration</small></div>
+            <span class="link">${s.cta} →</span>
+          </div>
+        </div>
+      </article>`;
+  }).join('');
+
+  // Wire click handlers
+  grid.querySelectorAll('[data-safari]').forEach(card => {
+    const id = card.dataset.safari;
+    card.addEventListener('click', () => openSafariModal(id));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSafariModal(id); }
+    });
+  });
+}
+
+/* ============================================
+   RENDER DESTINATIONS
+   ============================================ */
+function renderDestinations() {
+  const grid = document.getElementById('destinationGrid');
+  grid.innerHTML = Object.values(DESTINATIONS).map((d, i) => `
+    <div class="destination-card reveal${i%2?' reveal-delay-1':''}" data-destination="${d.id}" role="button" tabindex="0" aria-label="Open ${d.name} details">
+      <img src="${d.image}" alt="${d.name}" loading="lazy">
+      <div class="destination-content">
+        <div class="tagline">${d.tagline}</div>
+        <h3>${d.name.replace(' National Park','')}</h3>
+        <p>${d.copy}</p>
+        <span class="explore-link">Explore →</span>
+      </div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('[data-destination]').forEach(card => {
+    const id = card.dataset.destination;
+    card.addEventListener('click', () => openDestinationModal(id));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDestinationModal(id); }
+    });
+  });
+}
+
+/* ============================================
+   RENDER GALLERY
+   ============================================ */
+function renderGallery() {
+  const grid = document.getElementById('galleryGrid');
+  grid.innerHTML = GALLERY.map(g => `
+    <div class="gallery-item" data-category="${g.category}">
+      <img src="${g.img}" alt="${g.caption}" loading="lazy">
+      <span class="caption">${g.caption}</span>
+    </div>
+  `).join('');
+}
+
+/* ============================================
+   MODAL SYSTEM
+   ============================================ */
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalContent = document.getElementById('modalContent');
+let lastFocused = null;
+
+function openModal(html) {
+  lastFocused = document.activeElement;
+  modalContent.innerHTML = html;
+  modalBackdrop.classList.add('open');
+  modalBackdrop.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('no-scroll');
+
+  // Wire close button
+  const closeBtn = modalContent.querySelector('.modal-close');
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+  // Wire inner CTAs
+  modalContent.querySelectorAll('[data-action="whatsapp-safari"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const safari = btn.dataset.safari;
+      const s = SAFARIS[safari];
+      const msg = encodeURIComponent(`Hello Sonnenpfad Safaris, I'd like to request a quote for the "${s.title}" (${s.duration}) — ${s.destination}.`);
+      window.open(`https://wa.me/256773333108?text=${msg}`, '_blank');
+    });
+  });
+  modalContent.querySelectorAll('[data-action="contact-safari"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      closeModal();
+      const safari = btn.dataset.safari;
+      setTimeout(() => {
+        const el = document.getElementById('contact');
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.pageYOffset - document.getElementById('header').offsetHeight;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+        const interests = document.getElementById('cInterests');
+        if (interests) {
+          const s = SAFARIS[safari];
+          if (s) interests.value = `${s.title} (${s.duration})`;
+        }
+      }, 400);
+    });
+  });
+  modalContent.querySelectorAll('[data-action="view-safari-from-destination"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.safari;
+      closeModal();
+      setTimeout(() => openSafariModal(id), 350);
+    });
+  });
+
+  // Focus management
+  setTimeout(() => {
+    const focusable = modalContent.querySelector('.modal-close');
+    if (focusable) focusable.focus();
+  }, 100);
+}
+
+function closeModal() {
+  modalBackdrop.classList.remove('open');
+  modalBackdrop.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('no-scroll');
+  if (lastFocused) lastFocused.focus();
+}
+
+modalBackdrop.addEventListener('click', (e) => {
+  if (e.target === modalBackdrop) closeModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && modalBackdrop.classList.contains('open')) closeModal();
+});
+
+/* ============================================
+   SAFARI MODAL
+   ============================================ */
+function openSafariModal(id) {
+  const s = SAFARIS[id];
+  if (!s) return;
+
+  const html = `
+    <button class="modal-close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal-hero">
+      <img src="${s.image}" alt="${s.title} — ${s.destination}">
+      <div class="modal-hero-content">
+        <span class="badge">${s.duration}</span>
+        <h2>${s.title}</h2>
+        <span class="dest">${s.destination}</span>
+      </div>
+    </div>
+    <div class="modal-body">
+      <h3>Overview</h3>
+      <p>${s.overview}</p>
+
+      <h3>Key Experiences</h3>
+      <div class="modal-highlights">${s.highlights.map(h=>`<span>${h}</span>`).join('')}</div>
+
+      <h3>Day-by-Day Itinerary</h3>
+      <div class="modal-itinerary">
+        ${s.itinerary.map(d => `
+          <div class="day">
+            <div class="day-label">${d.day}</div>
+            <div class="day-detail">
+              <h5>${d.title}</h5>
+              <p>${d.desc}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <h3>What's Included</h3>
+      <div class="modal-included-grid">
+        <ul>${s.included.map(i=>`<li>${i}</li>`).join('')}</ul>
+      </div>
+
+      <h3>What's Excluded</h3>
+      <div class="modal-excluded-grid">
+        <ul>${s.excluded.map(i=>`<li>${i}</li>`).join('')}</ul>
+      </div>
+
+      <h3>Important Notes</h3>
+      <p>Gorilla and chimpanzee permits are subject to availability and must be secured well in advance. Prices are available on request — please contact us for a personalised quote based on your travel dates, group size and preferred accommodation level.</p>
+
+      <div class="modal-cta">
+        <button class="btn btn-primary" data-action="contact-safari" data-safari="${s.id}">${s.cta}</button>
+        <button class="btn btn-whatsapp" data-action="whatsapp-safari" data-safari="${s.id}">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp Enquiry
+        </button>
+      </div>
+    </div>
+  `;
+  openModal(html);
+}
+
+/* ============================================
+   DESTINATION MODAL
+   ============================================ */
+function openDestinationModal(id) {
+  const d = DESTINATIONS[id];
+  if (!d) return;
+
+  const related = d.relatedSafari ? SAFARIS[d.relatedSafari] : null;
+
+  const html = `
+    <button class="modal-close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal-hero">
+      <img src="${d.image}" alt="${d.name}">
+      <div class="modal-hero-content">
+        <span class="badge">${d.tagline}</span>
+        <h2>${d.name}</h2>
+      </div>
+    </div>
+    <div class="modal-body">
+      <h3>About</h3>
+      <p>${d.copy}</p>
+
+      <h3>Best For</h3>
+      <div class="modal-highlights">${d.bestFor.map(b=>`<span>${b}</span>`).join('')}</div>
+
+      <h3>Experiences</h3>
+      <p>${d.experiences}</p>
+
+      ${related ? `
+        <h3>Featured Safari</h3>
+        <p>We recommend the <strong>${related.title}</strong> (${related.duration}) — ${related.shortDesc}</p>
+      ` : ''}
+
+      <div class="modal-cta">
+        ${related ? `<button class="btn btn-primary" data-action="view-safari-from-destination" data-safari="${related.id}">View ${related.title}</button>` : ''}
+        <button class="btn btn-outline-dark" data-action="contact-safari" data-safari="${related ? related.id : 'gorilla-3'}">Request a Quote</button>
+      </div>
+    </div>
+  `;
+  openModal(html);
+}
+
+/* ============================================
+   TOAST SYSTEM
+   ============================================ */
+function showToast(title, msg, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icons = {
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>',
+    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>'
+  };
+  toast.innerHTML = `
+    ${icons[type]}
+    <div>
+      <div class="title">${title}</div>
+      <div class="msg">${msg}</div>
+    </div>
+  `;
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 500);
+  }, 4500);
+}
+
+/* ============================================
+   HEADER SCROLL
+   ============================================ */
+const header = document.getElementById('header');
+window.addEventListener('scroll', () => {
+  if (window.pageYOffset > 80) header.classList.add('scrolled');
+  else header.classList.remove('scrolled');
+}, { passive: true });
+
+/* ============================================
+   MOBILE MENU
+   ============================================ */
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+menuToggle.addEventListener('click', () => {
+  const isOpen = mobileMenu.classList.toggle('open');
+  menuToggle.classList.toggle('active', isOpen);
+  menuToggle.setAttribute('aria-expanded', isOpen);
+  mobileMenu.setAttribute('aria-hidden', !isOpen);
+  document.body.classList.toggle('no-scroll', isOpen);
+});
+mobileMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    menuToggle.classList.remove('active');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    mobileMenu.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('no-scroll');
+  });
+});
+
+/* ============================================
+   HERO MOUSE PARALLAX (3D)
+   ============================================ */
+const hero = document.querySelector('.hero');
+const heroScene = document.getElementById('heroScene');
+const heroLayers = document.querySelectorAll('[data-depth]');
+let mouseX = 0, mouseY = 0, curX = 0, curY = 0;
+let heroVisible = true;
+
+if (window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  hero.addEventListener('mousemove', (e) => {
+    const rect = hero.getBoundingClientRect();
+    mouseX = (e.clientX - rect.left - rect.width / 2) / rect.width;
+    mouseY = (e.clientY - rect.top - rect.height / 2) / rect.height;
+  });
+  hero.addEventListener('mouseleave', () => { mouseX = 0; mouseY = 0; });
+
+  function animateHero() {
+    curX += (mouseX - curX) * 0.06;
+    curY += (mouseY - curY) * 0.06;
+    heroLayers.forEach(layer => {
+      const depth = parseFloat(layer.dataset.depth) || 0;
+      const moveX = curX * depth * 200;
+      const moveY = curY * depth * 200;
+      layer.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+    });
+    if (heroVisible) requestAnimationFrame(animateHero);
+  }
+
+  const heroObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      heroVisible = e.isIntersecting;
+      if (heroVisible) animateHero();
+    });
+  }, { threshold: 0 });
+  heroObs.observe(hero);
+}
+
+/* ============================================
+   SCROLL PARALLAX FOR FEATURE SECTIONS
+   ============================================ */
+const parallaxElements = [
+  { el: document.getElementById('gorillaBg'), speed: 0.15 },
+  { el: document.getElementById('ctaBg'), speed: 0.15 }
+];
+
+window.addEventListener('scroll', () => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const winH = window.innerHeight;
+  parallaxElements.forEach(({ el, speed }) => {
+    if (!el) return;
+    const rect = el.parentElement.getBoundingClientRect();
+    if (rect.bottom > 0 && rect.top < winH) {
+      const offset = (rect.top - winH / 2) * speed;
+      el.style.transform = `translate3d(0, ${offset}px, 0) scale(1.15)`;
+    }
+  });
+}, { passive: true });
+
+/* ============================================
+   3D TILT CARDS
+   ============================================ */
+function initTiltCards() {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  document.querySelectorAll('.tilt-wrap').forEach(wrap => {
+    const card = wrap.querySelector('.tilt-card') || wrap;
+    const shine = card.querySelector('.tilt-shine');
+    let rafId = null;
+
+    wrap.addEventListener('mousemove', (e) => {
+      const rect = wrap.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      const rotY = (x - 0.5) * 14;
+      const rotX = (0.5 - y) * 14;
+
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        card.style.transform = `perspective(1200px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(0)`;
+        if (shine) {
+          shine.style.setProperty('--mx', `${x * 100}%`);
+          shine.style.setProperty('--my', `${y * 100}%`);
+          shine.style.opacity = '1';
+        }
+      });
+    });
+
+    wrap.addEventListener('mouseleave', () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      card.style.transform = 'perspective(1200px) rotateX(0) rotateY(0) translateZ(0)';
+      if (shine) shine.style.opacity = '0';
+    });
+  });
+}
+
+/* ============================================
+   SCROLL REVEAL
+   ============================================ */
+function initReveal() {
+  const revealEls = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+  revealEls.forEach(el => obs.observe(el));
+}
+
+/* ============================================
+   TESTIMONIAL CAROUSEL
+   ============================================ */
+function initTestimonials() {
+  const dots = document.querySelectorAll('.testimonial-dot');
+  const slides = document.querySelectorAll('.testimonial-slide');
+  let current = 0;
+  let interval;
+
+  function show(i) {
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+    current = i;
+  }
+  function next() { show((current + 1) % slides.length); }
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      show(i);
+      clearInterval(interval);
+      interval = setInterval(next, 7000);
+    });
+  });
+
+  if (slides.length > 1) interval = setInterval(next, 7000);
+}
+
+/* ============================================
+   SAFARI BUILDER
+   ============================================ */
+let currentStep = 1;
+const builderForm = document.getElementById('safariBuilder');
+const builderSteps = document.querySelectorAll('.builder-step');
+const progressSteps = document.querySelectorAll('.builder-progress .step');
+const builderPrev = document.getElementById('builderPrev');
+const builderNext = document.getElementById('builderNext');
+const builderSubmit = document.getElementById('builderSubmit');
+
+function updateBuilderUI() {
+  builderSteps.forEach(step => step.classList.toggle('active', parseInt(step.dataset.step) === currentStep));
+  progressSteps.forEach(step => {
+    const n = parseInt(step.dataset.step);
+    step.classList.toggle('active', n === currentStep);
+    step.classList.toggle('done', n < currentStep);
+  });
+  builderPrev.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+  builderNext.style.display = currentStep === 6 ? 'none' : 'inline-flex';
+  builderSubmit.style.display = currentStep === 6 ? 'inline-flex' : 'none';
+}
+
+document.querySelectorAll('.builder-step .option-grid').forEach(grid => {
+  grid.querySelectorAll('.option-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const isMulti = grid.dataset.step === '1';
+      if (isMulti) chip.classList.toggle('selected');
+      else {
+        grid.querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+      }
+    });
+  });
+});
+
+builderNext.addEventListener('click', () => {
+  // Validate current step has a selection (except step 6 which is form)
+  const activeStep = document.querySelector(`.builder-step[data-step="${currentStep}"]`);
+  const hasSelection = activeStep.querySelector('.option-chip.selected');
+  if (!hasSelection) {
+    showToast('Almost there', 'Please select an option to continue.', 'info');
+    return;
+  }
+  if (currentStep < 6) { currentStep++; updateBuilderUI(); }
+});
+builderPrev.addEventListener('click', () => {
+  if (currentStep > 1) { currentStep--; updateBuilderUI(); }
+});
+
+builderForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = document.getElementById('bName').value.trim();
+  const email = document.getElementById('bEmail').value.trim();
+  if (!name) { showToast('Name required', 'Please enter your full name.', 'error'); return; }
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) { showToast('Valid email required', 'Please enter a valid email address.', 'error'); return; }
+
+  // Collect selections
+  const interests = [...document.querySelectorAll('.builder-step[data-step="1"] .option-chip.selected')].map(c=>c.dataset.value);
+  const duration = document.querySelector('.builder-step[data-step="2"] .option-chip.selected')?.dataset.value || '';
+  const style = document.querySelector('.builder-step[data-step="3"] .option-chip.selected')?.dataset.value || '';
+  const travellers = document.querySelector('.builder-step[data-step="4"] .option-chip.selected')?.dataset.value || '';
+  const period = document.querySelector('.builder-step[data-step="5"] .option-chip.selected')?.dataset.value || '';
+
+  // Build WhatsApp message and open
+  const msg = encodeURIComponent(
+    `Hello Sonnenpfad Safaris! I'd like to request a custom safari plan.\n\n` +
+    `Name: ${name}\n` +
+    `Country: ${document.getElementById('bCountry').value || '—'}\n` +
+    `Email: ${email}\n` +
+    `Phone: ${document.getElementById('bPhone').value || '—'}\n` +
+    `Interests: ${interests.join(', ') || '—'}\n` +
+    `Duration: ${duration || '—'}\n` +
+    `Style: ${style || '—'}\n` +
+    `Travellers: ${travellers || '—'}\n` +
+    `Period: ${period || '—'}\n` +
+    `Notes: ${document.getElementById('bNotes').value || '—'}`
+  );
+  window.open(`https://wa.me/256773333108?text=${msg}`, '_blank');
+  showToast('Request sent!', 'Your safari plan request has been prepared. Complete it in WhatsApp.', 'success');
+  builderForm.reset();
+  document.querySelectorAll('.builder-step .option-chip.selected').forEach(c => c.classList.remove('selected'));
+  currentStep = 1;
+  updateBuilderUI();
+});
+
+/* ============================================
+   CONTACT FORM
+   ============================================ */
+const contactForm = document.getElementById('contactForm');
+contactForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const fields = {
+    cName: document.getElementById('cName'),
+    cEmail: document.getElementById('cEmail'),
+    cMessage: document.getElementById('cMessage')
+  };
+  let valid = true;
+  Object.entries(fields).forEach(([id, el]) => {
+    const err = contactForm.querySelector(`[data-error="${id}"]`);
+    let fieldValid = true;
+    if (id === 'cEmail') fieldValid = /^\S+@\S+\.\S+$/.test(el.value.trim());
+    else fieldValid = el.value.trim().length > 0;
+    el.classList.toggle('error', !fieldValid);
+    if (err) err.classList.toggle('visible', !fieldValid);
+    if (!fieldValid) valid = false;
+  });
+
+  if (!valid) { showToast('Please check the form', 'Some required fields need your attention.', 'error'); return; }
+
+  // Build WhatsApp message
+  const msg = encodeURIComponent(
+    `Hello Sonnenpfad Safaris! New safari enquiry:\n\n` +
+    `Name: ${fields.cName.value}\n` +
+    `Country: ${document.getElementById('cCountry').value || '—'}\n` +
+    `Email: ${fields.cEmail.value}\n` +
+    `Phone: ${document.getElementById('cPhone').value || '—'}\n` +
+    `Travel Dates: ${document.getElementById('cDates').value || '—'}\n` +
+    `Travellers: ${document.getElementById('cTravellers').value || '—'}\n` +
+    `Interests: ${document.getElementById('cInterests').value || '—'}\n` +
+    `Message: ${fields.cMessage.value}`
+  );
+  window.open(`https://wa.me/256773333108?text=${msg}`, '_blank');
+  showToast('Enquiry sent!', 'Thank you — we will be in touch shortly.', 'success');
+  contactForm.reset();
+});
+
+// Clear error on input
+['cName','cEmail','cMessage'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => {
+    el.classList.remove('error');
+    const err = contactForm.querySelector(`[data-error="${id}"]`);
+    if (err) err.classList.remove('visible');
+  });
+});
+
+/* ============================================
+   GALLERY FILTERS
+   ============================================ */
+function initGalleryFilters() {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const items = document.querySelectorAll('.gallery-item');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      items.forEach(item => {
+        if (filter === 'all' || item.dataset.category === filter) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+
+/* ============================================
+   SMOOTH ANCHOR SCROLL
+   ============================================ */
+function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      const target = document.querySelector(targetId);
+      if (!target) return;
+      e.preventDefault();
+      const headerH = header.offsetHeight;
+      const top = target.getBoundingClientRect().top + window.pageYOffset - headerH;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  });
+}
+
+/* ============================================
+   FOOTER SAFARI/DESTINATION LINKS
+   ============================================ */
+function initFooterLinks() {
+  document.querySelectorAll('[data-open-safari]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      const id = el.dataset.openSafari;
+      // Wait for smooth scroll to start, then open modal
+      setTimeout(() => openSafariModal(id), 600);
+    });
+  });
+  document.querySelectorAll('[data-open-destination]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      const id = el.dataset.openDestination;
+      setTimeout(() => openDestinationModal(id), 600);
+    });
+  });
+}
+
+/* ============================================
+   INIT
+   ============================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  renderSafaris();
+  renderDestinations();
+  renderGallery();
+  updateBuilderUI();
+  initSmoothScroll();
+  initReveal();
+  initTestimonials();
+  initGalleryFilters();
+  initFooterLinks();
+  // Init tilt after render
+  setTimeout(initTiltCards, 100);
+});
+</script>
+</body>
+</html>

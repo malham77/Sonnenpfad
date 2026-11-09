@@ -1,0 +1,6 @@
+{
+  "name": "Sonnenpfad Safaris Uganda Ltd",
+  "description": "Premium African tourism and bespoke safari expeditions across Uganda and East Africa. Discover mountain gorillas, the Great Migration, Serengeti, savannah wildlife, chimpanzees, and the Nile with Sonnenpfad Safaris.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

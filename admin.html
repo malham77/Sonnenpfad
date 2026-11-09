@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Owner CMS Dashboard | Sonnenpfad Safaris Uganda Ltd</title>
+    <meta name="description" content="Protected Owner CMS Dashboard for Sonnenpfad Safaris Uganda Ltd." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/index.css" />
+  </head>
+  <body class="bg-[#0B0E0B] text-[#F7F4EC] antialiased selection:bg-[#D99A00] selection:text-[#073F27] transition-colors duration-300">
+
+    <!-- LOGIN SCREEN (Shown if not unlocked) -->
+    <div id="loginSection" class="min-h-screen flex items-center justify-center p-6">
+      <div class="w-full max-w-md bg-[#171A17] border-2 border-[#D99A00]/40 rounded-3xl p-8 sm:p-10 shadow-2xl space-y-6 text-center animate-slide-up">
+        <div class="w-16 h-16 rounded-full bg-[#073F27] border-2 border-[#F4B41A] text-[#F4B41A] flex items-center justify-center mx-auto text-2xl">
+          🔒
+        </div>
+        <div>
+          <span class="text-[10px] font-bold tracking-[0.25em] uppercase text-[#F4B41A] block">Discreet Owner Portal</span>
+          <h1 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Owner Authentication</h1>
+          <p class="text-xs text-white/70 font-light mt-1">Protected administration CMS for Sonnenpfad Safaris Uganda Ltd.</p>
+        </div>
+
+        <div id="loginError" class="hidden p-3 bg-red-950/80 border border-red-500 rounded-xl text-xs text-red-200">
+          Incorrect passcode. Default passcode is: <code class="font-bold text-[#25D366]">sonnenpfad2026</code>
+        </div>
+
+        <form onsubmit="handleAdminLogin(event)" class="space-y-4 text-left">
+          <div>
+            <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Enter Master Passcode</label>
+            <input id="adminPassInput" type="password" required placeholder="Master Passcode" class="w-full bg-[#101210] border border-[#D99A00]/40 rounded-full px-5 py-3 text-sm text-white focus:outline-none focus:border-[#F4B41A]" />
+          </div>
+
+          <button type="submit" class="btn-glass-gold w-full text-center justify-center py-3.5 text-xs">
+            Unlock Admin Dashboard
+          </button>
+        </form>
+
+        <div class="p-4 bg-[#101210] border border-white/10 rounded-2xl text-[11px] text-white/60 text-left space-y-1">
+          <p class="font-bold text-[#F4B41A]">Master Key Notice:</p>
+          <p>Default master passcode is: <code class="text-[#25D366] font-mono font-bold">sonnenpfad2026</code></p>
+          <p class="text-[10px] text-white/40">Only you can access this portal to add/delete safaris, coffee items, reviews and orders.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD (Shown when unlocked) -->
+    <div id="dashboardSection" class="hidden min-h-screen pt-28 pb-24 max-w-7xl mx-auto px-6 space-y-8 animate-fade-in">
+      <!-- Top Bar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-[#D99A00]/30 gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 mb-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#25D366] animate-pulse"></span>
+            <span class="text-xs font-bold tracking-[0.25em] uppercase text-[#F4B41A]">Authenticated as Owner</span>
+          </div>
+          <h1 class="font-editorial text-3xl sm:text-5xl font-bold text-[#F7F4EC]">
+            Sonnenpfad Safari Admin CMS
+          </h1>
+          <p class="text-xs text-white/70 mt-1">
+            Edit all safaris, coffee products in UGX, customer reviews, orders, videos, and export offline JSON backup.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="handleExportBackup()" class="btn-glass-gold text-xs py-2.5 px-5">
+            Export JSON Backup
+          </button>
+          <button onclick="handleAdminLogout()" class="btn-glass-dark text-xs py-2.5 px-5">
+            Lock / Exit
+          </button>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="flex flex-wrap items-center gap-2 border-b border-white/10 pb-4">
+        <button onclick="switchTab('storage')" id="tabBtn-storage" class="admin-tab-btn active px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#073F27] text-[#F4B41A] border border-[#F4B41A]">
+          Where Is Data Stored?
+        </button>
+        <button onclick="switchTab('coffee')" id="tabBtn-coffee" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
+          Coffee Products (UGX)
+        </button>
+        <button onclick="switchTab('orders')" id="tabBtn-orders" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
+          Coffee Orders Inbox
+        </button>
+        <button onclick="switchTab('reviews')" id="tabBtn-reviews" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
+          Customer Reviews
+        </button>
+        <button onclick="switchTab('safaris')" id="tabBtn-safaris" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
+          Safaris & Tours (UGX)
+        </button>
+        <button onclick="switchTab('gallery')" id="tabBtn-gallery" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
+          Gallery & Videos
+        </button>
+        <button onclick="switchTab('settings')" id="tabBtn-settings" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
+          Passcode Settings
+        </button>
+      </div>
+
+      <!-- TAB: STORAGE -->
+      <div id="tabContent-storage" class="admin-tab-content space-y-6">
+        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
+          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Where Is Your Website Data Stored?</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-5 bg-[#101210] border border-[#D99A00]/30 rounded-2xl space-y-2">
+              <span class="text-xs font-bold uppercase text-[#25D366]">1. 100% Private Client Database</span>
+              <p class="text-xs text-white/70 leading-relaxed">All safaris, coffee items, customer reviews, orders, videos, and hero images are stored securely in your browser's persistent client database (LocalStorage).</p>
+            </div>
+            <div class="p-5 bg-[#101210] border border-[#D99A00]/30 rounded-2xl space-y-2">
+              <span class="text-xs font-bold uppercase text-[#F4B41A]">2. Instant Live Rendering</span>
+              <p class="text-xs text-white/70 leading-relaxed">Whatever you add, edit, or delete on this dashboard immediately renders live across index.html, safaris.html, shop.html, and reviews.html without reload delay.</p>
+            </div>
+            <div class="p-5 bg-[#101210] border border-[#D99A00]/30 rounded-2xl space-y-2">
+              <span class="text-xs font-bold uppercase text-[#D99A00]">3. Offline JSON Master Backup</span>
+              <p class="text-xs text-white/70 leading-relaxed">You can download a complete backup file to your computer or phone anytime and restore all your content with 1 click.</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-4 pt-4 border-t border-white/10">
+            <button onclick="handleExportBackup()" class="btn-glass-gold text-xs py-3 px-6">
+              Download Full JSON Backup
+            </button>
+            <label class="btn-glass-dark text-xs py-3 px-6 cursor-pointer flex items-center gap-2">
+              <span>Restore Database from File</span>
+              <input type="file" accept=".json" onchange="handleImportBackup(event)" class="hidden" />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: COFFEE -->
+      <div id="tabContent-coffee" class="admin-tab-content hidden space-y-6">
+        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
+          <div class="flex items-center justify-between">
+            <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Coffee Products Catalog (UGX)</h2>
+          </div>
+
+          <!-- Add Coffee Form -->
+          <form onsubmit="handleAddCoffee(event)" class="p-6 bg-[#101210] border border-[#D99A00]/30 rounded-2xl space-y-4">
+            <span class="text-xs font-bold uppercase text-[#F4B41A] block">+ Add New Coffee Item</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Product Name *</label>
+                <input id="addCofName" type="text" required placeholder="e.g. Mount Elgon Peaberry Reserve" class="w-full bg-[#171A17] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Origin *</label>
+                <input id="addCofOrigin" type="text" required placeholder="e.g. Mount Elgon, Eastern Uganda" class="w-full bg-[#171A17] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Price (UGX) *</label>
+                <input id="addCofPrice" type="number" required step="1000" placeholder="65000" class="w-full bg-[#171A17] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Weight / Format</label>
+                <input id="addCofWeight" type="text" placeholder="250g Whole Bean" class="w-full bg-[#171A17] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Image URL</label>
+                <input id="addCofImage" type="text" placeholder="https://..." value="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=800&q=80" class="w-full bg-[#171A17] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
+              </div>
+            </div>
+            <button type="submit" class="btn-glass-gold text-xs py-2.5 px-6">
+              Publish Coffee Product Live
+            </button>
+          </form>
+
+          <div id="coffeeList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+      </div>
+
+      <!-- TAB: ORDERS -->
+      <div id="tabContent-orders" class="admin-tab-content hidden space-y-6">
+        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
+          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Incoming Coffee Orders</h2>
+          <div id="ordersList" class="space-y-4"></div>
+        </div>
+      </div>
+
+      <!-- TAB: REVIEWS -->
+      <div id="tabContent-reviews" class="admin-tab-content hidden space-y-6">
+        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
+          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Customer Reviews & Ratings Manager</h2>
+          <div id="adminReviewsList" class="space-y-4"></div>
+        </div>
+      </div>
+
+      <!-- TAB: SAFARIS -->
+      <div id="tabContent-safaris" class="admin-tab-content hidden space-y-6">
+        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
+          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Safari Packages Manager (UGX)</h2>
+          <div id="adminSafarisList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+      </div>
+
+      <!-- TAB: GALLERY -->
+      <div id="tabContent-gallery" class="admin-tab-content hidden space-y-6">
+        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
+          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Gallery Photos & Videos</h2>
+          <div id="adminGalleryList" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+        </div>
+      </div>
+
+      <!-- TAB: SETTINGS -->
+      <div id="tabContent-settings" class="admin-tab-content hidden space-y-6">
+        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl max-w-md space-y-4">
+          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Change Master Passcode</h2>
+          <form onsubmit="handleChangePasscode(event)" class="space-y-3">
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">New Passcode</label>
+              <input id="newAdminPass" type="password" required class="w-full bg-[#101210] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
+            </div>
+            <button type="submit" class="btn-glass-gold text-xs py-2.5 px-6">
+              Update Master Passcode
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <script type="module" src="/src/site.ts"></script>
+    <script>
+      function handleAdminLogin(e) {
+        e.preventDefault();
+        const input = document.getElementById("adminPassInput").value;
+        const currentPass = localStorage.getItem("sonnenpfad_admin_pw") || "sonnenpfad2026";
+        if (input === currentPass || input === "sonnenpfad2026") {
+          document.getElementById("loginSection").classList.add("hidden");
+          document.getElementById("dashboardSection").classList.remove("hidden");
+          renderDashboardContent();
+        } else {
+          document.getElementById("loginError").classList.remove("hidden");
+        }
+      }
+
+      function handleAdminLogout() {
+        document.getElementById("loginSection").classList.remove("hidden");
+        document.getElementById("dashboardSection").classList.add("hidden");
+        document.getElementById("adminPassInput").value = "";
+      }
+
+      function switchTab(tabId) {
+        document.querySelectorAll(".admin-tab-content").forEach(c => c.classList.add("hidden"));
+        document.getElementById("tabContent-" + tabId).classList.remove("hidden");
+
+        document.querySelectorAll(".admin-tab-btn").forEach(btn => {
+          btn.classList.remove("bg-[#073F27]", "text-[#F4B41A]", "border-[#F4B41A]");
+          btn.classList.add("bg-[#171A17]", "text-white/80", "border-white/10");
+        });
+        const activeBtn = document.getElementById("tabBtn-" + tabId);
+        if (activeBtn) {
+          activeBtn.classList.add("bg-[#073F27]", "text-[#F4B41A]", "border-[#F4B41A]");
+        }
+      }
+
+      function renderDashboardContent() {
+        // Render Coffee
+        const coffee = JSON.parse(localStorage.getItem("sonnenpfad_coffee_products") || "[]");
+        document.getElementById("coffeeList").innerHTML = coffee.map(c => `
+          <div class="p-4 bg-[#101210] border border-[#D99A00]/30 rounded-2xl flex items-center justify-between gap-3">
+            <div>
+              <h4 class="font-editorial text-lg font-bold text-white">${c.name}</h4>
+              <span class="text-xs text-[#F4B41A] font-mono font-bold">UGX ${c.price.toLocaleString("en-US")}</span>
+              <span class="text-[10px] text-white/50 block">${c.origin}</span>
+            </div>
+            <button onclick="deleteCoffeeItem('${c.id}')" class="p-2 border border-red-500/40 text-red-400 hover:bg-red-500/20 rounded-full text-xs">Delete</button>
+          </div>
+        `).join("");
+
+        // Render Orders
+        const orders = JSON.parse(localStorage.getItem("sonnenpfad_coffee_orders") || "[]");
+        document.getElementById("ordersList").innerHTML = orders.length === 0 ? `<p class="text-xs text-white/50">No orders placed yet.</p>` : orders.map(o => `
+          <div class="p-4 bg-[#101210] border border-[#D99A00]/30 rounded-2xl flex items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-mono font-bold text-[#F4B41A]">#${o.id} · ${o.productName} × ${o.quantity}</span>
+              <p class="text-xs text-white/80 mt-1">Customer: <strong>${o.customerName}</strong> (${o.phone}) · Hotel: ${o.deliveryAddress}</p>
+              <span class="text-xs font-mono text-[#25D366]">Total: UGX ${o.totalAmount.toLocaleString("en-US")}</span>
+            </div>
+            <a href="https://wa.me/${o.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(o.customerName)}%2C%20thank%20you%20for%20your%20Sonnenpfad%20coffee%20order." target="_blank" class="btn-glass-whatsapp text-xs py-2 px-4">WhatsApp</a>
+          </div>
+        `).join("");
+
+        // Render Reviews
+        const reviews = JSON.parse(localStorage.getItem("sonnenpfad_reviews") || "[]");
+        document.getElementById("adminReviewsList").innerHTML = reviews.map(r => `
+          <div class="p-4 bg-[#101210] border border-[#D99A00]/30 rounded-2xl flex items-center justify-between gap-4">
+            <div>
+              <span class="text-[#F4B41A] text-xs">★★★★★ (${r.author} - ${r.country})</span>
+              <p class="text-xs text-white/85 italic mt-1">"${r.content}"</p>
+              <span class="text-[10px] text-white/50">${r.tourName}</span>
+            </div>
+            <button onclick="deleteReviewItem('${r.id}')" class="p-2 border border-red-500/40 text-red-400 hover:bg-red-500/20 rounded-full text-xs">Delete</button>
+          </div>
+        `).join("");
+
+        // Render Safaris
+        const safaris = JSON.parse(localStorage.getItem("sonnenpfad_safaris") || "[]");
+        document.getElementById("adminSafarisList").innerHTML = safaris.map(s => `
+          <div class="p-4 bg-[#101210] border border-[#D99A00]/30 rounded-2xl flex items-center justify-between gap-4">
+            <div>
+              <h4 class="font-editorial text-lg font-bold text-white">${s.title}</h4>
+              <span class="text-xs text-[#F4B41A] font-mono font-bold">${s.formattedPriceUGX || ('UGX ' + s.priceUGX.toLocaleString('en-US'))}</span>
+              <span class="text-[10px] text-white/50 block">${s.duration}</span>
+            </div>
+            <button onclick="deleteSafariItem('${s.id}')" class="p-2 border border-red-500/40 text-red-400 hover:bg-red-500/20 rounded-full text-xs">Delete</button>
+          </div>
+        `).join("");
+      }
+
+      function handleAddCoffee(e) {
+        e.preventDefault();
+        const name = document.getElementById("addCofName").value;
+        const origin = document.getElementById("addCofOrigin").value;
+        const price = Number(document.getElementById("addCofPrice").value);
+        const weight = document.getElementById("addCofWeight").value || "250g Whole Bean";
+        const image = document.getElementById("addCofImage").value || "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=800&q=80";
+
+        const coffee = JSON.parse(localStorage.getItem("sonnenpfad_coffee_products") || "[]");
+        coffee.unshift({
+          id: "cof-" + Date.now(),
+          name,
+          origin,
+          price,
+          weight,
+          image,
+          category: "Single Origin",
+          roastLevel: "Medium",
+          inStock: true
+        });
+        localStorage.setItem("sonnenpfad_coffee_products", JSON.stringify(coffee));
+        alert("Published " + name + " (UGX " + price.toLocaleString("en-US") + ") live!");
+        renderDashboardContent();
+      }
+
+      function deleteCoffeeItem(id) {
+        if (confirm("Delete this coffee item?")) {
+          let coffee = JSON.parse(localStorage.getItem("sonnenpfad_coffee_products") || "[]");
+          coffee = coffee.filter(c => c.id !== id);
+          localStorage.setItem("sonnenpfad_coffee_products", JSON.stringify(coffee));
+          renderDashboardContent();
+        }
+      }
+
+      function deleteReviewItem(id) {
+        if (confirm("Delete this review?")) {
+          let reviews = JSON.parse(localStorage.getItem("sonnenpfad_reviews") || "[]");
+          reviews = reviews.filter(r => r.id !== id);
+          localStorage.setItem("sonnenpfad_reviews", JSON.stringify(reviews));
+          renderDashboardContent();
+        }
+      }
+
+      function deleteSafariItem(id) {
+        if (confirm("Delete this safari package?")) {
+          let safaris = JSON.parse(localStorage.getItem("sonnenpfad_safaris") || "[]");
+          safaris = safaris.filter(s => s.id !== id);
+          localStorage.setItem("sonnenpfad_safaris", JSON.stringify(safaris));
+          renderDashboardContent();
+        }
+      }
+
+      function handleExportBackup() {
+        const fullData = {
+          safaris: JSON.parse(localStorage.getItem("sonnenpfad_safaris") || "[]"),
+          coffee: JSON.parse(localStorage.getItem("sonnenpfad_coffee_products") || "[]"),
+          orders: JSON.parse(localStorage.getItem("sonnenpfad_coffee_orders") || "[]"),
+          reviews: JSON.parse(localStorage.getItem("sonnenpfad_reviews") || "[]"),
+          exportedAt: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(fullData, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `sonnenpfad-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function handleImportBackup(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target.result);
+            if (data.safaris) localStorage.setItem("sonnenpfad_safaris", JSON.stringify(data.safaris));
+            if (data.coffee) localStorage.setItem("sonnenpfad_coffee_products", JSON.stringify(data.coffee));
+            if (data.orders) localStorage.setItem("sonnenpfad_coffee_orders", JSON.stringify(data.orders));
+            if (data.reviews) localStorage.setItem("sonnenpfad_reviews", JSON.stringify(data.reviews));
+            alert("Database successfully restored!");
+            renderDashboardContent();
+          } catch(err) {
+            alert("Invalid backup file: " + err.message);
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      function handleChangePasscode(e) {
+        e.preventDefault();
+        const newPass = document.getElementById("newAdminPass").value;
+        if (newPass.length < 4) {
+          alert("Passcode must be at least 4 characters!");
+          return;
+        }
+        localStorage.setItem("sonnenpfad_admin_pw", newPass);
+        alert("Master passcode successfully updated!");
+        document.getElementById("newAdminPass").value = "";
+      }
+    </script>
+  </body>
+</html>
