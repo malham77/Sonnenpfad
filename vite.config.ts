@@ -1,40 +1,42 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import { fileURLToPath } from 'url';
+import { defineConfig } from 'vite';
+
+const __filename = fileURLToPath(import.meta.url);
+const rootDir = path.dirname(__filename);
 
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': rootDir,
       },
     },
     build: {
       rollupOptions: {
         input: {
-          main: path.resolve(__dirname, 'index.html'),
-          safaris: path.resolve(__dirname, 'safaris.html'),
-          eastAfrica: path.resolve(__dirname, 'east-africa.html'),
-          destinations: path.resolve(__dirname, 'destinations.html'),
-          shop: path.resolve(__dirname, 'shop.html'),
-          gallery: path.resolve(__dirname, 'gallery.html'),
-          reviews: path.resolve(__dirname, 'reviews.html'),
-          about: path.resolve(__dirname, 'about.html'),
-          contact: path.resolve(__dirname, 'contact.html'),
-          admin: path.resolve(__dirname, 'admin.html'),
+          main: path.resolve(rootDir, 'index.html'),
+          safaris: path.resolve(rootDir, 'safaris.html'),
+          eastAfrica: path.resolve(rootDir, 'east-africa.html'),
+          destinations: path.resolve(rootDir, 'destinations.html'),
+          shop: path.resolve(rootDir, 'shop.html'),
+          gallery: path.resolve(rootDir, 'gallery.html'),
+          reviews: path.resolve(rootDir, 'reviews.html'),
+          about: path.resolve(rootDir, 'about.html'),
+          contact: path.resolve(rootDir, 'contact.html'),
+          admin: path.resolve(rootDir, 'admin.html'),
         },
       },
     },
     server: {
       port: 3000,
       host: '0.0.0.0',
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modify—file watching is disabled to prevent flickering during agent edits.
-      hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
+      // HMR is disabled in AI Studio to prevent flickering and port collision
+      hmr: false,
+      watch: null,
     },
   };
 });

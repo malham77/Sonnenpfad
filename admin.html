@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="light scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,410 +7,1445 @@
     <meta name="description" content="Protected Owner CMS Dashboard for Sonnenpfad Safaris Uganda Ltd." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/index.css" />
   </head>
-  <body class="bg-[#0B0E0B] text-[#F7F4EC] antialiased selection:bg-[#D99A00] selection:text-[#073F27] transition-colors duration-300">
+  <body class="bg-[#F8FAFC] text-[#0F172A] antialiased selection:bg-[#D99A00] selection:text-[#073F27]">
 
-    <!-- LOGIN SCREEN (Shown if not unlocked) -->
-    <div id="loginSection" class="min-h-screen flex items-center justify-center p-6">
-      <div class="w-full max-w-md bg-[#171A17] border-2 border-[#D99A00]/40 rounded-3xl p-8 sm:p-10 shadow-2xl space-y-6 text-center animate-slide-up">
-        <div class="w-16 h-16 rounded-full bg-[#073F27] border-2 border-[#F4B41A] text-[#F4B41A] flex items-center justify-center mx-auto text-2xl">
+    <!-- LOGIN SCREEN (Shown if locked) -->
+    <div id="loginSection" class="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[#F8FAFC]">
+      <div class="w-full max-w-md bg-white border-2 border-[#CBD5E1] rounded-3xl p-7 sm:p-10 shadow-2xl space-y-6 text-center animate-slide-up">
+        <div class="w-16 h-16 rounded-2xl bg-[#073F27] border-2 border-[#F4B41A] text-[#F4B41A] flex items-center justify-center mx-auto text-2xl shadow-lg">
           🔒
         </div>
         <div>
-          <span class="text-[10px] font-bold tracking-[0.25em] uppercase text-[#F4B41A] block">Discreet Owner Portal</span>
-          <h1 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Owner Authentication</h1>
-          <p class="text-xs text-white/70 font-light mt-1">Protected administration CMS for Sonnenpfad Safaris Uganda Ltd.</p>
+          <span class="text-[10px] font-bold tracking-[0.25em] uppercase text-[#996500] block">Discreet Owner Portal</span>
+          <h1 class="font-editorial text-3xl font-bold text-[#0F172A] mt-1">Owner CMS Dashboard</h1>
+          <p class="text-xs text-[#475569] mt-1">Protected administration portal for Sonnenpfad Safaris Uganda Ltd.</p>
         </div>
 
-        <div id="loginError" class="hidden p-3 bg-red-950/80 border border-red-500 rounded-xl text-xs text-red-200">
-          Incorrect passcode. Default passcode is: <code class="font-bold text-[#25D366]">sonnenpfad2026</code>
+        <div id="loginError" class="hidden p-3 bg-red-50 border border-red-300 rounded-xl text-xs text-red-700 font-semibold text-left">
+          Incorrect master passcode. Please try again.
         </div>
 
         <form onsubmit="handleAdminLogin(event)" class="space-y-4 text-left">
           <div>
-            <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Enter Master Passcode</label>
-            <input id="adminPassInput" type="password" required placeholder="Master Passcode" class="w-full bg-[#101210] border border-[#D99A00]/40 rounded-full px-5 py-3 text-sm text-white focus:outline-none focus:border-[#F4B41A]" />
+            <label for="adminPassInput" class="block text-[11px] font-bold uppercase text-[#996500] mb-1.5">Master Passcode</label>
+            <div class="relative">
+              <input id="adminPassInput" type="password" required autocomplete="current-password" placeholder="Enter your master passcode" class="w-full bg-white border border-[#94A3B8] rounded-xl pl-4 pr-16 py-3 text-sm text-[#0F172A] focus:outline-none focus:border-[#996500]" />
+              <button type="button" onclick="togglePassVisibility('adminPassInput', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[11px] font-bold text-[#0F172A] border border-[#CBD5E1] cursor-pointer">
+                Show
+              </button>
+            </div>
           </div>
 
-          <button type="submit" class="btn-glass-gold w-full text-center justify-center py-3.5 text-xs">
+          <button id="loginSubmitBtn" type="submit" class="btn-glass-gold w-full text-center justify-center py-3.5 text-xs font-extrabold">
             Unlock Admin Dashboard
           </button>
         </form>
 
-        <div class="p-4 bg-[#101210] border border-white/10 rounded-2xl text-[11px] text-white/60 text-left space-y-1">
-          <p class="font-bold text-[#F4B41A]">Master Key Notice:</p>
-          <p>Default master passcode is: <code class="text-[#25D366] font-mono font-bold">sonnenpfad2026</code></p>
-          <p class="text-[10px] text-white/40">Only you can access this portal to add/delete safaris, coffee items, reviews and orders.</p>
+        <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl text-[11px] text-[#334155] text-left space-y-1">
+          <p class="font-bold text-[#996500]">Security Notice</p>
+          <p id="defaultPassHint" class="text-[#334155]">Initial setup passcode: <code class="text-emerald-700 font-mono font-bold">sonnenpfad2026</code> (change inside Passcode Security after login).</p>
+          <p class="text-[10px] text-[#64748B]">Runs directly with Supabase Cloud DB &amp; Cloudflare Pages.</p>
         </div>
+
+        <a href="index.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#073F27] hover:text-[#996500] transition-colors">
+          ← Back to Public Website
+        </a>
       </div>
     </div>
 
-    <!-- DASHBOARD (Shown when unlocked) -->
-    <div id="dashboardSection" class="hidden min-h-screen pt-28 pb-24 max-w-7xl mx-auto px-6 space-y-8 animate-fade-in">
-      <!-- Top Bar -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-[#D99A00]/30 gap-4">
-        <div>
-          <div class="inline-flex items-center gap-2 mb-1">
-            <span class="w-2.5 h-2.5 rounded-full bg-[#25D366] animate-pulse"></span>
-            <span class="text-xs font-bold tracking-[0.25em] uppercase text-[#F4B41A]">Authenticated as Owner</span>
-          </div>
-          <h1 class="font-editorial text-3xl sm:text-5xl font-bold text-[#F7F4EC]">
-            Sonnenpfad Safari Admin CMS
-          </h1>
-          <p class="text-xs text-white/70 mt-1">
-            Edit all safaris, coffee products in UGX, customer reviews, orders, videos, and export offline JSON backup.
-          </p>
-        </div>
+    <!-- DASHBOARD SHELL (Shown when unlocked) -->
+    <div id="dashboardSection" class="hidden min-h-screen flex flex-col bg-[#F8FAFC]">
+      <!-- Sticky Top Bar -->
+      <header class="sticky top-0 z-40 bg-white border-b border-[#CBD5E1] shadow-sm">
+        <div class="px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <!-- Mobile Sidebar Slide-Over Toggle -->
+            <button
+              id="adminMobileNavBtn"
+              type="button"
+              onclick="toggleAdminSidebar()"
+              aria-label="Open admin navigation"
+              class="lg:hidden w-10 h-10 rounded-xl bg-[#073F27] text-[#F4B41A] border border-[#996500] flex items-center justify-center shrink-0 cursor-pointer shadow-sm"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
 
-        <div class="flex items-center gap-3">
-          <button onclick="handleExportBackup()" class="btn-glass-gold text-xs py-2.5 px-5">
-            Export JSON Backup
+            <a href="index.html" class="flex items-center gap-2.5 shrink-0">
+              <img src="/assets/aistudio/WhatsApp_Image_2026-09-29_at_21.35.55_c9561e3f.jpeg" alt="Logo" class="h-9 w-9 rounded-lg object-cover border border-[#CBD5E1]" />
+              <div class="hidden sm:block">
+                <span class="font-editorial text-lg font-bold text-[#0F172A] block leading-none">SONNENPFAD CMS</span>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-[#996500]">Owner Control Center</span>
+              </div>
+            </a>
+
+            <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-300 text-[11px] font-bold text-emerald-800 ml-2">
+              <span id="supabaseStatusDot" class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+              <span id="headerCloudState">Supabase Direct</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <a href="index.html" class="px-3 py-2 rounded-xl bg-[#F1F5F9] hover:bg-[#E2E8F0] border border-[#CBD5E1] text-xs font-bold text-[#0F172A] transition-colors whitespace-nowrap">
+              Live Site ↗
+            </a>
+            <button type="button" onclick="handleExportBackup()" class="hidden sm:inline-flex px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-xs font-bold text-[#996500] cursor-pointer whitespace-nowrap">
+              Export JSON
+            </button>
+            <button type="button" onclick="handleAdminLogout()" class="px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 border border-red-300 text-xs font-bold text-red-700 cursor-pointer whitespace-nowrap">
+              🔒 Lock
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Responsive Body: Mobile Slide-Over Backdrop -->
+      <div
+        id="adminSidebarBackdrop"
+        onclick="closeAdminSidebar()"
+        class="hidden fixed inset-0 z-40 bg-slate-900/55 backdrop-blur-xs lg:hidden transition-opacity"
+      ></div>
+
+      <div class="flex-1 flex relative max-w-[1600px] w-full mx-auto">
+        <!-- FLEXIBLE SIDEBAR NAVIGATION PANE (Slide-over drawer on mobile, sticky rail on desktop) -->
+        <aside
+          id="adminSidebar"
+          class="fixed lg:sticky top-0 lg:top-16 left-0 z-50 lg:z-20 h-screen lg:h-[calc(100vh-4rem)] w-72 bg-white border-r border-[#CBD5E1] flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out shadow-2xl lg:shadow-none overflow-y-auto shrink-0"
+        >
+          <div class="p-4 space-y-5">
+            <!-- Mobile Drawer Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-[#CBD5E1] lg:hidden">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                <span class="font-editorial text-lg font-bold text-[#0F172A]">Admin Menu</span>
+              </div>
+              <button
+                type="button"
+                onclick="closeAdminSidebar()"
+                aria-label="Close sidebar"
+                class="w-8 h-8 rounded-full bg-[#F1F5F9] text-[#0F172A] border border-[#CBD5E1] flex items-center justify-center cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <!-- Group 1: Overview & Cloud -->
+            <div class="space-y-1">
+              <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-[#64748B] block mb-1.5">Overview &amp; Cloud</span>
+              <button type="button" onclick="switchTab('storage')" id="tabBtn-storage" class="admin-nav-btn active w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
+                <span class="flex items-center gap-2.5"><span>📊</span><span>Overview &amp; Backup</span></span>
+              </button>
+              <button type="button" onclick="switchTab('supabase')" id="tabBtn-supabase" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
+                <span class="flex items-center gap-2.5"><span>☁️</span><span>Supabase Cloud DB</span></span>
+                <span id="sidebarDbPill" class="admin-nav-badge px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-100 text-emerald-800">DB</span>
+              </button>
+              <button type="button" onclick="switchTab('orders')" id="tabBtn-orders" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
+                <span class="flex items-center gap-2.5"><span>🛒</span><span>Orders Inbox</span></span>
+                <span id="sidebarOrdersBadge" class="admin-nav-badge px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-100 text-amber-900">0</span>
+              </button>
+            </div>
+
+            <!-- Group 2: Live Catalog & Media -->
+            <div class="space-y-1">
+              <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-[#64748B] block mb-1.5">Catalog &amp; Content</span>
+              <button type="button" onclick="switchTab('safaris')" id="tabBtn-safaris" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
+                <span class="flex items-center gap-2.5"><span>🦁</span><span>Safaris &amp; Tours (UGX)</span></span>
+                <span id="sidebarSafarisBadge" class="admin-nav-badge px-2 py-0.5 rounded-full text-[10px] font-mono bg-[#F1F5F9] text-[#0F172A]">0</span>
+              </button>
+              <button type="button" onclick="switchTab('shop')" id="tabBtn-shop" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
+                <span class="flex items-center gap-2.5"><span>☕</span><span>Shop Products (UGX)</span></span>
+                <span id="sidebarProductsBadge" class="admin-nav-badge px-2 py-0.5 rounded-full text-[10px] font-mono bg-[#F1F5F9] text-[#0F172A]">0</span>
+              </button>
+              <button type="button" onclick="switchTab('tiktoks')" id="tabBtn-tiktoks" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
+                <span class="flex items-center gap-2.5"><span>🎬</span><span>TikTok Reels Feed</span></span>
+              </button>
+              <button type="button" onclick="switchTab('comments')" id="tabBtn-comments" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
+                <span class="flex items-center gap-2.5"><span>💬</span><span>Comments &amp; Reviews</span></span>
+              </button>
+            </div>
+
+            <!-- Group 3: Operations & Security -->
+            <div class="space-y-1">
+              <span class="px-3 text-[10px] font-extrabold uppercase tracking-widest text-[#64748B] block mb-1.5">Settings &amp; Security</span>
+              <button type="button" onclick="switchTab('location')" id="tabBtn-location" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
+                <span class="flex items-center gap-2.5"><span>📍</span><span>Live Map &amp; Location</span></span>
+              </button>
+              <button type="button" onclick="switchTab('contacts')" id="tabBtn-contacts" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
+                <span class="flex items-center gap-2.5"><span>📞</span><span>Contacts &amp; Socials</span></span>
+              </button>
+              <button type="button" onclick="switchTab('settings')" id="tabBtn-settings" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
+                <span class="flex items-center gap-2.5"><span>🔐</span><span>Passcode Security</span></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sidebar Footer Info -->
+          <div class="p-4 border-t border-[#CBD5E1] bg-[#F8FAFC] space-y-2.5">
+            <div class="text-[11px] text-[#334155] space-y-0.5">
+              <span class="font-bold text-[#073F27] block">Cloudflare Pages Mode</span>
+              <span class="text-[10px] text-[#64748B] block">Static Build → Direct Supabase JS</span>
+            </div>
+            <button type="button" onclick="syncToSupabaseFromAdmin(this)" class="btn-glass-whatsapp w-full py-2 px-3 text-[11px] justify-center">
+              <span>🔄 Sync Cloud Now</span>
+            </button>
+          </div>
+        </aside>
+
+        <!-- MAIN WORKSPACE -->
+        <main class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 space-y-6">
+          <!-- KPI Metrics Row -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="p-4 bg-white border border-[#CBD5E1] rounded-2xl shadow-xs">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block">Active Safaris</span>
+              <span id="kpiSafarisCount" class="font-editorial text-2xl sm:text-3xl font-bold text-[#073F27] mt-1 block">0</span>
+            </div>
+            <div class="p-4 bg-white border border-[#CBD5E1] rounded-2xl shadow-xs">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block">Shop Products</span>
+              <span id="kpiProductsCount" class="font-editorial text-2xl sm:text-3xl font-bold text-[#996500] mt-1 block">0</span>
+            </div>
+            <div class="p-4 bg-white border border-[#CBD5E1] rounded-2xl shadow-xs">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block">Shop Orders</span>
+              <span id="kpiOrdersCount" class="font-editorial text-2xl sm:text-3xl font-bold text-emerald-700 mt-1 block">0</span>
+            </div>
+            <div class="p-4 bg-white border border-[#CBD5E1] rounded-2xl shadow-xs">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block">Reviews &amp; Comments</span>
+              <span id="kpiFeedbackCount" class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1 block">0</span>
+            </div>
+          </div>
+
+          <!-- TAB 1: OVERVIEW & DATABASE ARCHITECTURE -->
+          <div id="tabContent-storage" class="admin-tab-content space-y-6">
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#047857]">Serverless Cloud Architecture</span>
+                <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Pure Cloudflare Pages + Supabase Direct</h2>
+                <p class="text-xs sm:text-sm text-[#475569] mt-1 max-w-3xl">
+                  Your website requires zero extra Node/Express servers. All public pages and admin mutations connect directly from the browser to your Supabase PostgreSQL project with automatic offline fallback.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <div class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-2.5">
+                  <div class="w-10 h-10 rounded-xl bg-[#073F27] text-[#F4B41A] flex items-center justify-center text-lg">☁️</div>
+                  <h3 class="font-editorial text-xl font-bold text-[#0F172A]">1. Supabase PostgreSQL</h3>
+                  <p class="text-xs text-[#475569] leading-relaxed">
+                    Reads &amp; writes safaris, products, orders, comments, guest reviews, settings, TikTok reels, and passcode directly via <code class="text-emerald-700 font-mono font-bold">@supabase/supabase-js</code>.
+                  </p>
+                </div>
+
+                <div class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-2.5">
+                  <div class="w-10 h-10 rounded-xl bg-[#073F27] text-[#F4B41A] flex items-center justify-center text-lg">🚀</div>
+                  <h3 class="font-editorial text-xl font-bold text-[#0F172A]">2. Cloudflare Pages Build</h3>
+                  <p class="text-xs text-[#475569] leading-relaxed">
+                    Build command <code class="text-[#996500] font-mono font-bold">npm run build</code> outputs static assets to <code class="text-[#996500] font-mono font-bold">dist/</code> ready for global edge hosting with zero backend dependencies.
+                  </p>
+                </div>
+
+                <div class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-2.5">
+                  <div class="w-10 h-10 rounded-xl bg-[#073F27] text-[#F4B41A] flex items-center justify-center text-lg">📦</div>
+                  <h3 class="font-editorial text-xl font-bold text-[#0F172A]">3. JSON Master Backup</h3>
+                  <p class="text-xs text-[#475569] leading-relaxed">
+                    Download a full snapshot of your safaris, catalog, orders, settings, and TikTok reels anytime, or restore from a saved JSON file in one click.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-3 pt-4 border-t border-[#CBD5E1]">
+                <button type="button" onclick="handleExportBackup()" class="btn-glass-gold text-xs py-3 px-6">
+                  Download Complete JSON Backup
+                </button>
+                <label class="btn-glass-dark text-xs py-3 px-6 cursor-pointer flex items-center gap-2">
+                  <span>Restore Database from File</span>
+                  <input type="file" accept=".json" onchange="handleImportBackup(event)" class="hidden" />
+                </label>
+                <button type="button" onclick="switchTab('supabase')" class="btn-glass-forest text-xs py-3 px-6">
+                  Inspect Supabase Tables →
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: SUPABASE CLOUD DATABASE INTEGRATION -->
+          <div id="tabContent-supabase" class="admin-tab-content hidden space-y-6">
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Cloud Database Integration</span>
+                  <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Supabase PostgreSQL Cloud DB</h2>
+                  <p class="text-xs text-[#475569] mt-1 max-w-3xl">
+                    Connected to project <strong class="text-[#0F172A] font-mono">ujodbxzzibfypfgqsnpj</strong> in region <code class="text-[#996500] font-bold">eu-west-3</code>. Direct browser-to-cloud API mode enabled.
+                  </p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button type="button" onclick="testSupabaseFromAdmin()" class="btn-glass-gold text-xs py-2.5 px-5 flex items-center gap-2">
+                    <span>⚡ Test Live Ping</span>
+                  </button>
+                  <button id="btnSyncSupabase" type="button" onclick="syncToSupabaseFromAdmin(this)" class="btn-glass-whatsapp text-xs py-2.5 px-5 flex items-center gap-2">
+                    <span>🔄 Sync All to Supabase</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Status & Credentials Cards -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold uppercase text-[#996500]">Live Endpoint Status</span>
+                    <span id="supabasePingBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300">CHECKING</span>
+                  </div>
+                  <p class="font-mono text-xs text-[#0F172A] break-all">https://ujodbxzzibfypfgqsnpj.supabase.co</p>
+                  <div class="pt-2 border-t border-[#CBD5E1] flex items-center justify-between text-[11px] text-[#475569]">
+                    <span>API Latency:</span>
+                    <span id="supabaseLatency" class="text-emerald-700 font-mono font-bold">-- ms</span>
+                  </div>
+                </div>
+
+                <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold uppercase text-[#996500]">Publishable Anon Key</span>
+                    <span class="text-[10px] text-[#64748B] font-mono">Browser Direct</span>
+                  </div>
+                  <p class="font-mono text-xs text-[#0F172A] truncate">sb_publishable_uxtIygW_RFAXCSpjmN7Rbw_nd6IqhWX</p>
+                  <div class="pt-2 border-t border-[#CBD5E1] flex items-center justify-between text-[11px]">
+                    <span class="text-[#475569]">Access Mode:</span>
+                    <span class="text-emerald-700 font-mono font-bold">anon + RLS</span>
+                  </div>
+                </div>
+
+                <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold uppercase text-[#996500]">Postgres Pooler URL</span>
+                    <span class="text-[10px] text-[#64748B] font-mono">Port 5432</span>
+                  </div>
+                  <p class="font-mono text-[11px] text-[#0F172A] truncate">aws-0-eu-west-3.pooler.supabase.com</p>
+                  <div class="pt-2 border-t border-[#CBD5E1] flex items-center justify-between text-[11px] text-[#475569]">
+                    <span>Database Engine:</span>
+                    <span class="text-[#996500] font-bold">PostgreSQL 15</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Table Schema Quick Test Results Box (All 8 tables) -->
+              <div id="supabaseDiagnosticBox" class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <h4 class="text-xs font-bold uppercase text-[#996500] tracking-wider">Cloud Table Verification (8 Tables)</h4>
+                  <span id="supabaseDiagStatus" class="text-[11px] text-[#475569] font-medium">Click "Test Live Ping" to scan tables</span>
+                </div>
+                <div id="supabaseTableGrid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-[11px]">
+                  <div class="p-2 bg-white rounded-xl border border-[#CBD5E1] text-center">
+                    <span class="text-[#64748B] block text-[10px] font-mono">safaris</span>
+                    <span id="tblStatus-safaris" class="font-mono text-amber-700 font-bold">Checking</span>
+                  </div>
+                  <div class="p-2 bg-white rounded-xl border border-[#CBD5E1] text-center">
+                    <span class="text-[#64748B] block text-[10px] font-mono">products</span>
+                    <span id="tblStatus-products" class="font-mono text-amber-700 font-bold">Checking</span>
+                  </div>
+                  <div class="p-2 bg-white rounded-xl border border-[#CBD5E1] text-center">
+                    <span class="text-[#64748B] block text-[10px] font-mono">orders</span>
+                    <span id="tblStatus-orders" class="font-mono text-amber-700 font-bold">Checking</span>
+                  </div>
+                  <div class="p-2 bg-white rounded-xl border border-[#CBD5E1] text-center">
+                    <span class="text-[#64748B] block text-[10px] font-mono">comments</span>
+                    <span id="tblStatus-comments" class="font-mono text-amber-700 font-bold">Checking</span>
+                  </div>
+                  <div class="p-2 bg-white rounded-xl border border-[#CBD5E1] text-center">
+                    <span class="text-[#64748B] block text-[10px] font-mono">reviews</span>
+                    <span id="tblStatus-reviews" class="font-mono text-amber-700 font-bold">Checking</span>
+                  </div>
+                  <div class="p-2 bg-white rounded-xl border border-[#CBD5E1] text-center">
+                    <span class="text-[#64748B] block text-[10px] font-mono">settings</span>
+                    <span id="tblStatus-settings" class="font-mono text-amber-700 font-bold">Checking</span>
+                  </div>
+                  <div class="p-2 bg-white rounded-xl border border-[#CBD5E1] text-center">
+                    <span class="text-[#64748B] block text-[10px] font-mono">tiktoks</span>
+                    <span id="tblStatus-tiktoks" class="font-mono text-amber-700 font-bold">Checking</span>
+                  </div>
+                  <div class="p-2 bg-white rounded-xl border border-[#CBD5E1] text-center">
+                    <span class="text-[#64748B] block text-[10px] font-mono">likes</span>
+                    <span id="tblStatus-likes" class="font-mono text-amber-700 font-bold">Checking</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SQL Schema Setup Helper -->
+              <div class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 class="font-editorial text-lg font-bold text-[#0F172A]">Idempotent SQL Table Schema (8 Tables + RLS)</h3>
+                    <p class="text-xs text-[#475569]">
+                      Paste &amp; run this idempotent SQL script once inside your Supabase SQL Editor. Safe to re-run anytime.
+                    </p>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="copySupabaseSchemaSql()" id="btnCopySql" class="btn-glass-gold text-xs py-2 px-4 whitespace-nowrap">
+                      📋 Copy SQL Script
+                    </button>
+                    <a href="https://supabase.com/dashboard/project/ujodbxzzibfypfgqsnpj/sql" target="_blank" rel="noopener noreferrer" class="btn-glass-dark text-xs py-2 px-4 whitespace-nowrap">
+                      Open Supabase SQL Editor ↗
+                    </a>
+                  </div>
+                </div>
+                <pre class="bg-[#0A0D0A] text-[#44F087] text-[11px] font-mono p-4 rounded-xl border border-[#CBD5E1] overflow-x-auto max-h-64 leading-relaxed select-all" id="supabaseSqlPreview">Loading schema SQL...</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: LIVE MAP & LOCATION EDITOR -->
+          <div id="tabContent-location" class="admin-tab-content hidden space-y-6">
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#996500]">Geographic Coordinates</span>
+                <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Live Map &amp; Headquarters Location</h2>
+                <p class="text-xs text-[#475569] mt-1">
+                  Update your physical address and Google Maps iframe embed URL. Automatically updates on the homepage and contact page.
+                </p>
+              </div>
+
+              <form onsubmit="handleSaveLocation(event)" class="space-y-4 bg-[#F8FAFC] p-5 rounded-2xl border border-[#CBD5E1]">
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Physical Business Address *</label>
+                  <input id="locAddressInput" type="text" required placeholder="Plot 14 Entebbe Road, Kampala, Uganda" class="w-full bg-white border border-[#94A3B8] rounded-xl px-4 py-2.5 text-xs text-[#0F172A]" />
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Google Maps Embed URL (iframe src) *</label>
+                  <input id="locEmbedInput" type="text" required placeholder="https://www.google.com/maps/embed?..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-4 py-2.5 text-xs text-[#0F172A]" />
+                  <span class="text-[10px] text-[#64748B] block mt-1">Tip: On Google Maps, click Share → Embed a map, and paste the URL from src="...".</span>
+                </div>
+
+                <button type="submit" class="btn-glass-gold text-xs py-3 px-6">
+                  Save Location &amp; Update Live Map
+                </button>
+              </form>
+
+              <div class="space-y-2">
+                <span class="text-xs font-bold uppercase text-[#475569]">Map Live Preview</span>
+                <div class="h-72 w-full rounded-2xl overflow-hidden border border-[#CBD5E1]">
+                  <iframe id="locPreviewIframe" src="" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: CONTACTS & SOCIAL MEDIA -->
+          <div id="tabContent-contacts" class="admin-tab-content hidden space-y-6">
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#996500]">Official Channels</span>
+                <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Business Contacts &amp; Social Links</h2>
+                <p class="text-xs text-[#475569] mt-1">Updates phone links, WhatsApp hotline, TikTok handle, and inquiry email synced to Supabase.</p>
+              </div>
+
+              <form onsubmit="handleSaveContacts(event)" class="space-y-4 bg-[#F8FAFC] p-5 rounded-2xl border border-[#CBD5E1]">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Official Phone Number *</label>
+                    <input id="contPhoneInput" type="text" required placeholder="+256 773 333108" class="w-full bg-white border border-[#94A3B8] rounded-xl px-4 py-2.5 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">WhatsApp Hotline *</label>
+                    <input id="contWhatsappInput" type="text" required placeholder="+256 773 333108" class="w-full bg-white border border-[#94A3B8] rounded-xl px-4 py-2.5 text-xs text-[#0F172A]" />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Official Inquiry Email *</label>
+                    <input id="contEmailInput" type="email" required placeholder="info@sonnenpfadsafaris.com" class="w-full bg-white border border-[#94A3B8] rounded-xl px-4 py-2.5 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">TikTok Handle *</label>
+                    <input id="contTiktokInput" type="text" required placeholder="@kisacathy1900" class="w-full bg-white border border-[#94A3B8] rounded-xl px-4 py-2.5 text-xs text-[#0F172A]" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">TikTok Profile URL</label>
+                  <input id="contTiktokUrlInput" type="url" placeholder="https://www.tiktok.com/@kisacathy1900" class="w-full bg-white border border-[#94A3B8] rounded-xl px-4 py-2.5 text-xs text-[#0F172A]" />
+                </div>
+
+                <button type="submit" class="btn-glass-gold text-xs py-3 px-6">
+                  Save Contact Settings Live
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- TAB 5: TIKTOK VIDEOS MANAGER -->
+          <div id="tabContent-tiktoks" class="admin-tab-content hidden space-y-6">
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-[#996500]">Viral Social Feed</span>
+                  <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">TikTok Account Videos Feed</h2>
+                  <p class="text-xs text-[#475569] mt-1">Videos published here update the live feed on your homepage for <strong class="text-[#073F27]">@kisacathy1900</strong>.</p>
+                </div>
+                <a href="https://www.tiktok.com/@kisacathy1900" target="_blank" rel="noopener noreferrer" class="btn-glass-dark text-xs py-2 px-4 whitespace-nowrap">
+                  View TikTok Profile ↗
+                </a>
+              </div>
+
+              <form id="addTiktokForm" onsubmit="handleAddTiktok(event)" class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
+                <span class="text-xs font-bold uppercase text-[#996500] block">+ Add New TikTok Video</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Video Title / Caption *</label>
+                    <input id="ttTitleInput" type="text" required placeholder="e.g. Gorilla family in Bwindi encounter" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Direct TikTok Video URL *</label>
+                    <input id="ttUrlInput" type="url" required placeholder="https://www.tiktok.com/@kisacathy1900/video/..." value="https://www.tiktok.com/@kisacathy1900" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Thumbnail Cover Image URL *</label>
+                    <input id="ttThumbInput" type="url" required placeholder="https://images.unsplash.com/..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Views Display</label>
+                    <input id="ttViewsInput" type="text" placeholder="52.4K" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Likes Display</label>
+                    <input id="ttLikesInput" type="text" placeholder="7.8K" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                </div>
+                <button type="submit" class="btn-glass-gold text-xs py-2.5 px-6 font-bold">
+                  Publish Video to Homepage Feed
+                </button>
+              </form>
+
+              <div id="adminTiktokList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+            </div>
+          </div>
+
+          <!-- TAB 6: SHOP PRODUCTS MANAGER -->
+          <div id="tabContent-shop" class="admin-tab-content hidden space-y-6">
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-[#996500]">Inventory &amp; Outfitting</span>
+                  <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Shop Catalog Manager (UGX)</h2>
+                  <p class="text-xs text-[#475569] mt-1">Manage specialty coffee, safari backpacks, binoculars, gaiters, hats, and skincare products.</p>
+                </div>
+                <span id="shopCatalogCount" class="text-xs font-mono font-bold text-[#073F27] px-3 py-1 rounded-full bg-amber-100 border border-amber-300 whitespace-nowrap">0 Products Active</span>
+              </div>
+
+              <form id="addProductForm" onsubmit="handleAddProduct(event)" class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
+                <span class="text-xs font-bold uppercase text-[#996500] block">+ Add New Product to Shop</span>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Product Title *</label>
+                    <input id="addProdName" type="text" required placeholder="e.g. Safari Trekking Pole Set" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Category *</label>
+                    <select id="addProdCat" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]">
+                      <option value="Specialty Coffee">Specialty Coffee</option>
+                      <option value="Expedition Gear">Expedition Gear</option>
+                      <option value="Optics & Binoculars">Optics &amp; Binoculars</option>
+                      <option value="Apparel & Hats">Apparel &amp; Hats</option>
+                      <option value="Skincare">Skincare</option>
+                      <option value="Accessories">Accessories</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Price in UGX *</label>
+                    <input id="addProdPrice" type="number" required step="1000" min="1000" placeholder="120000" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-mono" />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Origin / Spec Label</label>
+                    <input id="addProdOrigin" type="text" placeholder="e.g. Mount Elgon / Carbon Fiber" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Weight / Sizing</label>
+                    <input id="addProdWeight" type="text" placeholder="e.g. 500g / Standard" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Image URL *</label>
+                    <input id="addProdImage" type="url" required placeholder="https://images.unsplash.com/..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Detailed Description *</label>
+                  <textarea id="addProdDesc" rows="2" required placeholder="Product specifications, safari benefits, and key materials..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] resize-none"></textarea>
+                </div>
+
+                <button type="submit" class="btn-glass-gold text-xs py-2.5 px-6 font-bold">
+                  Publish Product to Live Shop
+                </button>
+              </form>
+
+              <div id="adminShopList" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            </div>
+          </div>
+
+          <!-- TAB 7: SAFARIS & TOURS MANAGER -->
+          <div id="tabContent-safaris" class="admin-tab-content hidden space-y-6">
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-[#996500]">Itinerary Builder</span>
+                  <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Safaris &amp; Expeditions (UGX)</h2>
+                  <p class="text-xs text-[#475569] mt-1">Create, review, or remove safari packages across Uganda, Kenya, Tanzania &amp; Rwanda.</p>
+                </div>
+                <span id="safariCatalogCount" class="text-xs font-mono font-bold text-[#073F27] px-3 py-1 rounded-full bg-amber-100 border border-amber-300 whitespace-nowrap">0 Active Tours</span>
+              </div>
+
+              <form id="addSafariForm" onsubmit="handleAddSafari(event)" class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
+                <span class="text-xs font-bold uppercase text-[#996500] block">+ Create New Safari Package</span>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Safari Title *</label>
+                    <input id="addSafTitle" type="text" required placeholder="e.g. 4-Day Kidepo Valley Wilderness" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Duration *</label>
+                    <input id="addSafDuration" type="text" required placeholder="e.g. 4 Days / 3 Nights" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Price in UGX *</label>
+                    <input id="addSafPrice" type="number" required step="50000" min="50000" placeholder="6200000" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-mono" />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Key Destinations</label>
+                    <input id="addSafDest" type="text" placeholder="e.g. Kidepo Valley National Park & Karamoja" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Cover Image URL *</label>
+                    <input id="addSafImage" type="url" required placeholder="https://images.unsplash.com/..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Tour Overview *</label>
+                  <textarea id="addSafOverview" rows="2" required placeholder="Overview of highlights, wildlife sightings, and experiences..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] resize-none"></textarea>
+                </div>
+
+                <button type="submit" class="btn-glass-gold text-xs py-2.5 px-6 font-bold">
+                  Publish Safari Package Live
+                </button>
+              </form>
+
+              <div id="adminSafarisList" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></div>
+            </div>
+          </div>
+
+          <!-- TAB 8: ORDERS & INQUIRIES -->
+          <div id="tabContent-orders" class="admin-tab-content hidden space-y-6">
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-[#996500]">Incoming Orders</span>
+                  <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Shop Orders Inbox</h2>
+                </div>
+                <button type="button" onclick="clearCompletedOrders()" class="px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 border border-red-300 text-xs font-bold text-red-700 cursor-pointer self-start">
+                  Clear All Orders
+                </button>
+              </div>
+              <div id="ordersList" class="space-y-3"></div>
+            </div>
+          </div>
+
+          <!-- TAB 9: COMMENTS & COMMUNITY FEEDBACK -->
+          <div id="tabContent-comments" class="admin-tab-content hidden space-y-6">
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#996500]">Guest Engagement</span>
+                <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Live Comments &amp; Customer Reviews</h2>
+                <p class="text-xs text-[#475569] mt-1">Item-level Q&amp;A comments and verified guest reviews synced from Supabase &amp; browser storage.</p>
+              </div>
+
+              <div class="space-y-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-[#073F27]">Item Comments &amp; Questions</h3>
+                <div id="adminCommentsList" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
+              </div>
+
+              <div class="pt-4 border-t border-[#CBD5E1] space-y-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-[#073F27]">Published Guest Reviews</h3>
+                <div id="adminReviewsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 10: PASSCODE SECURITY -->
+          <div id="tabContent-settings" class="admin-tab-content hidden space-y-6">
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm max-w-lg space-y-5">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#996500]">Access Control</span>
+                <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Change Master Passcode</h2>
+                <p class="text-xs text-[#475569] mt-1">
+                  Once updated, the new passcode replaces the old passcode across Supabase &amp; this portal immediately. The old default passcode will no longer grant access.
+                </p>
+              </div>
+
+              <div id="passcodeFeedbackBanner" class="hidden p-3 rounded-xl text-xs font-semibold border"></div>
+
+              <form onsubmit="handleChangePasscode(event)" class="space-y-4 bg-[#F8FAFC] p-5 rounded-2xl border border-[#CBD5E1]">
+                <div>
+                  <label for="currentAdminPass" class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Current Master Passcode *</label>
+                  <div class="relative">
+                    <input id="currentAdminPass" type="password" required placeholder="Enter current passcode" class="w-full bg-white border border-[#94A3B8] rounded-xl pl-4 pr-16 py-2.5 text-xs text-[#0F172A]" />
+                    <button type="button" onclick="togglePassVisibility('currentAdminPass', this)" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded bg-[#F1F5F9] text-[10px] font-bold text-[#0F172A] border border-[#CBD5E1] cursor-pointer">Show</button>
+                  </div>
+                </div>
+
+                <div>
+                  <label for="newAdminPass" class="block text-[11px] font-bold uppercase text-[#996500] mb-1">New Master Passcode (min 4 characters) *</label>
+                  <div class="relative">
+                    <input id="newAdminPass" type="password" required minlength="4" placeholder="Enter new passcode" class="w-full bg-white border border-[#94A3B8] rounded-xl pl-4 pr-16 py-2.5 text-xs text-[#0F172A]" />
+                    <button type="button" onclick="togglePassVisibility('newAdminPass', this)" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded bg-[#F1F5F9] text-[10px] font-bold text-[#0F172A] border border-[#CBD5E1] cursor-pointer">Show</button>
+                  </div>
+                </div>
+
+                <div>
+                  <label for="confirmAdminPass" class="block text-[11px] font-bold uppercase text-[#996500] mb-1">Confirm New Passcode *</label>
+                  <div class="relative">
+                    <input id="confirmAdminPass" type="password" required minlength="4" placeholder="Re-enter new passcode" class="w-full bg-white border border-[#94A3B8] rounded-xl pl-4 pr-16 py-2.5 text-xs text-[#0F172A]" />
+                    <button type="button" onclick="togglePassVisibility('confirmAdminPass', this)" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded bg-[#F1F5F9] text-[10px] font-bold text-[#0F172A] border border-[#CBD5E1] cursor-pointer">Show</button>
+                  </div>
+                </div>
+
+                <button id="updatePassBtn" type="submit" class="btn-glass-gold text-xs py-3 px-6 font-bold w-full">
+                  Save &amp; Activate New Passcode
+                </button>
+              </form>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- IN-PAGE CONFIRMATION MODAL (Replaces window.confirm) -->
+    <div id="adminConfirmModal" class="hidden fixed inset-0 z-[90] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-white border-2 border-[#CBD5E1] rounded-3xl p-6 shadow-2xl space-y-4">
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-[#996500] block">Confirm Action</span>
+          <h3 class="font-editorial text-xl font-bold text-[#0F172A]" id="confirmModalTitle">Are you sure?</h3>
+          <p class="text-xs text-[#475569]" id="confirmModalMessage">Please confirm this action.</p>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="resolveAdminConfirm(false)" class="px-4 py-2 rounded-xl bg-[#F1F5F9] hover:bg-[#E2E8F0] border border-[#CBD5E1] text-xs font-bold text-[#0F172A] cursor-pointer">
+            Cancel
           </button>
-          <button onclick="handleAdminLogout()" class="btn-glass-dark text-xs py-2.5 px-5">
-            Lock / Exit
+          <button type="button" onclick="resolveAdminConfirm(true)" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-xs font-bold text-white cursor-pointer">
+            Confirm
           </button>
         </div>
       </div>
-
-      <!-- TABS -->
-      <div class="flex flex-wrap items-center gap-2 border-b border-white/10 pb-4">
-        <button onclick="switchTab('storage')" id="tabBtn-storage" class="admin-tab-btn active px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#073F27] text-[#F4B41A] border border-[#F4B41A]">
-          Where Is Data Stored?
-        </button>
-        <button onclick="switchTab('coffee')" id="tabBtn-coffee" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
-          Coffee Products (UGX)
-        </button>
-        <button onclick="switchTab('orders')" id="tabBtn-orders" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
-          Coffee Orders Inbox
-        </button>
-        <button onclick="switchTab('reviews')" id="tabBtn-reviews" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
-          Customer Reviews
-        </button>
-        <button onclick="switchTab('safaris')" id="tabBtn-safaris" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
-          Safaris & Tours (UGX)
-        </button>
-        <button onclick="switchTab('gallery')" id="tabBtn-gallery" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
-          Gallery & Videos
-        </button>
-        <button onclick="switchTab('settings')" id="tabBtn-settings" class="admin-tab-btn px-4 py-2 rounded-full text-xs font-bold uppercase bg-[#171A17] text-white/80 border border-white/10">
-          Passcode Settings
-        </button>
-      </div>
-
-      <!-- TAB: STORAGE -->
-      <div id="tabContent-storage" class="admin-tab-content space-y-6">
-        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
-          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Where Is Your Website Data Stored?</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="p-5 bg-[#101210] border border-[#D99A00]/30 rounded-2xl space-y-2">
-              <span class="text-xs font-bold uppercase text-[#25D366]">1. 100% Private Client Database</span>
-              <p class="text-xs text-white/70 leading-relaxed">All safaris, coffee items, customer reviews, orders, videos, and hero images are stored securely in your browser's persistent client database (LocalStorage).</p>
-            </div>
-            <div class="p-5 bg-[#101210] border border-[#D99A00]/30 rounded-2xl space-y-2">
-              <span class="text-xs font-bold uppercase text-[#F4B41A]">2. Instant Live Rendering</span>
-              <p class="text-xs text-white/70 leading-relaxed">Whatever you add, edit, or delete on this dashboard immediately renders live across index.html, safaris.html, shop.html, and reviews.html without reload delay.</p>
-            </div>
-            <div class="p-5 bg-[#101210] border border-[#D99A00]/30 rounded-2xl space-y-2">
-              <span class="text-xs font-bold uppercase text-[#D99A00]">3. Offline JSON Master Backup</span>
-              <p class="text-xs text-white/70 leading-relaxed">You can download a complete backup file to your computer or phone anytime and restore all your content with 1 click.</p>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap gap-4 pt-4 border-t border-white/10">
-            <button onclick="handleExportBackup()" class="btn-glass-gold text-xs py-3 px-6">
-              Download Full JSON Backup
-            </button>
-            <label class="btn-glass-dark text-xs py-3 px-6 cursor-pointer flex items-center gap-2">
-              <span>Restore Database from File</span>
-              <input type="file" accept=".json" onchange="handleImportBackup(event)" class="hidden" />
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB: COFFEE -->
-      <div id="tabContent-coffee" class="admin-tab-content hidden space-y-6">
-        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
-          <div class="flex items-center justify-between">
-            <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Coffee Products Catalog (UGX)</h2>
-          </div>
-
-          <!-- Add Coffee Form -->
-          <form onsubmit="handleAddCoffee(event)" class="p-6 bg-[#101210] border border-[#D99A00]/30 rounded-2xl space-y-4">
-            <span class="text-xs font-bold uppercase text-[#F4B41A] block">+ Add New Coffee Item</span>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Product Name *</label>
-                <input id="addCofName" type="text" required placeholder="e.g. Mount Elgon Peaberry Reserve" class="w-full bg-[#171A17] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Origin *</label>
-                <input id="addCofOrigin" type="text" required placeholder="e.g. Mount Elgon, Eastern Uganda" class="w-full bg-[#171A17] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Price (UGX) *</label>
-                <input id="addCofPrice" type="number" required step="1000" placeholder="65000" class="w-full bg-[#171A17] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
-              </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Weight / Format</label>
-                <input id="addCofWeight" type="text" placeholder="250g Whole Bean" class="w-full bg-[#171A17] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">Image URL</label>
-                <input id="addCofImage" type="text" placeholder="https://..." value="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=800&q=80" class="w-full bg-[#171A17] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
-              </div>
-            </div>
-            <button type="submit" class="btn-glass-gold text-xs py-2.5 px-6">
-              Publish Coffee Product Live
-            </button>
-          </form>
-
-          <div id="coffeeList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-        </div>
-      </div>
-
-      <!-- TAB: ORDERS -->
-      <div id="tabContent-orders" class="admin-tab-content hidden space-y-6">
-        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
-          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Incoming Coffee Orders</h2>
-          <div id="ordersList" class="space-y-4"></div>
-        </div>
-      </div>
-
-      <!-- TAB: REVIEWS -->
-      <div id="tabContent-reviews" class="admin-tab-content hidden space-y-6">
-        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
-          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Customer Reviews & Ratings Manager</h2>
-          <div id="adminReviewsList" class="space-y-4"></div>
-        </div>
-      </div>
-
-      <!-- TAB: SAFARIS -->
-      <div id="tabContent-safaris" class="admin-tab-content hidden space-y-6">
-        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
-          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Safari Packages Manager (UGX)</h2>
-          <div id="adminSafarisList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        </div>
-      </div>
-
-      <!-- TAB: GALLERY -->
-      <div id="tabContent-gallery" class="admin-tab-content hidden space-y-6">
-        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl space-y-6">
-          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Gallery Photos & Videos</h2>
-          <div id="adminGalleryList" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
-        </div>
-      </div>
-
-      <!-- TAB: SETTINGS -->
-      <div id="tabContent-settings" class="admin-tab-content hidden space-y-6">
-        <div class="p-8 bg-[#171A17] border border-[#D99A00]/40 rounded-3xl max-w-md space-y-4">
-          <h2 class="font-editorial text-3xl font-bold text-[#F7F4EC]">Change Master Passcode</h2>
-          <form onsubmit="handleChangePasscode(event)" class="space-y-3">
-            <div>
-              <label class="block text-[11px] font-bold uppercase text-[#D99A00] mb-1">New Passcode</label>
-              <input id="newAdminPass" type="password" required class="w-full bg-[#101210] border border-white/20 rounded-xl px-3 py-2 text-xs text-white" />
-            </div>
-            <button type="submit" class="btn-glass-gold text-xs py-2.5 px-6">
-              Update Master Passcode
-            </button>
-          </form>
-        </div>
-      </div>
-
     </div>
 
     <script type="module" src="/src/site.ts"></script>
     <script>
-      function handleAdminLogin(e) {
-        e.preventDefault();
-        const input = document.getElementById("adminPassInput").value;
-        const currentPass = localStorage.getItem("sonnenpfad_admin_pw") || "sonnenpfad2026";
-        if (input === currentPass || input === "sonnenpfad2026") {
+      let pendingConfirmResolver = null;
+
+      function notify(msg, type = "success") {
+        if (window.showToast) {
+          window.showToast(msg, type);
+        }
+      }
+
+      function askConfirm(title, message) {
+        return new Promise((resolve) => {
+          pendingConfirmResolver = resolve;
+          document.getElementById("confirmModalTitle").textContent = title;
+          document.getElementById("confirmModalMessage").textContent = message;
+          document.getElementById("adminConfirmModal").classList.remove("hidden");
+        });
+      }
+
+      function resolveAdminConfirm(accepted) {
+        document.getElementById("adminConfirmModal").classList.add("hidden");
+        if (pendingConfirmResolver) {
+          const fn = pendingConfirmResolver;
+          pendingConfirmResolver = null;
+          fn(accepted);
+        }
+      }
+
+      function togglePassVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const isPassword = input.type === "password";
+        input.type = isPassword ? "text" : "password";
+        btn.textContent = isPassword ? "Hide" : "Show";
+      }
+
+      // Mobile Slide-Over Sidebar Drawer Controls
+      function openAdminSidebar() {
+        const sidebar = document.getElementById("adminSidebar");
+        const backdrop = document.getElementById("adminSidebarBackdrop");
+        if (sidebar) sidebar.classList.remove("-translate-x-full");
+        if (backdrop) backdrop.classList.remove("hidden");
+      }
+
+      function closeAdminSidebar() {
+        const sidebar = document.getElementById("adminSidebar");
+        const backdrop = document.getElementById("adminSidebarBackdrop");
+        if (sidebar) sidebar.classList.add("-translate-x-full");
+        if (backdrop) backdrop.classList.add("hidden");
+      }
+
+      function toggleAdminSidebar() {
+        const sidebar = document.getElementById("adminSidebar");
+        if (!sidebar) return;
+        if (sidebar.classList.contains("-translate-x-full")) {
+          openAdminSidebar();
+        } else {
+          closeAdminSidebar();
+        }
+      }
+
+      // Wait for Vite module window.db initialization
+      function waitForDb(timeoutMs = 4000) {
+        return new Promise((resolve) => {
+          if (window.db) return resolve(window.db);
+          const started = Date.now();
+          const timer = setInterval(() => {
+            if (window.db || Date.now() - started > timeoutMs) {
+              clearInterval(timer);
+              resolve(window.db || null);
+            }
+          }, 50);
+        });
+      }
+
+      window.addEventListener("DOMContentLoaded", async () => {
+        await waitForDb();
+        // Hide default passcode hint if the owner has already set a custom passcode
+        const customPw = localStorage.getItem("sonnenpfad_admin_pw");
+        if (customPw && customPw !== "sonnenpfad2026") {
+          const hint = document.getElementById("defaultPassHint");
+          if (hint) {
+            hint.textContent = "Custom master passcode is active. Enter your private passcode to unlock.";
+          }
+        }
+        // Populate SQL Schema Preview cleanly from module constant
+        const sqlPre = document.getElementById("supabaseSqlPreview");
+        if (sqlPre && window.SUPABASE_SCHEMA_SQL) {
+          sqlPre.textContent = window.SUPABASE_SCHEMA_SQL;
+        }
+        // Keep session unlocked on soft reload in same tab unless locked
+        if (sessionStorage.getItem("sonnenpfad_admin_unlocked") === "true") {
           document.getElementById("loginSection").classList.add("hidden");
           document.getElementById("dashboardSection").classList.remove("hidden");
-          renderDashboardContent();
+          loadDashboardData();
+        }
+      });
+
+      async function handleAdminLogin(e) {
+        e.preventDefault();
+        const input = document.getElementById("adminPassInput").value.trim();
+        const errBox = document.getElementById("loginError");
+        const btn = document.getElementById("loginSubmitBtn");
+        errBox.classList.add("hidden");
+        if (btn) btn.disabled = true;
+
+        await waitForDb();
+        let valid = false;
+        if (window.db && window.db.verifyAdminPasscode) {
+          valid = await window.db.verifyAdminPasscode(input);
         } else {
-          document.getElementById("loginError").classList.remove("hidden");
+          const stored = localStorage.getItem("sonnenpfad_admin_pw") || "sonnenpfad2026";
+          valid = input === stored;
+        }
+
+        if (btn) btn.disabled = false;
+
+        if (valid) {
+          sessionStorage.setItem("sonnenpfad_admin_unlocked", "true");
+          document.getElementById("loginSection").classList.add("hidden");
+          document.getElementById("dashboardSection").classList.remove("hidden");
+          loadDashboardData();
+        } else {
+          errBox.classList.remove("hidden");
         }
       }
 
       function handleAdminLogout() {
+        sessionStorage.removeItem("sonnenpfad_admin_unlocked");
+        closeAdminSidebar();
         document.getElementById("loginSection").classList.remove("hidden");
         document.getElementById("dashboardSection").classList.add("hidden");
         document.getElementById("adminPassInput").value = "";
+        document.getElementById("loginError").classList.add("hidden");
       }
 
       function switchTab(tabId) {
-        document.querySelectorAll(".admin-tab-content").forEach(c => c.classList.add("hidden"));
-        document.getElementById("tabContent-" + tabId).classList.remove("hidden");
+        document.querySelectorAll(".admin-tab-content").forEach((c) => c.classList.add("hidden"));
+        const target = document.getElementById("tabContent-" + tabId);
+        if (target) target.classList.remove("hidden");
 
-        document.querySelectorAll(".admin-tab-btn").forEach(btn => {
-          btn.classList.remove("bg-[#073F27]", "text-[#F4B41A]", "border-[#F4B41A]");
-          btn.classList.add("bg-[#171A17]", "text-white/80", "border-white/10");
+        document.querySelectorAll(".admin-nav-btn").forEach((btn) => {
+          btn.classList.remove("active");
         });
         const activeBtn = document.getElementById("tabBtn-" + tabId);
         if (activeBtn) {
-          activeBtn.classList.add("bg-[#073F27]", "text-[#F4B41A]", "border-[#F4B41A]");
+          activeBtn.classList.add("active");
+        }
+
+        // Auto-close slide-over drawer on mobile/tablet viewports
+        if (window.innerWidth < 1024) {
+          closeAdminSidebar();
         }
       }
 
-      function renderDashboardContent() {
-        // Render Coffee
-        const coffee = JSON.parse(localStorage.getItem("sonnenpfad_coffee_products") || "[]");
-        document.getElementById("coffeeList").innerHTML = coffee.map(c => `
-          <div class="p-4 bg-[#101210] border border-[#D99A00]/30 rounded-2xl flex items-center justify-between gap-3">
-            <div>
-              <h4 class="font-editorial text-lg font-bold text-white">${c.name}</h4>
-              <span class="text-xs text-[#F4B41A] font-mono font-bold">UGX ${c.price.toLocaleString("en-US")}</span>
-              <span class="text-[10px] text-white/50 block">${c.origin}</span>
-            </div>
-            <button onclick="deleteCoffeeItem('${c.id}')" class="p-2 border border-red-500/40 text-red-400 hover:bg-red-500/20 rounded-full text-xs">Delete</button>
-          </div>
-        `).join("");
+      async function loadDashboardData() {
+        const dbApi = await waitForDb();
+        if (!dbApi) return;
 
-        // Render Orders
-        const orders = JSON.parse(localStorage.getItem("sonnenpfad_coffee_orders") || "[]");
-        document.getElementById("ordersList").innerHTML = orders.length === 0 ? `<p class="text-xs text-white/50">No orders placed yet.</p>` : orders.map(o => `
-          <div class="p-4 bg-[#101210] border border-[#D99A00]/30 rounded-2xl flex items-center justify-between gap-4">
-            <div>
-              <span class="text-xs font-mono font-bold text-[#F4B41A]">#${o.id} · ${o.productName} × ${o.quantity}</span>
-              <p class="text-xs text-white/80 mt-1">Customer: <strong>${o.customerName}</strong> (${o.phone}) · Hotel: ${o.deliveryAddress}</p>
-              <span class="text-xs font-mono text-[#25D366]">Total: UGX ${o.totalAmount.toLocaleString("en-US")}</span>
-            </div>
-            <a href="https://wa.me/${o.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(o.customerName)}%2C%20thank%20you%20for%20your%20Sonnenpfad%20coffee%20order." target="_blank" class="btn-glass-whatsapp text-xs py-2 px-4">WhatsApp</a>
-          </div>
-        `).join("");
+        const sqlPre = document.getElementById("supabaseSqlPreview");
+        if (sqlPre && window.SUPABASE_SCHEMA_SQL) {
+          sqlPre.textContent = window.SUPABASE_SCHEMA_SQL;
+        }
 
-        // Render Reviews
-        const reviews = JSON.parse(localStorage.getItem("sonnenpfad_reviews") || "[]");
-        document.getElementById("adminReviewsList").innerHTML = reviews.map(r => `
-          <div class="p-4 bg-[#101210] border border-[#D99A00]/30 rounded-2xl flex items-center justify-between gap-4">
-            <div>
-              <span class="text-[#F4B41A] text-xs">★★★★★ (${r.author} - ${r.country})</span>
-              <p class="text-xs text-white/85 italic mt-1">"${r.content}"</p>
-              <span class="text-[10px] text-white/50">${r.tourName}</span>
-            </div>
-            <button onclick="deleteReviewItem('${r.id}')" class="p-2 border border-red-500/40 text-red-400 hover:bg-red-500/20 rounded-full text-xs">Delete</button>
-          </div>
-        `).join("");
+        const settings = await dbApi.fetchSettings();
+        if (settings) {
+          document.getElementById("locAddressInput").value = settings.address || "";
+          document.getElementById("locEmbedInput").value = settings.mapEmbedUrl || "";
+          document.getElementById("locPreviewIframe").src = settings.mapEmbedUrl || "";
+          document.getElementById("contPhoneInput").value = settings.phone || "";
+          document.getElementById("contWhatsappInput").value = settings.whatsapp || "";
+          document.getElementById("contEmailInput").value = settings.email || "";
+          document.getElementById("contTiktokInput").value = settings.tiktok || "";
+          document.getElementById("contTiktokUrlInput").value = settings.tiktokUrl || "";
+        }
 
-        // Render Safaris
-        const safaris = JSON.parse(localStorage.getItem("sonnenpfad_safaris") || "[]");
-        document.getElementById("adminSafarisList").innerHTML = safaris.map(s => `
-          <div class="p-4 bg-[#101210] border border-[#D99A00]/30 rounded-2xl flex items-center justify-between gap-4">
-            <div>
-              <h4 class="font-editorial text-lg font-bold text-white">${s.title}</h4>
-              <span class="text-xs text-[#F4B41A] font-mono font-bold">${s.formattedPriceUGX || ('UGX ' + s.priceUGX.toLocaleString('en-US'))}</span>
-              <span class="text-[10px] text-white/50 block">${s.duration}</span>
-            </div>
-            <button onclick="deleteSafariItem('${s.id}')" class="p-2 border border-red-500/40 text-red-400 hover:bg-red-500/20 rounded-full text-xs">Delete</button>
-          </div>
-        `).join("");
+        await Promise.all([
+          renderTiktokList(),
+          renderShopList(),
+          renderSafarisList(),
+          renderOrdersList(),
+          renderCommentsAndReviews(),
+          testSupabaseFromAdmin(),
+        ]);
       }
 
-      function handleAddCoffee(e) {
+      async function handleSaveLocation(e) {
         e.preventDefault();
-        const name = document.getElementById("addCofName").value;
-        const origin = document.getElementById("addCofOrigin").value;
-        const price = Number(document.getElementById("addCofPrice").value);
-        const weight = document.getElementById("addCofWeight").value || "250g Whole Bean";
-        const image = document.getElementById("addCofImage").value || "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=800&q=80";
+        const address = document.getElementById("locAddressInput").value.trim();
+        const mapEmbedUrl = document.getElementById("locEmbedInput").value.trim();
 
-        const coffee = JSON.parse(localStorage.getItem("sonnenpfad_coffee_products") || "[]");
-        coffee.unshift({
-          id: "cof-" + Date.now(),
+        const cur = window.db.getSettings();
+        cur.address = address;
+        cur.mapEmbedUrl = mapEmbedUrl;
+        const res = await window.db.saveSettings(cur);
+        document.getElementById("locPreviewIframe").src = mapEmbedUrl;
+        notify(
+          res.cloudSynced
+            ? "Location and Live Map saved to Supabase & live site!"
+            : "Location updated locally (run SQL schema to sync to Supabase)."
+        );
+      }
+
+      async function handleSaveContacts(e) {
+        e.preventDefault();
+        const cur = window.db.getSettings();
+        cur.phone = document.getElementById("contPhoneInput").value.trim();
+        cur.whatsapp = document.getElementById("contWhatsappInput").value.trim();
+        cur.email = document.getElementById("contEmailInput").value.trim();
+        cur.tiktok = document.getElementById("contTiktokInput").value.trim();
+        cur.tiktokUrl = document.getElementById("contTiktokUrlInput").value.trim();
+        const res = await window.db.saveSettings(cur);
+        notify(
+          res.cloudSynced
+            ? "Contacts & social links synced live to Supabase!"
+            : "Contacts saved locally (run SQL schema to sync to Supabase)."
+        );
+      }
+
+      async function renderTiktokList() {
+        const tiktoks = await window.db.fetchTiktoks();
+        const list = document.getElementById("adminTiktokList");
+        if (!list) return;
+
+        list.innerHTML = tiktoks
+          .map(
+            (tt) => `
+          <div class="p-3 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl flex flex-col justify-between space-y-2">
+            <div class="relative h-44 rounded-xl overflow-hidden bg-slate-900">
+              <img src="${tt.thumbnail}" alt="${tt.title}" class="w-full h-full object-cover" />
+              <span class="absolute top-2 left-2 bg-black/75 text-[10px] text-white keep-white px-2 py-0.5 rounded font-mono">👁 ${tt.views}</span>
+            </div>
+            <h4 class="text-xs font-bold text-[#0F172A] line-clamp-2">${tt.title}</h4>
+            <div class="flex items-center justify-between pt-1">
+              <a href="${tt.videoUrl}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-[#996500] hover:underline">Watch ↗</a>
+              <button type="button" onclick="deleteTiktok('${tt.id}')" class="text-[11px] font-bold text-red-600 hover:text-red-800 cursor-pointer">Delete</button>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      async function handleAddTiktok(e) {
+        e.preventDefault();
+        const title = document.getElementById("ttTitleInput").value.trim();
+        const videoUrl = document.getElementById("ttUrlInput").value.trim();
+        const thumbnail = document.getElementById("ttThumbInput").value.trim();
+        const views = document.getElementById("ttViewsInput").value.trim() || "35.1K";
+        const likes = document.getElementById("ttLikesInput").value.trim() || "4.8K";
+
+        const tiktoks = window.db.getTiktoks();
+        tiktoks.unshift({
+          id: "tt-" + Date.now(),
+          title,
+          videoUrl,
+          thumbnail,
+          views,
+          likes,
+        });
+        await window.db.saveTiktoks(tiktoks);
+        notify("Published TikTok reel live!");
+        await renderTiktokList();
+        document.getElementById("ttTitleInput").value = "";
+      }
+
+      async function deleteTiktok(id) {
+        const ok = await askConfirm("Remove TikTok Reel", "Remove this TikTok reel from your homepage feed?");
+        if (!ok) return;
+        await window.db.deleteTiktok(id);
+        await renderTiktokList();
+        notify("TikTok reel removed.");
+      }
+
+      async function renderShopList() {
+        const products = await window.db.getProducts();
+        document.getElementById("shopCatalogCount").textContent = `${products.length} Products Active`;
+        document.getElementById("kpiProductsCount").textContent = String(products.length);
+        document.getElementById("sidebarProductsBadge").textContent = String(products.length);
+
+        const list = document.getElementById("adminShopList");
+        if (!list) return;
+
+        list.innerHTML = products
+          .map(
+            (p) => `
+          <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 overflow-hidden min-w-0">
+              <img src="${p.image}" alt="${p.name}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#CBD5E1]" />
+              <div class="min-w-0">
+                <span class="text-[9px] uppercase tracking-wider text-[#996500] font-bold block">${p.category}</span>
+                <h4 class="font-editorial text-base font-bold text-[#0F172A] truncate">${p.name}</h4>
+                <span class="text-xs font-mono font-bold text-[#073F27]">UGX ${Number(p.price).toLocaleString("en-US")}</span>
+              </div>
+            </div>
+            <button type="button" onclick="deleteProduct('${p.id}')" class="px-3 py-1.5 bg-red-50 border border-red-300 text-red-700 hover:bg-red-100 rounded-xl text-xs font-bold shrink-0 cursor-pointer">Delete</button>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      async function handleAddProduct(e) {
+        e.preventDefault();
+        const name = document.getElementById("addProdName").value.trim();
+        const category = document.getElementById("addProdCat").value;
+        const price = Number(document.getElementById("addProdPrice").value);
+        const origin = document.getElementById("addProdOrigin").value.trim() || "East Africa";
+        const weight = document.getElementById("addProdWeight").value.trim() || "Standard";
+        const image = document.getElementById("addProdImage").value.trim();
+        const description = document.getElementById("addProdDesc").value.trim();
+
+        await window.db.addProduct({
           name,
-          origin,
+          category,
           price,
+          origin,
           weight,
           image,
-          category: "Single Origin",
-          roastLevel: "Medium",
-          inStock: true
+          description,
+          rating: 5,
+          reviewsCount: 12,
+          inStock: true,
+          likesCount: 24,
+          flavorNotes: [],
         });
-        localStorage.setItem("sonnenpfad_coffee_products", JSON.stringify(coffee));
-        alert("Published " + name + " (UGX " + price.toLocaleString("en-US") + ") live!");
-        renderDashboardContent();
+
+        notify(`Published "${name}" (UGX ${price.toLocaleString("en-US")})!`);
+        document.getElementById("addProductForm").reset();
+        await renderShopList();
       }
 
-      function deleteCoffeeItem(id) {
-        if (confirm("Delete this coffee item?")) {
-          let coffee = JSON.parse(localStorage.getItem("sonnenpfad_coffee_products") || "[]");
-          coffee = coffee.filter(c => c.id !== id);
-          localStorage.setItem("sonnenpfad_coffee_products", JSON.stringify(coffee));
-          renderDashboardContent();
+      async function deleteProduct(id) {
+        const ok = await askConfirm("Delete Shop Product", "Remove this product from the live Expedition Shop?");
+        if (!ok) return;
+        await window.db.deleteProduct(id);
+        await renderShopList();
+        notify("Product deleted from catalog.");
+      }
+
+      async function renderSafarisList() {
+        const safaris = await window.db.getSafaris();
+        document.getElementById("safariCatalogCount").textContent = `${safaris.length} Active Tours`;
+        document.getElementById("kpiSafarisCount").textContent = String(safaris.length);
+        document.getElementById("sidebarSafarisBadge").textContent = String(safaris.length);
+
+        const list = document.getElementById("adminSafarisList");
+        if (!list) return;
+
+        list.innerHTML = safaris
+          .map(
+            (s) => `
+          <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 overflow-hidden min-w-0">
+              <img src="${s.image}" alt="${s.title}" class="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#CBD5E1]" />
+              <div class="min-w-0">
+                <span class="text-[10px] text-[#64748B] font-semibold block">${s.duration}</span>
+                <h4 class="font-editorial text-base font-bold text-[#0F172A] truncate">${s.title}</h4>
+                <span class="text-xs text-[#996500] font-mono font-bold">${s.formattedPriceUGX || "UGX " + Number(s.priceUGX).toLocaleString("en-US")}</span>
+              </div>
+            </div>
+            <button type="button" onclick="deleteSafari('${s.id}')" class="px-3 py-1.5 bg-red-50 border border-red-300 text-red-700 hover:bg-red-100 rounded-xl text-xs font-bold shrink-0 cursor-pointer">Delete</button>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      async function handleAddSafari(e) {
+        e.preventDefault();
+        const title = document.getElementById("addSafTitle").value.trim();
+        const duration = document.getElementById("addSafDuration").value.trim();
+        const priceUGX = Number(document.getElementById("addSafPrice").value);
+        const destinationsFormatted = document.getElementById("addSafDest").value.trim() || "Uganda & East Africa";
+        const image = document.getElementById("addSafImage").value.trim();
+        const overview = document.getElementById("addSafOverview").value.trim();
+
+        await window.db.addSafari({
+          title,
+          duration,
+          durationDays: 5,
+          destinations: [destinationsFormatted],
+          destinationsFormatted,
+          priceUGX,
+          formattedPriceUGX: "UGX " + priceUGX.toLocaleString("en-US"),
+          image,
+          overview,
+          highlights: ["Private 4x4 Land Cruiser", "English-speaking driver guide", "Park entrance permits included"],
+          included: ["Transport", "Accommodations", "Park fees"],
+          excluded: ["International flights", "Visas"],
+          accommodationLevel: "Luxury",
+          likesCount: 50,
+          itinerary: [],
+        });
+
+        notify(`Published "${title}" live!`);
+        document.getElementById("addSafariForm").reset();
+        await renderSafarisList();
+      }
+
+      async function deleteSafari(id) {
+        const ok = await askConfirm("Delete Safari Package", "Remove this safari expedition from the live tours catalog?");
+        if (!ok) return;
+        await window.db.deleteSafari(id);
+        await renderSafarisList();
+        notify("Safari package removed.");
+      }
+
+      async function renderOrdersList() {
+        const orders = await window.db.getOrders();
+        document.getElementById("kpiOrdersCount").textContent = String(orders.length);
+        document.getElementById("sidebarOrdersBadge").textContent = String(orders.length);
+
+        const list = document.getElementById("ordersList");
+        if (!list) return;
+
+        list.innerHTML =
+          orders.length === 0
+            ? `<p class="text-xs text-[#64748B] italic py-8 text-center bg-[#F8FAFC] rounded-2xl border border-[#CBD5E1]">No customer shop orders recorded yet.</p>`
+            : orders
+                .map(
+                  (o) => `
+          <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-mono font-bold text-[#996500]">#${o.id || "ORD"} · ${o.productName} × ${o.quantity}</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">${o.date || "Recent"}</span>
+              </div>
+              <p class="text-xs text-[#0F172A]">Customer: <strong>${o.customerName}</strong> (${o.phone})</p>
+              <p class="text-xs text-[#475569]">Location / Hotel: ${o.deliveryAddress} ${o.grindPreference ? `· Spec: ${o.grindPreference}` : ""}</p>
+              <span class="text-xs font-mono text-emerald-700 font-bold block">Total: UGX ${Number(o.totalAmount || 0).toLocaleString("en-US")}</span>
+            </div>
+            <a href="https://wa.me/${(o.phone || "").replace(/[^0-9]/g, "")}?text=Hello%20${encodeURIComponent(o.customerName)}%2C%20thank%20you%20for%20your%20Sonnenpfad%20order." target="_blank" rel="noopener noreferrer" class="btn-glass-whatsapp text-xs py-2 px-4 text-center whitespace-nowrap">
+              Message on WhatsApp
+            </a>
+          </div>
+        `
+                )
+                .join("");
+      }
+
+      async function clearCompletedOrders() {
+        const ok = await askConfirm("Clear All Orders", "Permanently remove all completed orders from the inbox?");
+        if (!ok) return;
+        await window.db.clearOrders();
+        await renderOrdersList();
+        notify("Order inbox cleared.");
+      }
+
+      async function renderCommentsAndReviews() {
+        const [comments, reviews] = await Promise.all([
+          window.db.getAllComments(),
+          window.db.getReviews(),
+        ]);
+
+        const total = comments.length + reviews.length;
+        document.getElementById("kpiFeedbackCount").textContent = String(total);
+
+        const commentsList = document.getElementById("adminCommentsList");
+        if (commentsList) {
+          commentsList.innerHTML =
+            comments.length === 0
+              ? `<p class="text-xs text-[#64748B] italic py-4 bg-[#F8FAFC] rounded-xl px-4 border border-[#CBD5E1]">No item comments submitted yet.</p>`
+              : comments
+                  .map(
+                    (c) => `
+            <div class="p-3.5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-xl text-xs space-y-1">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-bold text-[#0F172A]">${c.author}</span>
+                <span class="text-[#996500] font-bold">${"★".repeat(c.rating || 5)} · <span class="text-[#64748B] text-[10px]">${c.date}</span></span>
+              </div>
+              <p class="text-xs text-[#334155]">"${c.text}"</p>
+            </div>
+          `
+                  )
+                  .join("");
         }
-      }
 
-      function deleteReviewItem(id) {
-        if (confirm("Delete this review?")) {
-          let reviews = JSON.parse(localStorage.getItem("sonnenpfad_reviews") || "[]");
-          reviews = reviews.filter(r => r.id !== id);
-          localStorage.setItem("sonnenpfad_reviews", JSON.stringify(reviews));
-          renderDashboardContent();
-        }
-      }
-
-      function deleteSafariItem(id) {
-        if (confirm("Delete this safari package?")) {
-          let safaris = JSON.parse(localStorage.getItem("sonnenpfad_safaris") || "[]");
-          safaris = safaris.filter(s => s.id !== id);
-          localStorage.setItem("sonnenpfad_safaris", JSON.stringify(safaris));
-          renderDashboardContent();
+        const reviewsList = document.getElementById("adminReviewsList");
+        if (reviewsList) {
+          reviewsList.innerHTML = reviews
+            .map(
+              (r) => `
+            <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl text-xs space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-[#996500]">${"★".repeat(r.rating || 5)}</span>
+                <span class="px-2 py-0.5 rounded-full bg-[#073F27] text-white text-[10px] font-bold">${r.status || "Verified Guest"}</span>
+              </div>
+              <p class="text-[#334155] italic">"${r.content}"</p>
+              <div class="border-t border-[#CBD5E1] pt-2">
+                <strong class="text-[#0F172A] block">${r.author} (${r.country})</strong>
+                <span class="text-[10px] text-[#64748B]">${r.tourName}</span>
+              </div>
+            </div>
+          `
+            )
+            .join("");
         }
       }
 
       function handleExportBackup() {
         const fullData = {
+          settings: window.db ? window.db.getSettings() : {},
+          tiktoks: window.db ? window.db.getTiktoks() : [],
           safaris: JSON.parse(localStorage.getItem("sonnenpfad_safaris") || "[]"),
-          coffee: JSON.parse(localStorage.getItem("sonnenpfad_coffee_products") || "[]"),
+          products: JSON.parse(localStorage.getItem("sonnenpfad_shop_products") || "[]"),
           orders: JSON.parse(localStorage.getItem("sonnenpfad_coffee_orders") || "[]"),
           reviews: JSON.parse(localStorage.getItem("sonnenpfad_reviews") || "[]"),
-          exportedAt: new Date().toISOString()
+          exportedAt: new Date().toISOString(),
         };
         const blob = new Blob([JSON.stringify(fullData, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `sonnenpfad-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = `sonnenpfad-master-db-${new Date().toISOString().slice(0, 10)}.json`;
         a.click();
         URL.revokeObjectURL(url);
+        notify("Downloaded complete JSON database backup.");
       }
 
       function handleImportBackup(e) {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = (event) => {
+        reader.onload = async (event) => {
           try {
             const data = JSON.parse(event.target.result);
             if (data.safaris) localStorage.setItem("sonnenpfad_safaris", JSON.stringify(data.safaris));
-            if (data.coffee) localStorage.setItem("sonnenpfad_coffee_products", JSON.stringify(data.coffee));
+            if (data.products) localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(data.products));
+            if (data.settings) localStorage.setItem("sonnenpfad_settings", JSON.stringify(data.settings));
+            if (data.tiktoks) localStorage.setItem("sonnenpfad_tiktoks", JSON.stringify(data.tiktoks));
             if (data.orders) localStorage.setItem("sonnenpfad_coffee_orders", JSON.stringify(data.orders));
             if (data.reviews) localStorage.setItem("sonnenpfad_reviews", JSON.stringify(data.reviews));
-            alert("Database successfully restored!");
-            renderDashboardContent();
-          } catch(err) {
-            alert("Invalid backup file: " + err.message);
+            notify("Database restored! Syncing to Supabase...");
+            await loadDashboardData();
+          } catch (err) {
+            notify("Invalid backup file: " + err.message, "error");
           }
         };
         reader.readAsText(file);
       }
 
-      function handleChangePasscode(e) {
+      async function handleChangePasscode(e) {
         e.preventDefault();
-        const newPass = document.getElementById("newAdminPass").value;
+        const currentPass = document.getElementById("currentAdminPass").value.trim();
+        const newPass = document.getElementById("newAdminPass").value.trim();
+        const confirmPass = document.getElementById("confirmAdminPass").value.trim();
+        const banner = document.getElementById("passcodeFeedbackBanner");
+        const btn = document.getElementById("updatePassBtn");
+
+        banner.classList.add("hidden");
+
         if (newPass.length < 4) {
-          alert("Passcode must be at least 4 characters!");
+          banner.className = "p-3 rounded-xl text-xs font-semibold border bg-red-50 border-red-300 text-red-800";
+          banner.textContent = "New passcode must be at least 4 characters long.";
+          banner.classList.remove("hidden");
           return;
         }
-        localStorage.setItem("sonnenpfad_admin_pw", newPass);
-        alert("Master passcode successfully updated!");
+
+        if (newPass !== confirmPass) {
+          banner.className = "p-3 rounded-xl text-xs font-semibold border bg-red-50 border-red-300 text-red-800";
+          banner.textContent = "New passcode and confirmation do not match.";
+          banner.classList.remove("hidden");
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Updating Passcode...";
+
+        const result = await window.db.updateAdminPasscode(currentPass, newPass);
+
+        btn.disabled = false;
+        btn.textContent = "Save & Activate New Passcode";
+
+        if (!result.ok) {
+          banner.className = "p-3 rounded-xl text-xs font-semibold border bg-red-50 border-red-300 text-red-800";
+          banner.textContent = result.error || "Unable to update passcode.";
+          banner.classList.remove("hidden");
+          notify(result.error || "Passcode update failed.", "error");
+          return;
+        }
+
+        document.getElementById("currentAdminPass").value = "";
         document.getElementById("newAdminPass").value = "";
+        document.getElementById("confirmAdminPass").value = "";
+
+        const hint = document.getElementById("defaultPassHint");
+        if (hint) {
+          hint.textContent = "Custom master passcode is active. Enter your private passcode to unlock.";
+        }
+
+        banner.className = "p-3 rounded-xl text-xs font-semibold border bg-emerald-50 border-emerald-300 text-emerald-800";
+        banner.textContent = result.cloudSynced
+          ? "Master passcode updated & synced to Supabase Cloud! Old passcode is now disabled."
+          : "Master passcode updated locally! Run the SQL schema to enable cross-device Supabase passcode sync.";
+        banner.classList.remove("hidden");
+        notify("Master passcode changed successfully!");
+      }
+
+      // Direct Browser-to-Supabase Cloud DB Health Diagnostic
+      async function testSupabaseFromAdmin() {
+        const pingBadge = document.getElementById("supabasePingBadge");
+        const latencyEl = document.getElementById("supabaseLatency");
+        const diagStatus = document.getElementById("supabaseDiagStatus");
+        const dbPill = document.getElementById("sidebarDbPill");
+        const headerState = document.getElementById("headerCloudState");
+
+        if (pingBadge) {
+          pingBadge.textContent = "PINGING...";
+          pingBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300";
+        }
+        if (diagStatus) diagStatus.textContent = "Scanning all 8 Supabase PostgreSQL tables...";
+
+        try {
+          const data = await window.testSupabaseConnection();
+          if (latencyEl) latencyEl.textContent = `${data.latencyMs} ms`;
+
+          if (data.allReady) {
+            if (pingBadge) {
+              pingBadge.textContent = "ALL 8 TABLES LIVE";
+              pingBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+            }
+            if (dbPill) dbPill.textContent = "8/8 OK";
+            if (headerState) headerState.textContent = "Supabase Live";
+          } else if (data.connected) {
+            const readyCount = Object.values(data.tables).filter((t) => t.status === "ok").length;
+            if (pingBadge) {
+              pingBadge.textContent = `${readyCount}/8 READY`;
+              pingBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300";
+            }
+            if (dbPill) dbPill.textContent = `${readyCount}/8`;
+            if (headerState) headerState.textContent = "Setup Needed";
+          }
+
+          Object.entries(data.tables).forEach(([tbl, info]) => {
+            const el = document.getElementById(`tblStatus-${tbl}`);
+            if (!el) return;
+            if (info.status === "ok") {
+              el.textContent = "Ready";
+              el.className = "font-mono text-emerald-700 font-bold";
+            } else {
+              el.textContent = "Run SQL";
+              el.className = "font-mono text-amber-700 font-bold";
+            }
+          });
+
+          if (diagStatus) diagStatus.textContent = data.message;
+        } catch (err) {
+          if (pingBadge) {
+            pingBadge.textContent = "OFFLINE FALLBACK";
+            pingBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300";
+          }
+          if (diagStatus) diagStatus.textContent = "Using browser localStorage fallback.";
+        }
+      }
+
+      async function syncToSupabaseFromAdmin(btnEl) {
+        const btn = btnEl || document.getElementById("btnSyncSupabase");
+        const origHtml = btn ? btn.innerHTML : "";
+        if (btn) btn.innerHTML = `<span>⏳ Syncing...</span>`;
+
+        try {
+          const result = await window.db.syncAllToSupabase();
+          if (result.success) {
+            notify(
+              `Synced to Supabase: ${result.counts.safaris} safaris, ${result.counts.products} products, ${result.counts.tiktoks} reels, ${result.counts.reviews} reviews!`
+            );
+          } else {
+            notify(
+              `Run the SQL schema script in Supabase SQL Editor first (${result.errors.length} table notice).`,
+              "info"
+            );
+          }
+          await testSupabaseFromAdmin();
+        } catch (err) {
+          notify("Sync warning: " + err.message, "error");
+        } finally {
+          if (btn) btn.innerHTML = origHtml;
+        }
+      }
+
+      function copySupabaseSchemaSql() {
+        const sql = window.SUPABASE_SCHEMA_SQL || document.getElementById("supabaseSqlPreview")?.textContent;
+        if (!sql) return;
+
+        navigator.clipboard
+          .writeText(sql)
+          .then(() => {
+            const btn = document.getElementById("btnCopySql");
+            if (btn) {
+              const orig = btn.innerHTML;
+              btn.innerHTML = "✅ SQL Copied!";
+              setTimeout(() => {
+                btn.innerHTML = orig;
+              }, 2500);
+            }
+            notify("SQL schema copied! Paste & Run in your Supabase SQL Editor.");
+          })
+          .catch(() => {
+            notify("Select the SQL code box and copy manually.", "info");
+          });
       }
     </script>
   </body>

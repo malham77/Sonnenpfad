@@ -8,87 +8,41 @@
   --color-forest: #073F27;
   --color-forest-deep: #042617;
   --color-forest-surface: #0a4d30;
-  --color-gold: #D99A00;
-  --color-gold-light: #F4B41A;
-  --color-gold-subtle: rgba(217, 154, 0, 0.2);
-  --color-ivory: #F7F4EC;
-  --color-charcoal: #171A17;
-  --color-charcoal-deep: #101210;
-  --color-charcoal-light: #222622;
-  --color-sand: #D9C8A6;
+  --color-gold: #996500;
+  --color-gold-light: #B45309;
+  --color-gold-subtle: rgba(153, 101, 0, 0.15);
+  --color-ivory: #FFFFFF;
+  --color-charcoal: #0F172A;
+  --color-charcoal-deep: #020617;
+  --color-charcoal-light: #1E293B;
+  --color-sand: #F8FAFC;
 }
 
-:root {
-  color-scheme: dark;
-  --theme-bg-main: #0B0E0B;
-  --theme-bg-deep: #050705;
-  --theme-bg-card: #121612;
-  --theme-text-main: #F7F4EC;
-  --theme-text-muted: rgba(247, 244, 236, 0.75);
-  --theme-border: rgba(217, 154, 0, 0.25);
-}
+/* ============================================================
+   UNIVERSAL LIGHT THEME FOUNDATION (DARK THEME REMOVED)
+   ============================================================ */
 
+:root,
+html,
 html.light {
   color-scheme: light;
-  --theme-bg-main: #FFFFFF !important;
-  --theme-bg-deep: #F8FAFC !important;
-  --theme-bg-card: #FFFFFF !important;
-  --theme-text-main: #0F172A !important;
-  --theme-text-muted: #475569 !important;
-  --theme-border: rgba(217, 154, 0, 0.45) !important;
+  --theme-bg-main: #FFFFFF;
+  --theme-bg-deep: #F8FAFC;
+  --theme-bg-card: #FFFFFF;
+  --theme-text-main: #0F172A;
+  --theme-text-muted: #1E293B;
+  --theme-border: #CBD5E1;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--theme-bg-main);
-  color: var(--theme-text-main);
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
 }
 
-html.light body {
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
-}
-
-/* Light Theme Color Adaptations for Pure White Daylight */
-html.light .bg-\[\#171A17\],
-html.light .bg-\[\#101210\],
-html.light .bg-\[\#042617\] {
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
-}
-
-html.light .bg-\[\#073F27\] {
-  background-color: #0A4D30 !important;
-  color: #FFFFFF !important;
-}
-
-html.light .text-\[\#F7F4EC\] {
-  color: #0F172A !important;
-}
-
-html.light .text-\[\#F7F4EC\]\/85,
-html.light .text-\[\#F7F4EC\]\/80,
-html.light .text-\[\#F7F4EC\]\/75,
-html.light .text-\[\#F7F4EC\]\/70,
-html.light .text-\[\#F7F4EC\]\/65,
-html.light .text-\[\#F7F4EC\]\/60 {
-  color: #475569 !important;
-}
-
-html.light .border-white\/10,
-html.light .border-white\/15,
-html.light .border-white\/20,
-html.light .border-white\/25 {
-  border-color: #E2E8F0 !important;
-}
-
-html.light .bg-white\/5,
-html.light .bg-white\/10 {
-  background-color: #F8FAFC !important;
-}
-
+/* Typography font classes */
 h1, h2, h3, h4, .font-editorial {
   font-family: var(--font-serif);
 }
@@ -97,157 +51,662 @@ h1, h2, h3, h4, .font-editorial {
   font-family: "Caveat", cursive;
 }
 
-/* Fancy Multi-directional Keyframes */
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translate3d(-60px, 0, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
+/* ============================================================
+   1. HIGH VISIBILITY TYPOGRAPHY FOR PAGE CONTENT
+   ============================================================ */
+
+/* Headings in light page content (excluding dark photo heroes) */
+h1:not(.keep-white),
+h2:not(.keep-white),
+h3:not(.keep-white),
+h4:not(.keep-white),
+h5:not(.keep-white),
+h6:not(.keep-white),
+.font-editorial:not(.keep-white) {
+  color: #0F172A;
 }
 
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translate3d(60px, 0, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
+p:not(.keep-white) {
+  color: #334155;
 }
 
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 50px, 0) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
+/* Never let white or transparent text disappear on light page surfaces */
+.text-white:not(.keep-white),
+.text-white\/95:not(.keep-white),
+.text-white\/90:not(.keep-white),
+.text-white\/85:not(.keep-white),
+.text-\[\#F7F4EC\]:not(.keep-white),
+.text-\[\#F7F4EC\]\/95:not(.keep-white),
+.text-\[\#F7F4EC\]\/90:not(.keep-white),
+.text-\[\#F7F4EC\]\/85:not(.keep-white) {
+  color: #0F172A;
 }
 
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translate3d(0, -40px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
+.text-white\/80:not(.keep-white),
+.text-white\/75:not(.keep-white),
+.text-white\/70:not(.keep-white),
+.text-\[\#F7F4EC\]\/80:not(.keep-white),
+.text-\[\#F7F4EC\]\/75:not(.keep-white),
+.text-\[\#F7F4EC\]\/70:not(.keep-white) {
+  color: #1E293B;
 }
 
-@keyframes zoomSubtle {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.04); }
-  100% { transform: scale(1); }
+.text-white\/65:not(.keep-white),
+.text-white\/60:not(.keep-white),
+.text-white\/50:not(.keep-white),
+.text-\[\#F7F4EC\]\/65:not(.keep-white),
+.text-\[\#F7F4EC\]\/60:not(.keep-white),
+.text-\[\#F7F4EC\]\/50:not(.keep-white) {
+  color: #475569;
 }
 
-@keyframes pulseGold {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(217, 154, 0, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 20px 4px rgba(244, 180, 26, 0.4);
-  }
+.text-white\/40:not(.keep-white),
+.text-white\/30:not(.keep-white) {
+  color: #64748B;
 }
 
-.animate-slide-left {
-  animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Gold / Yellow Accents:
+   Darken to rich deep amber/bronze (#996500) so they pop with 5.5:1 contrast against white */
+.text-\[\#F4B41A\]:not(.keep-gold),
+.text-\[\#D99A00\]:not(.keep-gold) {
+  color: #996500;
+  font-weight: 700;
 }
 
-.animate-slide-right {
-  animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* ============================================================
+   2. SURFACE BACKGROUNDS & CARDS (CRISP DAYLIGHT WHITE)
+   ============================================================ */
+
+.bg-\[\#0B0E0B\],
+.bg-\[\#050705\],
+.bg-\[\#101210\],
+.bg-\[\#171A17\],
+.bg-\[\#121612\],
+.bg-\[\#222622\] {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
 }
 
-.animate-slide-up {
-  animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+section.bg-\[\#101210\],
+section.bg-\[\#0B0E0B\],
+section.bg-\[\#0F130F\] {
+  background-color: #F8FAFC !important;
 }
 
-.animate-slide-down {
-  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Card wrappers get clean borders and subtle soft depth */
+div.bg-\[\#101210\],
+div.bg-\[\#171A17\],
+div.bg-\[\#121612\] {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04) !important;
 }
 
-.animate-zoom-bg {
-  animation: zoomSubtle 24s ease-in-out infinite alternate;
+/* Borders in Light Mode */
+.border-\[\#D99A00\]\/30,
+.border-\[\#D99A00\]\/25,
+.border-\[\#D99A00\]\/20,
+.border-\[\#D99A00\]\/40,
+.border-white\/10,
+.border-white\/15,
+.border-white\/20,
+.border-white\/25,
+.border-white\/30,
+.border-white\/5 {
+  border-color: #CBD5E1 !important;
 }
 
-.animate-pulse-gold {
-  animation: pulseGold 3s infinite;
+.bg-white\/5,
+.bg-white\/10,
+.bg-white\/15 {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
 }
 
-/* 3D Frosted Liquid Glass Capsule Pill Buttons (Matches Attachment image_f81cfcf4.png) */
+/* ============================================================
+   3. NAVIGATION BAR & HEADER
+   ============================================================ */
+
+header > div:first-child {
+  background-color: #F1F5F9 !important;
+  border-bottom: 1px solid #CBD5E1 !important;
+}
+
+header > div:first-child a,
+header > div:first-child span {
+  color: #1E293B !important;
+}
+
+header > div:first-child a:hover {
+  color: #996500 !important;
+}
+
+nav {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  border-bottom: 1px solid #CBD5E1 !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08) !important;
+}
+
+nav a {
+  white-space: nowrap;
+}
+
+nav a.text-white\/80,
+nav a.text-white\/90,
+nav a.text-white,
+nav a {
+  color: #0F172A !important;
+  font-weight: 700;
+}
+
+nav a:hover {
+  color: #996500 !important;
+}
+
+nav a.text-\[\#F4B41A\] {
+  color: #073F27 !important;
+  border-bottom-color: #996500 !important;
+}
+
+/* Dropdown list */
+.group-hover\:block,
+.dropdown-menu {
+  background-color: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 20px 30px -5px rgba(0, 0, 0, 0.14) !important;
+}
+
+.group-hover\:block a,
+.dropdown-menu a {
+  color: #1E293B !important;
+  font-weight: 600;
+}
+
+.group-hover\:block a:hover,
+.dropdown-menu a:hover {
+  background-color: #F1F5F9 !important;
+  color: #073F27 !important;
+}
+
+/* Mobile Drawer */
+#mobileDrawer {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+#mobileDrawer a {
+  color: #0F172A !important;
+  border-bottom-color: #E2E8F0 !important;
+}
+
+#mobileDrawer a:hover {
+  color: #996500 !important;
+}
+
+#mobileDrawerClose {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+/* Modals */
+#globalFeedbackModal > div,
+#productOrderModal > div,
+#coffeeOrderModal > div,
+#reviewModal > div,
+.modal-content {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 2px solid #CBD5E1 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.modal-content h2,
+.modal-content h3,
+#feedbackItemTitle,
+#orderItemName {
+  color: #0F172A !important;
+}
+
+/* Form Controls */
+input:not([type="submit"]):not([type="button"]):not([type="range"]),
+textarea,
+select {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1.5px solid #94A3B8 !important;
+  font-weight: 500;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #996500 !important;
+  outline: 2px solid rgba(153, 101, 0, 0.25) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #64748B !important;
+}
+
+/* Footer */
+footer {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+  border-top: 1px solid #CBD5E1 !important;
+}
+
+footer a {
+  color: #334155 !important;
+}
+
+footer a:hover {
+  color: #996500 !important;
+}
+
+footer .text-white\/70,
+footer .text-white\/75,
+footer .text-white\/60,
+footer .text-white\/50 {
+  color: #475569 !important;
+}
+
+/* ============================================================
+   4. HERO SECTIONS & DARK PHOTOGRAPHIC MEDIA (CRITICAL FIX)
+   Words in hero sections MUST remain ultra-readable white with shadow
+   ============================================================ */
+
+.hero-banner,
+.hero-photo-section,
+section:has(#heroBg),
+section:has(.bg-cover),
+section.relative.min-h-\[90vh\] {
+  position: relative;
+  background-color: #042617 !important;
+}
+
+/* Hero Titles, Subheadings, Paragraphs & Spans on Photo Backgrounds */
+.hero-banner h1,
+.hero-banner h2,
+.hero-banner h3,
+.hero-banner p,
+.hero-photo-section h1,
+.hero-photo-section h2,
+.hero-photo-section h3,
+.hero-photo-section p,
+section:has(#heroBg) h1,
+section:has(#heroBg) h2,
+section:has(#heroBg) p,
+section.relative.min-h-\[90vh\] h1,
+section.relative.min-h-\[90vh\] h2,
+section.relative.min-h-\[90vh\] p {
+  color: #FFFFFF !important;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Hero Script Callout */
+.hero-banner .font-script,
+section:has(#heroBg) .font-script,
+section.relative.min-h-\[90vh\] .font-script {
+  color: #F4B41A !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9) !important;
+  font-weight: 700;
+}
+
+/* Hero Top Pill Badge */
+.hero-banner .inline-flex.rounded-full,
+section:has(#heroBg) .inline-flex.rounded-full,
+section.relative.min-h-\[90vh\] .inline-flex.rounded-full {
+  background-color: rgba(7, 63, 39, 0.95) !important;
+  border: 1.5px solid #F4B41A !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+}
+
+.hero-banner .inline-flex.rounded-full span,
+section:has(#heroBg) .inline-flex.rounded-full span,
+section.relative.min-h-\[90vh\] .inline-flex.rounded-full span {
+  color: #F4B41A !important;
+  text-shadow: none !important;
+  font-weight: 800;
+}
+
+.hero-banner .text-\[\#F4B41A\],
+.bg-\[\#073F27\] .text-\[\#F4B41A\],
+.bg-\[\#073F27\]\/95 .text-\[\#F4B41A\],
+.bg-\[\#073F27\]\/90 .text-\[\#F4B41A\] {
+  color: #F4B41A !important;
+}
+
+/* Dedicated Forest Green Section, Badges & Photo Overlay Boxes */
+.bg-\[\#073F27\],
+.bg-\[\#073F27\]\/95,
+.bg-\[\#073F27\]\/90,
+.bg-gradient-to-br.from-\[\#073F27\] {
+  background-color: rgba(7, 63, 39, 0.96) !important;
+  color: #FFFFFF !important;
+}
+
+.bg-\[\#073F27\] h1,
+.bg-\[\#073F27\] h2,
+.bg-\[\#073F27\] h3,
+.bg-\[\#073F27\] h4,
+.bg-\[\#073F27\] p,
+.bg-\[\#073F27\] span:not(.text-\[\#F4B41A\]),
+.bg-\[\#073F27\]\/95 p,
+.bg-\[\#073F27\]\/95 span:not(.text-\[\#F4B41A\]),
+.bg-\[\#073F27\]\/90 span:not(.text-\[\#F4B41A\]),
+.bg-gradient-to-br.from-\[\#073F27\] h4,
+.bg-gradient-to-br.from-\[\#073F27\] p {
+  color: #FFFFFF !important;
+}
+
+.bg-gradient-to-br.from-\[\#073F27\] .text-\[\#F4B41A\] {
+  color: #F4B41A !important;
+}
+
+/* Dark Photo Overlays & Pills (Price tags, TikTok reels, View badges) */
+.bg-\[\#101210\]\/95,
+.bg-black\/75,
+.bg-black\/70,
+.bg-black\/60,
+.aspect-\[9\/16\] {
+  color: #FFFFFF !important;
+}
+
+.bg-\[\#101210\]\/95,
+span.bg-\[\#101210\]\/95 {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.bg-black\/70,
+.bg-black\/75,
+.bg-black\/60,
+.aspect-\[9\/16\] p,
+.aspect-\[9\/16\] span:not(.text-\[\#F4B41A\]) {
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85) !important;
+}
+
+.aspect-\[9\/16\] .text-\[\#F4B41A\] {
+  color: #F4B41A !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Crisp Emerald, Amber & Red Accents on White Backgrounds */
+.text-\[\#25D366\],
+.text-emerald-400:not(.keep-bright),
+.text-emerald-300:not(.keep-bright) {
+  color: #047857 !important;
+  font-weight: 700;
+}
+
+.text-amber-400:not(.keep-bright),
+.text-amber-300:not(.keep-bright) {
+  color: #B45309 !important;
+  font-weight: 700;
+}
+
+.text-red-400,
+.text-red-300 {
+  color: #DC2626 !important;
+  font-weight: 700;
+}
+
+.bg-emerald-950 {
+  background-color: #ECFDF5 !important;
+  color: #065F46 !important;
+  border-color: #6EE7B7 !important;
+}
+
+.bg-amber-950 {
+  background-color: #FEF3C7 !important;
+  color: #92400E !important;
+  border-color: #FCD34D !important;
+}
+
+.hero-banner .text-\[\#25D366\],
+.bg-\[\#073F27\] .text-\[\#25D366\],
+#supabaseSqlPreview {
+  color: #44F087 !important;
+}
+
+/* Admin / Portal SQL Code Block */
+#supabaseSqlPreview {
+  background-color: #0A0D0A !important;
+  color: #44F087 !important;
+}
+
+/* Admin Tab & Sidebar Navigation Buttons */
+.admin-tab-btn {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+  border: 1px solid #CBD5E1 !important;
+}
+
+.admin-tab-btn:hover {
+  background-color: #E2E8F0 !important;
+}
+
+.admin-tab-btn.active,
+.admin-tab-btn.bg-\[\#073F27\] {
+  background-color: #073F27 !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid #996500 !important;
+}
+
+.admin-tab-btn.active span,
+.admin-tab-btn.bg-\[\#073F27\] span {
+  color: #FFFFFF !important;
+}
+
+.admin-nav-btn {
+  background-color: transparent;
+  color: #1E293B;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.admin-nav-btn:hover {
+  background-color: #F1F5F9;
+  color: #073F27;
+  border-color: #CBD5E1;
+}
+
+.admin-nav-btn.active {
+  background-color: #073F27 !important;
+  color: #FFFFFF !important;
+  border-color: #996500 !important;
+  box-shadow: 0 8px 18px -4px rgba(7, 63, 39, 0.35);
+}
+
+.admin-nav-btn.active * {
+  color: #FFFFFF !important;
+}
+
+.admin-nav-btn.active .admin-nav-badge {
+  background-color: #F4B41A !important;
+  color: #042617 !important;
+}
+
+/* Active Category Pill in Shop & Filters */
+.category-pill.active {
+  background-color: #073F27 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #073F27 !important;
+}
+
+.category-pill:not(.active) {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+  border: 1px solid #CBD5E1 !important;
+}
+
+.category-pill:not(.active):hover {
+  background-color: #E2E8F0 !important;
+}
+
+/* Hamburger Menu Toggle Button */
+#mobileMenuToggle {
+  background-color: #F4B41A !important;
+  color: #073F27 !important;
+  border: 1.5px solid #D99A00 !important;
+}
+
+/* Search Overlay in Light Mode */
+#searchOverlay {
+  background-color: rgba(255, 255, 255, 0.97) !important;
+  color: #0F172A !important;
+}
+
+#searchOverlay input {
+  color: #0F172A !important;
+}
+
+#searchOverlay a.bg-\[\#073F27\] {
+  color: #FFFFFF !important;
+}
+
+/* ============================================================
+   5. ALL BUTTONS: ULTRA-VISIBLE & HIGH CONTRAST
+   ============================================================ */
+
+/* Base 3D Capsule Pill Shape */
 .btn-vision-pill,
 .btn-glass-gold,
 .btn-glass-forest,
 .btn-glass-dark,
-.btn-glass-whatsapp {
+.btn-glass-whatsapp,
+.btn-outline-dark {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.625rem;
-  padding: 0.875rem 2.25rem;
-  font-weight: 700;
+  padding: 0.875rem 2rem;
+  font-weight: 800;
   font-size: 0.8125rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   border-radius: 9999px;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   cursor: pointer;
   overflow: hidden;
   user-select: none;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
 }
 
-/* 1. Crystal Clear Vision Glass (Exact Match to image_f81cfcf4.png) */
-.btn-vision-glass {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(235, 240, 245, 0.45) 50%, rgba(220, 228, 235, 0.3) 100%);
-  color: #073F27;
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
-  box-shadow:
-    inset 0 2px 2px 0 rgba(255, 255, 255, 1),
-    inset 0 6px 14px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.15),
-    0 12px 30px -4px rgba(0, 0, 0, 0.3);
+/* 1. Amber Gold 3D Glass Pill (Primary CTA) */
+.btn-glass-gold,
+a.btn-glass-gold,
+button.btn-glass-gold {
+  color: #042617 !important;
+  background: linear-gradient(180deg, #F5BA26 0%, #E5A500 50%, #C88A00 100%) !important;
+  border: 2px solid #FFFFFF !important;
+  box-shadow: 0 10px 24px -2px rgba(200, 138, 0, 0.5), inset 0 2px 2px #FFFFFF !important;
+  font-weight: 800 !important;
 }
 
-.btn-vision-glass:hover {
-  transform: translateY(-2px) scale(1.02);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 248, 252, 0.6) 100%);
-  box-shadow:
-    inset 0 2.5px 3px 0 #FFFFFF,
-    inset 0 8px 20px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.1),
-    0 18px 36px -4px rgba(0, 0, 0, 0.4);
-}
-
-/* 2. Amber Gold 3D Glass Pill */
-.btn-glass-gold {
-  color: #073F27;
-  background: linear-gradient(180deg, rgba(255, 204, 64, 0.95) 0%, rgba(244, 180, 26, 0.9) 45%, rgba(217, 154, 0, 0.95) 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
-  box-shadow:
-    inset 0 2px 2px 0 rgba(255, 255, 255, 1),
-    inset 0 6px 16px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.25),
-    0 14px 32px -4px rgba(217, 154, 0, 0.5);
+.btn-glass-gold *,
+a.btn-glass-gold *,
+button.btn-glass-gold * {
+  color: #042617 !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
 }
 
 .btn-glass-gold:hover {
   transform: translateY(-2px) scale(1.02);
-  background: linear-gradient(180deg, #FFE17D 0%, #F4B41A 45%, #E5A500 100%);
-  box-shadow:
-    inset 0 3px 3px 0 #FFFFFF,
-    inset 0 8px 20px 0 rgba(255, 255, 255, 0.75),
-    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.15),
-    0 20px 40px -4px rgba(244, 180, 26, 0.65);
+  background: linear-gradient(180deg, #FFE17D 0%, #F5BA26 50%, #D99A00 100%) !important;
+  box-shadow: 0 14px 30px -2px rgba(200, 138, 0, 0.65), inset 0 2px 2px #FFFFFF !important;
+}
+
+/* 2. WhatsApp Green 3D Glass Pill */
+.btn-glass-whatsapp,
+a.btn-glass-whatsapp,
+button.btn-glass-whatsapp {
+  color: #042617 !important;
+  background: linear-gradient(180deg, #44F087 0%, #25D366 50%, #1DB954 100%) !important;
+  border: 2px solid #FFFFFF !important;
+  box-shadow: 0 10px 24px -2px rgba(37, 211, 102, 0.45), inset 0 2px 2px #FFFFFF !important;
+  font-weight: 800 !important;
+}
+
+.btn-glass-whatsapp *,
+a.btn-glass-whatsapp *,
+button.btn-glass-whatsapp * {
+  color: #042617 !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+}
+
+.btn-glass-whatsapp:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: linear-gradient(180deg, #5df399 0%, #2ee071 50%, #1db954 100%) !important;
+  box-shadow: 0 14px 30px -2px rgba(37, 211, 102, 0.6), inset 0 2px 2px #FFFFFF !important;
+}
+
+/* 3. Forest Green 3D Glass Pill */
+.btn-glass-forest,
+a.btn-glass-forest,
+button.btn-glass-forest {
+  color: #FFFFFF !important;
+  background: linear-gradient(180deg, #0a4d30 0%, #073F27 50%, #042617 100%) !important;
+  border: 2px solid #F4B41A !important;
+  box-shadow: 0 10px 24px -2px rgba(7, 63, 39, 0.45), inset 0 2px 2px rgba(255, 255, 255, 0.25) !important;
+  font-weight: 800 !important;
+}
+
+.btn-glass-forest *,
+a.btn-glass-forest *,
+button.btn-glass-forest * {
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+}
+
+.btn-glass-forest svg {
+  color: #F4B41A !important;
+}
+
+.btn-glass-forest:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: linear-gradient(180deg, #0d5e3b 0%, #0a4d30 50%, #073F27 100%) !important;
+  border-color: #FFE17D !important;
+  box-shadow: 0 14px 30px -2px rgba(7, 63, 39, 0.65) !important;
+}
+
+/* 4. Secondary Light Glass Pill (Replaced Dark Glass) */
+.btn-glass-dark,
+a.btn-glass-dark,
+button.btn-glass-dark {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1.5px solid #CBD5E1 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
+  font-weight: 700 !important;
+}
+
+.btn-glass-dark *,
+a.btn-glass-dark *,
+button.btn-glass-dark * {
+  color: #0F172A !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+.btn-glass-dark:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: #073F27 !important;
+  color: #FFFFFF !important;
+  border-color: #073F27 !important;
+  box-shadow: 0 10px 22px rgba(7, 63, 39, 0.25) !important;
+}
+
+.btn-glass-dark:hover * {
+  color: #FFFFFF !important;
 }
 
 .btn-glass-gold:active,
@@ -257,106 +716,59 @@ h1, h2, h3, h4, .font-editorial {
   transform: translateY(1px) scale(0.98);
 }
 
-/* 3. Forest Green 3D Glass Pill */
-.btn-glass-forest {
-  color: #F7F4EC;
-  background: linear-gradient(180deg, rgba(12, 90, 56, 0.92) 0%, rgba(7, 63, 39, 0.95) 50%, rgba(4, 38, 23, 0.98) 100%);
-  border: 1.5px solid rgba(244, 180, 26, 0.85);
-  box-shadow:
-    inset 0 2px 2px 0 rgba(255, 255, 255, 0.8),
-    inset 0 6px 14px 0 rgba(244, 180, 26, 0.35),
-    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.4),
-    0 14px 32px -4px rgba(0, 0, 0, 0.6);
+/* 5. Like & Review Action Buttons on Cards */
+button[onclick*="handleLikeClick"],
+button[onclick*="handleCardLike"] {
+  background-color: #F8FAFC !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0F172A !important;
 }
 
-.btn-glass-forest:hover {
-  transform: translateY(-2px) scale(1.02);
-  color: #F4B41A;
-  background: linear-gradient(180deg, rgba(18, 115, 72, 0.95) 0%, rgba(10, 77, 48, 0.98) 50%, rgba(7, 63, 39, 1) 100%);
-  border-color: #F4B41A;
-  box-shadow:
-    inset 0 2.5px 3px 0 rgba(255, 255, 255, 0.95),
-    inset 0 8px 20px 0 rgba(244, 180, 26, 0.5),
-    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.3),
-    0 20px 38px -4px rgba(7, 63, 39, 0.7);
+button[onclick*="handleLikeClick"] *,
+button[onclick*="handleCardLike"] * {
+  color: #0F172A !important;
 }
 
-/* 4. Dark Translucent 3D Glass Pill */
-.btn-glass-dark {
-  color: #F7F4EC;
-  background: linear-gradient(180deg, rgba(40, 45, 40, 0.85) 0%, rgba(23, 26, 23, 0.9) 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
-  box-shadow:
-    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 4px 10px 0 rgba(255, 255, 255, 0.15),
-    inset 0 -2px 3px 0 rgba(0, 0, 0, 0.3),
-    0 10px 24px -2px rgba(0, 0, 0, 0.45);
+button[onclick*="handleLikeClick"] .text-rose-500,
+button[onclick*="handleLikeClick"] .text-red-500,
+button[onclick*="handleCardLike"] .text-rose-500,
+button[onclick*="handleCardLike"] .text-red-500 {
+  color: #E11D48 !important;
 }
 
-.btn-glass-dark:hover {
-  transform: translateY(-2px) scale(1.02);
-  border-color: rgba(244, 180, 26, 0.9);
-  color: #F4B41A;
-  background: linear-gradient(180deg, rgba(10, 77, 48, 0.9) 0%, rgba(7, 63, 39, 0.95) 100%);
-  box-shadow:
-    inset 0 2px 2px 0 rgba(255, 255, 255, 0.8),
-    inset 0 6px 14px 0 rgba(244, 180, 26, 0.3),
-    0 14px 30px rgba(0, 0, 0, 0.5);
+button[onclick*="openItemFeedbackModal"],
+button[onclick*="openFeedbackModal"] {
+  background-color: #F8FAFC !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #996500 !important;
+  font-weight: 700 !important;
 }
 
-/* 5. WhatsApp Green 3D Glass Pill */
-.btn-glass-whatsapp {
-  color: #042617;
-  background: linear-gradient(180deg, #44F087 0%, #25D366 50%, #1DB954 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.95);
-  box-shadow:
-    inset 0 2px 2px 0 #FFFFFF,
-    inset 0 6px 16px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.2),
-    0 14px 30px -4px rgba(37, 211, 102, 0.55);
+/* ============================================================
+   6. ANIMATIONS
+   ============================================================ */
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translate3d(-60px, 0, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
-.btn-glass-whatsapp:hover {
-  transform: translateY(-2px) scale(1.02);
-  background: linear-gradient(180deg, #57F594 0%, #27DE6D 50%, #20BA59 100%);
-  box-shadow:
-    inset 0 3px 3px 0 #FFFFFF,
-    inset 0 8px 20px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.15),
-    0 20px 38px -4px rgba(37, 211, 102, 0.7);
+@keyframes slideInRight {
+  from { opacity: 0; transform: translate3d(60px, 0, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
-/* Wavy SVG divider animation */
-@keyframes floatWavy {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+@keyframes slideInUp {
+  from { opacity: 0; transform: translate3d(0, 40px, 0) scale(0.98); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
 
-.animate-float-wavy {
-  animation: floatWavy 6s ease-in-out infinite;
+@keyframes slideInDown {
+  from { opacity: 0; transform: translate3d(0, -30px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
-/* Shimmer wipe effect */
-.shine-overlay {
-  position: relative;
-  overflow: hidden;
-}
-.shine-overlay::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    60deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.18) 50%,
-    transparent 70%
-  );
-  transform: rotate(30deg) translateY(-100%);
-  transition: transform 0.75s ease;
-}
-.shine-overlay:hover::after {
-  transform: rotate(30deg) translateY(100%);
-}
+.animate-slide-left { animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-slide-right { animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-slide-up { animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-slide-down { animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
