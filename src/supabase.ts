@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
   created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 4. Item Comments & Reviews Table
+-- 4. Item & Section Comments Table
 CREATE TABLE IF NOT EXISTS public.comments (
   id TEXT PRIMARY KEY,
   item_id TEXT NOT NULL,
@@ -95,8 +95,11 @@ CREATE TABLE IF NOT EXISTS public.comments (
   text TEXT NOT NULL,
   item_type TEXT DEFAULT 'general',
   date TEXT NOT NULL,
+  status TEXT DEFAULT 'Published',
   created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+ALTER TABLE public.comments ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Published';
 
 -- 5. Verified Guest Reviews Table
 CREATE TABLE IF NOT EXISTS public.reviews (
@@ -126,10 +129,12 @@ CREATE TABLE IF NOT EXISTS public.settings (
   address TEXT DEFAULT 'Plot 14 Entebbe Road, Kampala, Uganda',
   map_embed_url TEXT,
   admin_passcode TEXT DEFAULT 'sonnenpfad2026',
+  moderation_mode TEXT DEFAULT 'auto',
   updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS admin_passcode TEXT DEFAULT 'sonnenpfad2026';
+ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS moderation_mode TEXT DEFAULT 'auto';
 
 -- 7. TikTok Video Feed Table
 CREATE TABLE IF NOT EXISTS public.tiktoks (

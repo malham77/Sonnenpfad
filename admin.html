@@ -189,6 +189,7 @@
                   <svg class="w-4 h-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
                   <span>Comments &amp; Reviews</span>
                 </span>
+                <span id="sidebarFeedbackBadge" class="admin-nav-badge px-2 py-0.5 rounded-full text-[10px] font-mono bg-[#F1F5F9] text-[#0F172A]">0</span>
               </button>
             </div>
 
@@ -581,9 +582,15 @@
               </div>
 
               <form id="addProductForm" onsubmit="handleAddProduct(event)" class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
-                <span class="text-xs font-bold uppercase text-[#7C4D00] block">Add New Product to Shop</span>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
+                <div class="flex items-center justify-between gap-2">
+                  <span id="prodFormHeading" class="text-xs font-bold uppercase text-[#7C4D00] block">Add New Product to Shop</span>
+                  <button id="cancelEditProdBtn" type="button" onclick="resetProductForm()" class="hidden px-3 py-1 rounded-lg bg-white border border-[#CBD5E1] text-[11px] font-bold text-[#0F172A] hover:bg-[#F1F5F9] cursor-pointer">
+                    Cancel Edit
+                  </button>
+                </div>
+                <input id="editProdId" type="hidden" value="" />
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                  <div class="sm:col-span-2">
                     <label for="addProdName" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Product Title *</label>
                     <input id="addProdName" type="text" required placeholder="e.g. Safari Trekking Pole Set" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
@@ -600,14 +607,18 @@
                   </div>
                   <div>
                     <label for="addProdPrice" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Price in UGX *</label>
-                    <input id="addProdPrice" type="number" required step="1000" min="1000" placeholder="120000" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-mono" />
+                    <input id="addProdPrice" type="number" required step="100" min="100" placeholder="120000" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-mono" />
                   </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                  <div>
+                    <label for="addProdOrigPrice" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Compare Price (Optional)</label>
+                    <input id="addProdOrigPrice" type="number" step="100" min="0" placeholder="e.g. 150000" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-mono" />
+                  </div>
                   <div>
                     <label for="addProdOrigin" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Origin / Spec Label</label>
-                    <input id="addProdOrigin" type="text" placeholder="e.g. Mount Elgon / Carbon Fiber" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                    <input id="addProdOrigin" type="text" placeholder="e.g. Mount Elgon / Canvas" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
                   <div>
                     <label for="addProdWeight" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Weight / Sizing</label>
@@ -624,9 +635,15 @@
                   <textarea id="addProdDesc" rows="2" required placeholder="Product specifications, materials, and safari benefits..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] resize-none"></textarea>
                 </div>
 
-                <button type="submit" class="btn-glass-gold text-xs py-2.5 px-6 font-bold">
-                  Publish Product to Live Shop
-                </button>
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <label class="inline-flex items-center gap-2 text-xs font-semibold text-[#0F172A] cursor-pointer">
+                    <input id="addProdSale" type="checkbox" class="accent-[#073F27]" />
+                    <span>Mark as Featured Offer</span>
+                  </label>
+                  <button id="prodSubmitBtn" type="submit" class="btn-glass-gold text-xs py-2.5 px-6 font-bold">
+                    Publish Product to Live Shop
+                  </button>
+                </div>
               </form>
 
               <div id="adminShopList" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
@@ -640,13 +657,19 @@
                 <div>
                   <span class="text-xs font-bold uppercase tracking-wider text-[#7C4D00]">Itinerary Builder</span>
                   <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Safaris &amp; Expeditions (UGX)</h2>
-                  <p class="text-xs text-[#334155] mt-1">Create, review, or remove safari packages across Uganda, Kenya, Tanzania &amp; Rwanda.</p>
+                  <p class="text-xs text-[#334155] mt-1">Create, adjust, or remove safari packages across Uganda, Kenya, Tanzania &amp; Rwanda.</p>
                 </div>
                 <span id="safariCatalogCount" class="text-xs font-mono font-bold text-[#073F27] px-3 py-1 rounded-full bg-amber-100 border border-amber-300 whitespace-nowrap">0 Active Tours</span>
               </div>
 
               <form id="addSafariForm" onsubmit="handleAddSafari(event)" class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
-                <span class="text-xs font-bold uppercase text-[#7C4D00] block">Create New Safari Package</span>
+                <div class="flex items-center justify-between gap-2">
+                  <span id="safFormHeading" class="text-xs font-bold uppercase text-[#7C4D00] block">Create New Safari Package</span>
+                  <button id="cancelEditSafBtn" type="button" onclick="resetSafariForm()" class="hidden px-3 py-1 rounded-lg bg-white border border-[#CBD5E1] text-[11px] font-bold text-[#0F172A] hover:bg-[#F1F5F9] cursor-pointer">
+                    Cancel Edit
+                  </button>
+                </div>
+                <input id="editSafId" type="hidden" value="" />
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label for="addSafTitle" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Safari Title *</label>
@@ -658,7 +681,7 @@
                   </div>
                   <div>
                     <label for="addSafPrice" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Price in UGX *</label>
-                    <input id="addSafPrice" type="number" required step="50000" min="50000" placeholder="6200000" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-mono" />
+                    <input id="addSafPrice" type="number" required step="10000" min="50000" placeholder="6200000" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-mono" />
                   </div>
                 </div>
 
@@ -678,9 +701,15 @@
                   <textarea id="addSafOverview" rows="2" required placeholder="Overview of highlights, wildlife sightings, and itinerary..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] resize-none"></textarea>
                 </div>
 
-                <button type="submit" class="btn-glass-gold text-xs py-2.5 px-6 font-bold">
-                  Publish Safari Package Live
-                </button>
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <label class="inline-flex items-center gap-2 text-xs font-semibold text-[#0F172A] cursor-pointer">
+                    <input id="addSafFlagship" type="checkbox" class="accent-[#073F27]" />
+                    <span>Mark as Flagship Expedition</span>
+                  </label>
+                  <button id="safSubmitBtn" type="submit" class="btn-glass-gold text-xs py-2.5 px-6 font-bold">
+                    Publish Safari Package Live
+                  </button>
+                </div>
               </form>
 
               <div id="adminSafarisList" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></div>
@@ -705,20 +734,75 @@
 
           <!-- TAB 9: COMMENTS & COMMUNITY FEEDBACK -->
           <div id="tabContent-comments" class="admin-tab-content hidden space-y-6">
+            <!-- Moderation Policy Card -->
+            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-[#7C4D00]">Publishing Control</span>
+                  <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Database Moderation Policy</h2>
+                  <p class="text-xs text-[#334155] mt-1">Choose whether new customer comments and reviews go live immediately or wait in your Pending Approval queue.</p>
+                </div>
+                <button type="button" onclick="renderCommentsAndReviews()" class="btn-glass-forest text-xs py-2 px-4 self-start">
+                  Refresh Feedback
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label class="flex items-start gap-3 p-4 rounded-2xl border border-[#CBD5E1] bg-[#F8FAFC] cursor-pointer hover:border-[#073F27]">
+                  <input type="radio" name="moderationModeRadio" id="modModeAuto" value="auto" class="mt-0.5 accent-[#073F27]" checked />
+                  <div>
+                    <span class="text-xs font-bold text-[#0F172A] block">Auto-Publish Immediately</span>
+                    <span class="text-[11px] text-[#475569]">Customer posts go live right away. You can still edit, feature, hide, or delete any entry below.</span>
+                  </div>
+                </label>
+
+                <label class="flex items-start gap-3 p-4 rounded-2xl border border-[#CBD5E1] bg-[#F8FAFC] cursor-pointer hover:border-[#073F27]">
+                  <input type="radio" name="moderationModeRadio" id="modModeManual" value="manual" class="mt-0.5 accent-[#073F27]" />
+                  <div>
+                    <span class="text-xs font-bold text-[#0F172A] block">Owner Approval Required</span>
+                    <span class="text-[11px] text-[#475569]">New posts enter as Pending Approval and stay hidden from the public until you approve them.</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <span id="moderationCurrentSummary" class="text-xs font-semibold text-[#073F27]">Active Policy: Auto-Publish Immediately</span>
+                <button id="btnSaveModerationPolicy" type="button" onclick="saveModerationSetting()" class="btn-glass-gold text-xs py-2.5 px-5 font-bold cursor-pointer">
+                  Save Moderation Policy
+                </button>
+              </div>
+            </div>
+
+            <!-- Filter & Full Control Queue -->
             <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
-              <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-[#7C4D00]">Guest Engagement</span>
-                <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Live Comments &amp; Customer Reviews</h2>
-                <p class="text-xs text-[#334155] mt-1">Item-level Q&amp;A comments and real guest reviews synced from Supabase.</p>
+              <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-[#7C4D00]">Full Database Control</span>
+                  <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">All Section Comments &amp; Customer Reviews</h2>
+                  <p id="feedbackQueueSummary" class="text-xs text-[#334155] mt-1">Loading all comments and guest reviews...</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filter feedback by status">
+                  <button type="button" onclick="setFeedbackFilter('all')" id="fbFilter-all" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-[#073F27] bg-[#073F27] text-white cursor-pointer">All</button>
+                  <button type="button" onclick="setFeedbackFilter('pending')" id="fbFilter-pending" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-[#CBD5E1] bg-[#F8FAFC] text-[#0F172A] cursor-pointer">Pending Approval</button>
+                  <button type="button" onclick="setFeedbackFilter('published')" id="fbFilter-published" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-[#CBD5E1] bg-[#F8FAFC] text-[#0F172A] cursor-pointer">Published / Approved</button>
+                  <button type="button" onclick="setFeedbackFilter('hidden')" id="fbFilter-hidden" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-[#CBD5E1] bg-[#F8FAFC] text-[#0F172A] cursor-pointer">Hidden</button>
+                </div>
               </div>
 
               <div class="space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-[#073F27]">Item Comments &amp; Questions</h3>
-                <div id="adminCommentsList" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-[#073F27]">Section, Tour &amp; Shop Comments</h3>
+                  <span id="adminCommentsSectionCount" class="text-[11px] font-mono font-bold text-[#475569]">0 shown</span>
+                </div>
+                <div id="adminCommentsList" class="space-y-3 max-h-[30rem] overflow-y-auto pr-1"></div>
               </div>
 
-              <div class="pt-4 border-t border-[#CBD5E1] space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-[#073F27]">Published Guest Reviews</h3>
+              <div class="pt-5 border-t border-[#CBD5E1] space-y-3">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-[#073F27]">Customer Reviews Ledger</h3>
+                  <span id="adminReviewsSectionCount" class="text-[11px] font-mono font-bold text-[#475569]">0 shown</span>
+                </div>
                 <div id="adminReviewsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
               </div>
             </div>
@@ -808,6 +892,76 @@
       </div>
     </div>
 
+    <!-- IN-PAGE EDIT COMMENT / REVIEW MODAL -->
+    <div id="adminFeedbackEditModal" role="dialog" aria-modal="true" aria-labelledby="adminFeedbackEditTitle" class="hidden fixed inset-0 z-[90] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+      <div class="w-full max-w-lg bg-white border-2 border-[#CBD5E1] rounded-3xl p-6 shadow-2xl space-y-4 my-6">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span id="adminFeedbackEditTag" class="text-[10px] font-bold uppercase tracking-widest text-[#7C4D00] block">Owner Moderation Edit</span>
+            <h3 id="adminFeedbackEditTitle" class="font-editorial text-2xl font-bold text-[#0F172A]">Edit Entry</h3>
+          </div>
+          <button type="button" onclick="closeAdminFeedbackEdit()" aria-label="Close edit modal" class="w-8 h-8 rounded-full bg-[#F1F5F9] hover:bg-[#E2E8F0] border border-[#CBD5E1] text-[#0F172A] flex items-center justify-center cursor-pointer">
+            <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <form onsubmit="saveAdminFeedbackEdit(event)" class="space-y-3">
+          <input type="hidden" id="adminEditKind" value="" />
+          <input type="hidden" id="adminEditId" value="" />
+          <input type="hidden" id="adminEditItemId" value="" />
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="adminEditAuthor" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Display Name *</label>
+              <input id="adminEditAuthor" type="text" required maxlength="80" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+            </div>
+            <div>
+              <label for="adminEditRating" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Star Rating</label>
+              <select id="adminEditRating" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]">
+                <option value="5">5.0 Stars</option>
+                <option value="4">4.0 Stars</option>
+                <option value="3">3.0 Stars</option>
+                <option value="2">2.0 Stars</option>
+                <option value="1">1.0 Star</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="adminEditReviewFields" class="hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="adminEditCountry" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Country / City</label>
+                <input id="adminEditCountry" type="text" maxlength="80" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+              </div>
+              <div>
+                <label for="adminEditTour" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Tour / Service</label>
+                <input id="adminEditTour" type="text" maxlength="120" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label for="adminEditStatus" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Moderation Status</label>
+            <select id="adminEditStatus" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]"></select>
+          </div>
+
+          <div>
+            <label for="adminEditBody" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Message Content *</label>
+            <textarea id="adminEditBody" rows="4" required maxlength="800" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] resize-none"></textarea>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-2">
+            <button type="button" onclick="closeAdminFeedbackEdit()" class="px-4 py-2 rounded-xl bg-[#F1F5F9] hover:bg-[#E2E8F0] border border-[#CBD5E1] text-xs font-bold text-[#0F172A] cursor-pointer">
+              Cancel
+            </button>
+            <button id="btnAdminFeedbackSave" type="submit" class="btn-glass-gold text-xs py-2.5 px-5 font-bold cursor-pointer">
+              Save to Database
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script type="module" src="/src/site.ts"></script>
     <script>
       let pendingConfirmResolver = null;
@@ -843,8 +997,11 @@
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
           const confirmModal = document.getElementById("adminConfirmModal");
+          const editModal = document.getElementById("adminFeedbackEditModal");
           if (confirmModal && !confirmModal.classList.contains("hidden")) {
             resolveAdminConfirm(false);
+          } else if (editModal && !editModal.classList.contains("hidden")) {
+            closeAdminFeedbackEdit();
           } else {
             closeAdminSidebar();
           }
@@ -995,6 +1152,9 @@
           document.getElementById("contEmailInput").value = settings.email || "";
           document.getElementById("contTiktokInput").value = settings.tiktok || "";
           document.getElementById("contTiktokUrlInput").value = settings.tiktokUrl || "";
+          syncModerationControls(settings.moderationMode);
+        } else {
+          syncModerationControls();
         }
 
         await Promise.all([
@@ -1096,8 +1256,39 @@
         notify("TikTok reel removed.");
       }
 
+      let cachedShopProducts = [];
+      let cachedSafarisList = [];
+
+      function resetProductForm() {
+        document.getElementById("addProductForm").reset();
+        document.getElementById("editProdId").value = "";
+        document.getElementById("prodFormHeading").textContent = "Add New Product to Shop";
+        document.getElementById("prodSubmitBtn").textContent = "Publish Product to Live Shop";
+        document.getElementById("cancelEditProdBtn").classList.add("hidden");
+      }
+
+      function editProduct(id) {
+        const p = cachedShopProducts.find((item) => item.id === id);
+        if (!p) return;
+        document.getElementById("editProdId").value = p.id;
+        document.getElementById("addProdName").value = p.name || "";
+        document.getElementById("addProdCat").value = p.category || "Expedition Gear";
+        document.getElementById("addProdPrice").value = String(p.price || "");
+        document.getElementById("addProdOrigPrice").value = p.originalPrice ? String(p.originalPrice) : "";
+        document.getElementById("addProdOrigin").value = p.origin || "";
+        document.getElementById("addProdWeight").value = p.weight || "";
+        document.getElementById("addProdImage").value = p.image || "";
+        document.getElementById("addProdDesc").value = p.description || "";
+        document.getElementById("addProdSale").checked = Boolean(p.isSale);
+        document.getElementById("prodFormHeading").textContent = `Editing Product: ${p.name}`;
+        document.getElementById("prodSubmitBtn").textContent = "Save Changes to Live Shop & Homepage";
+        document.getElementById("cancelEditProdBtn").classList.remove("hidden");
+        document.getElementById("addProductForm").scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
       async function renderShopList() {
         const products = await window.db.getProducts();
+        cachedShopProducts = products;
         document.getElementById("shopCatalogCount").textContent = `${products.length} Products Active`;
         document.getElementById("kpiProductsCount").textContent = String(products.length);
         document.getElementById("sidebarProductsBadge").textContent = String(products.length);
@@ -1117,7 +1308,10 @@
                 <span class="text-xs font-mono font-bold text-[#073F27]">UGX ${Number(p.price).toLocaleString("en-US")}</span>
               </div>
             </div>
-            <button type="button" onclick="deleteProduct('${esc(p.id)}')" class="px-3 py-1.5 bg-red-50 border border-red-300 text-red-800 hover:bg-red-100 rounded-xl text-xs font-bold shrink-0 cursor-pointer">Delete</button>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button type="button" onclick="editProduct('${esc(p.id)}')" class="px-2.5 py-1.5 bg-white border border-[#CBD5E1] text-[#073F27] hover:bg-[#E2E8F0] rounded-xl text-xs font-bold cursor-pointer">Edit</button>
+              <button type="button" onclick="deleteProduct('${esc(p.id)}')" class="px-2.5 py-1.5 bg-red-50 border border-red-300 text-red-800 hover:bg-red-100 rounded-xl text-xs font-bold cursor-pointer">Delete</button>
+            </div>
           </div>
         `
           )
@@ -1126,44 +1320,77 @@
 
       async function handleAddProduct(e) {
         e.preventDefault();
+        const editId = document.getElementById("editProdId").value.trim();
+        const existing = editId ? cachedShopProducts.find((item) => item.id === editId) : null;
         const name = document.getElementById("addProdName").value.trim();
         const category = document.getElementById("addProdCat").value;
         const price = Number(document.getElementById("addProdPrice").value);
+        const origPriceRaw = Number(document.getElementById("addProdOrigPrice").value || 0);
         const origin = document.getElementById("addProdOrigin").value.trim() || "East Africa";
         const weight = document.getElementById("addProdWeight").value.trim() || "Standard";
         const image = document.getElementById("addProdImage").value.trim();
         const description = document.getElementById("addProdDesc").value.trim();
+        const isSale = document.getElementById("addProdSale").checked;
 
         await window.db.addProduct({
+          id: editId || undefined,
           name,
           category,
           price,
+          originalPrice: origPriceRaw > 0 ? origPriceRaw : undefined,
           origin,
           weight,
           image,
           description,
-          rating: 5,
-          reviewsCount: 0,
+          isSale,
+          rating: existing ? existing.rating : 5,
+          reviewsCount: existing ? existing.reviewsCount : 0,
           inStock: true,
-          likesCount: 0,
-          flavorNotes: [],
+          likesCount: existing ? existing.likesCount : 0,
+          flavorNotes: existing ? existing.flavorNotes : [],
         });
 
-        notify(`Published "${name}" (UGX ${price.toLocaleString("en-US")}).`);
-        document.getElementById("addProductForm").reset();
+        notify(editId ? `Updated "${name}" live across Shop & Homepage.` : `Published "${name}" (UGX ${price.toLocaleString("en-US")}).`);
+        resetProductForm();
         await renderShopList();
       }
 
       async function deleteProduct(id) {
-        const ok = await askConfirm("Delete Shop Product", "Remove this product from the live Expedition Shop?");
+        const ok = await askConfirm("Delete Shop Product", "Remove this product from the live Expedition Shop and homepage?");
         if (!ok) return;
         await window.db.deleteProduct(id);
         await renderShopList();
         notify("Product deleted from catalog.");
       }
 
+      function resetSafariForm() {
+        document.getElementById("addSafariForm").reset();
+        document.getElementById("editSafId").value = "";
+        document.getElementById("safFormHeading").textContent = "Create New Safari Package";
+        document.getElementById("safSubmitBtn").textContent = "Publish Safari Package Live";
+        document.getElementById("cancelEditSafBtn").classList.add("hidden");
+      }
+
+      function editSafari(id) {
+        const s = cachedSafarisList.find((item) => item.id === id);
+        if (!s) return;
+        document.getElementById("editSafId").value = s.id;
+        document.getElementById("addSafTitle").value = s.title || "";
+        document.getElementById("addSafDuration").value = s.duration || "";
+        document.getElementById("addSafPrice").value = String(s.priceUGX || "");
+        document.getElementById("addSafDest").value = s.destinationsFormatted || "";
+        document.getElementById("addSafImage").value = s.image || "";
+        document.getElementById("addSafOverview").value = s.overview || "";
+        document.getElementById("addSafFlagship").checked = Boolean(s.isFlagship);
+        document.getElementById("safFormHeading").textContent = `Editing Safari: ${s.title}`;
+        document.getElementById("safSubmitBtn").textContent = "Save Safari Changes to Live Site";
+        document.getElementById("cancelEditSafBtn").classList.remove("hidden");
+        document.getElementById("addSafariForm").scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
       async function renderSafarisList() {
         const safaris = await window.db.getSafaris();
+        cachedSafarisList = safaris;
         document.getElementById("safariCatalogCount").textContent = `${safaris.length} Active Tours`;
         document.getElementById("kpiSafarisCount").textContent = String(safaris.length);
         document.getElementById("sidebarSafarisBadge").textContent = String(safaris.length);
@@ -1183,7 +1410,10 @@
                 <span class="text-xs text-[#7C4D00] font-mono font-bold">${esc(s.formattedPriceUGX || "UGX " + Number(s.priceUGX).toLocaleString("en-US"))}</span>
               </div>
             </div>
-            <button type="button" onclick="deleteSafari('${esc(s.id)}')" class="px-3 py-1.5 bg-red-50 border border-red-300 text-red-800 hover:bg-red-100 rounded-xl text-xs font-bold shrink-0 cursor-pointer">Delete</button>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button type="button" onclick="editSafari('${esc(s.id)}')" class="px-2.5 py-1.5 bg-white border border-[#CBD5E1] text-[#073F27] hover:bg-[#E2E8F0] rounded-xl text-xs font-bold cursor-pointer">Edit</button>
+              <button type="button" onclick="deleteSafari('${esc(s.id)}')" class="px-2.5 py-1.5 bg-red-50 border border-red-300 text-red-800 hover:bg-red-100 rounded-xl text-xs font-bold cursor-pointer">Delete</button>
+            </div>
           </div>
         `
           )
@@ -1192,38 +1422,43 @@
 
       async function handleAddSafari(e) {
         e.preventDefault();
+        const editId = document.getElementById("editSafId").value.trim();
+        const existing = editId ? cachedSafarisList.find((item) => item.id === editId) : null;
         const title = document.getElementById("addSafTitle").value.trim();
         const duration = document.getElementById("addSafDuration").value.trim();
         const priceUGX = Number(document.getElementById("addSafPrice").value);
         const destinationsFormatted = document.getElementById("addSafDest").value.trim() || "Uganda & East Africa";
         const image = document.getElementById("addSafImage").value.trim();
         const overview = document.getElementById("addSafOverview").value.trim();
+        const isFlagship = document.getElementById("addSafFlagship").checked;
 
         await window.db.addSafari({
+          id: editId || undefined,
           title,
           duration,
-          durationDays: 5,
+          durationDays: existing ? existing.durationDays : 5,
           destinations: [destinationsFormatted],
           destinationsFormatted,
           priceUGX,
           formattedPriceUGX: "UGX " + priceUGX.toLocaleString("en-US"),
           image,
           overview,
-          highlights: ["Private 4x4 Land Cruiser", "English-speaking driver guide", "Park entrance permits included"],
-          included: ["Transport", "Accommodations", "Park fees"],
-          excluded: ["International flights", "Visas"],
-          accommodationLevel: "Luxury",
-          likesCount: 0,
-          itinerary: [],
+          isFlagship,
+          highlights: existing ? existing.highlights : ["Private 4x4 Land Cruiser", "English-speaking driver guide", "Park entrance permits included"],
+          included: existing ? existing.included : ["Transport", "Accommodations", "Park fees"],
+          excluded: existing ? existing.excluded : ["International flights", "Visas"],
+          accommodationLevel: existing ? existing.accommodationLevel : "Luxury",
+          likesCount: existing ? existing.likesCount : 0,
+          itinerary: existing ? existing.itinerary : [],
         });
 
-        notify(`Published "${title}" live.`);
-        document.getElementById("addSafariForm").reset();
+        notify(editId ? `Updated "${title}" live.` : `Published "${title}" live.`);
+        resetSafariForm();
         await renderSafarisList();
       }
 
       async function deleteSafari(id) {
-        const ok = await askConfirm("Delete Safari Package", "Remove this safari expedition from the live tours catalog?");
+        const ok = await askConfirm("Delete Safari Package", "Remove this safari expedition from the live tours catalog and homepage?");
         if (!ok) return;
         await window.db.deleteSafari(id);
         await renderSafarisList();
@@ -1271,58 +1506,347 @@
         notify("Order inbox cleared.");
       }
 
+      let currentFeedbackFilter = "all";
+      let adminCommentsCache = [];
+      let adminReviewsCache = [];
+
+      function syncModerationControls(explicitMode) {
+        const cur = window.db ? window.db.getSettings() : {};
+        const mode = explicitMode || cur.moderationMode || "auto";
+        const autoRadio = document.getElementById("modModeAuto");
+        const manualRadio = document.getElementById("modModeManual");
+        const summary = document.getElementById("moderationCurrentSummary");
+        if (autoRadio) autoRadio.checked = mode !== "manual";
+        if (manualRadio) manualRadio.checked = mode === "manual";
+        if (summary) {
+          summary.textContent =
+            mode === "manual"
+              ? "Active Policy: Owner Approval Required (new posts stay hidden until approved)"
+              : "Active Policy: Auto-Publish Immediately (owner can edit, hide, or delete anytime)";
+        }
+      }
+
+      async function saveModerationSetting() {
+        const manualRadio = document.getElementById("modModeManual");
+        const mode = manualRadio && manualRadio.checked ? "manual" : "auto";
+        const btn = document.getElementById("btnSaveModerationPolicy");
+        if (btn) btn.disabled = true;
+
+        const cur = window.db.getSettings();
+        cur.moderationMode = mode;
+        const res = await window.db.saveSettings(cur);
+        syncModerationControls(mode);
+
+        if (btn) btn.disabled = false;
+        notify(
+          res.cloudSynced
+            ? `Moderation policy updated (${mode === "manual" ? "Owner Approval Required" : "Auto-Publish"}) and synced to Supabase.`
+            : "Moderation policy saved locally. Run the latest SQL schema script to sync moderation settings across devices."
+        );
+      }
+
+      function setFeedbackFilter(filterKey) {
+        currentFeedbackFilter = filterKey || "all";
+        ["all", "pending", "published", "hidden"].forEach((key) => {
+          const btn = document.getElementById("fbFilter-" + key);
+          if (!btn) return;
+          if (key === currentFeedbackFilter) {
+            btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold border border-[#073F27] bg-[#073F27] text-white cursor-pointer";
+          } else {
+            btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold border border-[#CBD5E1] bg-[#F8FAFC] text-[#0F172A] cursor-pointer";
+          }
+        });
+        renderCommentsAndReviews();
+      }
+
+      function matchesStatusFilter(statusVal, isReview) {
+        const st = statusVal || (isReview ? "Verified Guest" : "Published");
+        if (currentFeedbackFilter === "all") return true;
+        if (currentFeedbackFilter === "pending") return st === "Pending Approval";
+        if (currentFeedbackFilter === "hidden") return st === "Hidden";
+        return st !== "Pending Approval" && st !== "Hidden";
+      }
+
       async function renderCommentsAndReviews() {
         const [comments, reviews] = await Promise.all([
-          window.db.getAllComments(),
-          window.db.getReviews(),
+          window.db.getAllComments(true),
+          window.db.getReviews(true),
         ]);
 
-        const total = comments.length + reviews.length;
-        document.getElementById("kpiFeedbackCount").textContent = String(total);
+        adminCommentsCache = comments || [];
+        adminReviewsCache = reviews || [];
+
+        const total = adminCommentsCache.length + adminReviewsCache.length;
+        const pendingTotal =
+          adminCommentsCache.filter((c) => c.status === "Pending Approval").length +
+          adminReviewsCache.filter((r) => r.status === "Pending Approval").length;
+        const hiddenTotal =
+          adminCommentsCache.filter((c) => c.status === "Hidden").length +
+          adminReviewsCache.filter((r) => r.status === "Hidden").length;
+        const publishedTotal = total - pendingTotal - hiddenTotal;
+
+        const kpiEl = document.getElementById("kpiFeedbackCount");
+        if (kpiEl) kpiEl.textContent = String(total);
+
+        const sidebarBadge = document.getElementById("sidebarFeedbackBadge");
+        if (sidebarBadge) {
+          sidebarBadge.textContent = pendingTotal > 0 ? `${pendingTotal} pending` : String(total);
+          sidebarBadge.className =
+            pendingTotal > 0
+              ? "admin-nav-badge px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-100 text-[#7C4D00] border border-amber-300"
+              : "admin-nav-badge px-2 py-0.5 rounded-full text-[10px] font-mono bg-[#F1F5F9] text-[#0F172A]";
+        }
+
+        const queueSummary = document.getElementById("feedbackQueueSummary");
+        if (queueSummary) {
+          queueSummary.textContent = `Total: ${total} · Published: ${publishedTotal} · Pending Approval: ${pendingTotal} · Hidden: ${hiddenTotal}`;
+        }
+
+        const fAll = document.getElementById("fbFilter-all");
+        const fPen = document.getElementById("fbFilter-pending");
+        const fPub = document.getElementById("fbFilter-published");
+        const fHid = document.getElementById("fbFilter-hidden");
+        if (fAll) fAll.textContent = `All (${total})`;
+        if (fPen) fPen.textContent = `Pending (${pendingTotal})`;
+        if (fPub) fPub.textContent = `Published (${publishedTotal})`;
+        if (fHid) fHid.textContent = `Hidden (${hiddenTotal})`;
+
+        const filteredComments = adminCommentsCache.filter((c) => matchesStatusFilter(c.status, false));
+        const filteredReviews = adminReviewsCache.filter((r) => matchesStatusFilter(r.status, true));
+
+        const ccEl = document.getElementById("adminCommentsSectionCount");
+        if (ccEl) ccEl.textContent = `${filteredComments.length} shown`;
+        const rcEl = document.getElementById("adminReviewsSectionCount");
+        if (rcEl) rcEl.textContent = `${filteredReviews.length} shown`;
 
         const commentsList = document.getElementById("adminCommentsList");
         if (commentsList) {
           commentsList.innerHTML =
-            comments.length === 0
-              ? `<p class="text-xs text-[#475569] italic py-4 bg-[#F8FAFC] rounded-xl px-4 border border-[#CBD5E1]">No item comments submitted yet.</p>`
-              : comments
-                  .map(
-                    (c) => `
-            <div class="p-3.5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-xl text-xs space-y-1">
-              <div class="flex items-center justify-between gap-2">
-                <span class="font-bold text-[#0F172A]">${esc(c.author)}</span>
+            filteredComments.length === 0
+              ? `<p class="text-xs text-[#475569] italic py-4 bg-[#F8FAFC] rounded-xl px-4 border border-[#CBD5E1]">No section, tour, or shop comments match the selected filter.</p>`
+              : filteredComments
+                  .map((c) => {
+                    const st = c.status || "Published";
+                    const stClass =
+                      st === "Pending Approval"
+                        ? "bg-amber-100 text-[#7C4D00] border border-amber-300"
+                        : st === "Hidden"
+                        ? "bg-slate-200 text-[#334155] border border-slate-300"
+                        : "bg-emerald-100 text-[#073F27] border border-emerald-300";
+                    return `
+            <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl text-xs space-y-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="font-bold text-[#0F172A]">${esc(c.author)}</span>
+                  <span class="px-2 py-0.5 rounded-full bg-white border border-[#CBD5E1] text-[10px] font-mono text-[#334155]">${esc(c.itemType || "item")}: ${esc(c.itemId || "")}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${stClass}">${esc(st)}</span>
+                </div>
                 <span class="text-[#7C4D00] font-bold">${Number(c.rating) || 5}.0 / 5.0 · <span class="text-[#475569] text-[10px]">${esc(c.date)}</span></span>
               </div>
-              <p class="text-xs text-[#334155]">"${esc(c.text)}"</p>
+              <p class="text-xs text-[#334155] leading-relaxed">"${esc(c.text)}"</p>
+              <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-[#E2E8F0]">
+                ${
+                  st !== "Published"
+                    ? `<button type="button" onclick="moderateCommentStatus('${esc(c.id)}', 'Published')" class="px-2.5 py-1 rounded-lg bg-[#073F27] hover:bg-[#0A5233] text-white text-[11px] font-bold cursor-pointer">Approve &amp; Publish</button>`
+                    : ""
+                }
+                ${
+                  st !== "Hidden"
+                    ? `<button type="button" onclick="moderateCommentStatus('${esc(c.id)}', 'Hidden')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#F1F5F9] border border-[#CBD5E1] text-[#334155] text-[11px] font-bold cursor-pointer">Hide</button>`
+                    : ""
+                }
+                <button type="button" onclick="openAdminFeedbackEdit('comment', '${esc(c.id)}')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#F1F5F9] border border-[#CBD5E1] text-[#073F27] text-[11px] font-bold cursor-pointer">Edit</button>
+                <button type="button" onclick="deleteAdminComment('${esc(c.id)}')" class="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 text-[11px] font-bold cursor-pointer">Delete</button>
+              </div>
             </div>
-          `
-                  )
+          `;
+                  })
                   .join("");
         }
 
         const reviewsList = document.getElementById("adminReviewsList");
         if (reviewsList) {
           reviewsList.innerHTML =
-            reviews.length === 0
-              ? `<p class="md:col-span-2 text-xs text-[#475569] italic py-4 bg-[#F8FAFC] rounded-xl px-4 border border-[#CBD5E1]">No guest reviews submitted yet. Real traveller reviews submitted on reviews.html appear here automatically.</p>`
-              : reviews
-                  .map(
-                    (r) => `
-            <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl text-xs space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="font-bold text-[#7C4D00]">${Number(r.rating) || 5}.0 / 5.0 Stars</span>
-                <span class="px-2 py-0.5 rounded-full bg-[#073F27] text-white text-[10px] font-bold">${esc(r.status || "Verified Guest")}</span>
+            filteredReviews.length === 0
+              ? `<p class="md:col-span-2 text-xs text-[#475569] italic py-4 bg-[#F8FAFC] rounded-xl px-4 border border-[#CBD5E1]">No guest reviews match the selected filter. Real traveller reviews submitted on reviews.html appear here automatically.</p>`
+              : filteredReviews
+                  .map((r) => {
+                    const st = r.status || "Verified Guest";
+                    const stClass =
+                      st === "Pending Approval"
+                        ? "bg-amber-100 text-[#7C4D00] border border-amber-300"
+                        : st === "Hidden"
+                        ? "bg-slate-200 text-[#334155] border border-slate-300"
+                        : st === "Featured on Homepage"
+                        ? "bg-[#D99A00] text-[#042617]"
+                        : "bg-[#073F27] text-white";
+                    return `
+            <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl text-xs space-y-2.5 flex flex-col justify-between">
+              <div class="space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="font-bold text-[#7C4D00]">${Number(r.rating) || 5}.0 / 5.0 Stars</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${stClass}">${esc(st)}</span>
+                </div>
+                <p class="text-[#334155] italic leading-relaxed">"${esc(r.content)}"</p>
+                <div class="border-t border-[#E2E8F0] pt-2">
+                  <strong class="text-[#0F172A] block">${esc(r.author)} (${esc(r.country)})</strong>
+                  <span class="text-[10px] text-[#475569]">${esc(r.tourName)} · ${esc(r.date || "Recent")}</span>
+                </div>
               </div>
-              <p class="text-[#334155] italic">"${esc(r.content)}"</p>
-              <div class="border-t border-[#CBD5E1] pt-2">
-                <strong class="text-[#0F172A] block">${esc(r.author)} (${esc(r.country)})</strong>
-                <span class="text-[10px] text-[#475569]">${esc(r.tourName)}</span>
+              <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-[#E2E8F0]">
+                ${
+                  st !== "Verified Guest" && st !== "Featured on Homepage"
+                    ? `<button type="button" onclick="moderateReviewStatus('${esc(r.id)}', 'Verified Guest')" class="px-2.5 py-1 rounded-lg bg-[#073F27] hover:bg-[#0A5233] text-white text-[11px] font-bold cursor-pointer">Approve</button>`
+                    : ""
+                }
+                ${
+                  st !== "Featured on Homepage"
+                    ? `<button type="button" onclick="moderateReviewStatus('${esc(r.id)}', 'Featured on Homepage')" class="px-2.5 py-1 rounded-lg bg-[#D99A00] hover:bg-[#c58b00] text-[#042617] text-[11px] font-bold cursor-pointer">Feature on Home</button>`
+                    : `<button type="button" onclick="moderateReviewStatus('${esc(r.id)}', 'Verified Guest')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#F1F5F9] border border-[#CBD5E1] text-[#073F27] text-[11px] font-bold cursor-pointer">Standard Verified</button>`
+                }
+                ${
+                  st !== "Hidden"
+                    ? `<button type="button" onclick="moderateReviewStatus('${esc(r.id)}', 'Hidden')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#F1F5F9] border border-[#CBD5E1] text-[#334155] text-[11px] font-bold cursor-pointer">Hide</button>`
+                    : ""
+                }
+                <button type="button" onclick="openAdminFeedbackEdit('review', '${esc(r.id)}')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#F1F5F9] border border-[#CBD5E1] text-[#073F27] text-[11px] font-bold cursor-pointer">Edit</button>
+                <button type="button" onclick="deleteAdminReview('${esc(r.id)}')" class="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 text-[11px] font-bold cursor-pointer">Delete</button>
               </div>
             </div>
-          `
-                  )
+          `;
+                  })
                   .join("");
         }
+      }
+
+      async function moderateCommentStatus(commentId, nextStatus) {
+        const target = adminCommentsCache.find((c) => String(c.id) === String(commentId));
+        if (!target) return;
+        await window.db.updateComment(target.id, target.itemId, { status: nextStatus });
+        await renderCommentsAndReviews();
+        notify(`Comment marked as ${nextStatus}.`);
+      }
+
+      async function deleteAdminComment(commentId) {
+        const target = adminCommentsCache.find((c) => String(c.id) === String(commentId));
+        if (!target) return;
+        const ok = await askConfirm(
+          "Delete Comment Permanently",
+          `Remove comment by ${target.author} from ${target.itemId}? This removes it from Supabase.`
+        );
+        if (!ok) return;
+        await window.db.deleteComment(target.id, target.itemId);
+        await renderCommentsAndReviews();
+        notify("Comment deleted permanently.");
+      }
+
+      async function moderateReviewStatus(reviewId, nextStatus) {
+        await window.db.updateReview(reviewId, { status: nextStatus });
+        await renderCommentsAndReviews();
+        notify(`Review status updated to ${nextStatus}.`);
+      }
+
+      async function deleteAdminReview(reviewId) {
+        const target = adminReviewsCache.find((r) => String(r.id) === String(reviewId));
+        if (!target) return;
+        const ok = await askConfirm(
+          "Delete Guest Review",
+          `Permanently delete review by ${target.author}? This deletes it from Supabase and your live site.`
+        );
+        if (!ok) return;
+        await window.db.deleteReview(reviewId);
+        await renderCommentsAndReviews();
+        notify("Guest review deleted permanently.");
+      }
+
+      function openAdminFeedbackEdit(kind, id) {
+        const modal = document.getElementById("adminFeedbackEditModal");
+        const statusSel = document.getElementById("adminEditStatus");
+        const reviewFields = document.getElementById("adminEditReviewFields");
+        document.getElementById("adminEditKind").value = kind;
+        document.getElementById("adminEditId").value = id;
+
+        if (kind === "comment") {
+          const item = adminCommentsCache.find((c) => String(c.id) === String(id));
+          if (!item) return;
+          document.getElementById("adminFeedbackEditTag").textContent = `Section / Item Comment · ${item.itemId || ""}`;
+          document.getElementById("adminFeedbackEditTitle").textContent = "Edit Customer Comment";
+          document.getElementById("adminEditItemId").value = item.itemId || "";
+          document.getElementById("adminEditAuthor").value = item.author || "";
+          document.getElementById("adminEditRating").value = String(Number(item.rating) || 5);
+          document.getElementById("adminEditBody").value = item.text || "";
+          reviewFields.classList.add("hidden");
+          statusSel.innerHTML = `
+            <option value="Published">Published</option>
+            <option value="Pending Approval">Pending Approval</option>
+            <option value="Hidden">Hidden</option>
+          `;
+          statusSel.value = item.status || "Published";
+        } else {
+          const item = adminReviewsCache.find((r) => String(r.id) === String(id));
+          if (!item) return;
+          document.getElementById("adminFeedbackEditTag").textContent = `Guest Review Ledger · ${item.id || ""}`;
+          document.getElementById("adminFeedbackEditTitle").textContent = "Edit Customer Review";
+          document.getElementById("adminEditItemId").value = "";
+          document.getElementById("adminEditAuthor").value = item.author || "";
+          document.getElementById("adminEditRating").value = String(Number(item.rating) || 5);
+          document.getElementById("adminEditCountry").value = item.country || "";
+          document.getElementById("adminEditTour").value = item.tourName || "";
+          document.getElementById("adminEditBody").value = item.content || "";
+          reviewFields.classList.remove("hidden");
+          statusSel.innerHTML = `
+            <option value="Verified Guest">Verified Guest</option>
+            <option value="Featured on Homepage">Featured on Homepage</option>
+            <option value="Pending Approval">Pending Approval</option>
+            <option value="Hidden">Hidden</option>
+          `;
+          statusSel.value = item.status || "Verified Guest";
+        }
+
+        modal.classList.remove("hidden");
+        document.getElementById("adminEditAuthor").focus();
+      }
+
+      function closeAdminFeedbackEdit() {
+        document.getElementById("adminFeedbackEditModal").classList.add("hidden");
+      }
+
+      async function saveAdminFeedbackEdit(e) {
+        e.preventDefault();
+        const kind = document.getElementById("adminEditKind").value;
+        const id = document.getElementById("adminEditId").value;
+        const itemId = document.getElementById("adminEditItemId").value;
+        const author = document.getElementById("adminEditAuthor").value.trim();
+        const rating = Number(document.getElementById("adminEditRating").value || 5);
+        const status = document.getElementById("adminEditStatus").value;
+        const body = document.getElementById("adminEditBody").value.trim();
+        const btn = document.getElementById("btnAdminFeedbackSave");
+        if (btn) btn.disabled = true;
+
+        if (kind === "comment") {
+          await window.db.updateComment(id, itemId, {
+            author,
+            rating,
+            text: body,
+            status,
+          });
+        } else {
+          const country = document.getElementById("adminEditCountry").value.trim();
+          const tourName = document.getElementById("adminEditTour").value.trim();
+          await window.db.updateReview(id, {
+            author,
+            country,
+            tourName,
+            rating,
+            content: body,
+            status,
+          });
+        }
+
+        if (btn) btn.disabled = false;
+        closeAdminFeedbackEdit();
+        await renderCommentsAndReviews();
+        notify(kind === "comment" ? "Comment updated in database." : "Guest review updated in database.");
       }
 
       async function renderDeletionsList() {

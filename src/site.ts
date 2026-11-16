@@ -71,6 +71,7 @@ export interface CommentItem {
   text: string;
   itemType: string;
   date: string;
+  status?: "Published" | "Pending Approval" | "Hidden";
 }
 
 export interface CustomerReview {
@@ -85,7 +86,12 @@ export interface CustomerReview {
   guideScore: number;
   lodgingScore: number;
   content: string;
-  status: "Verified Guest" | "Featured on Homepage" | "Approved";
+  status:
+    | "Verified Guest"
+    | "Featured on Homepage"
+    | "Approved"
+    | "Pending Approval"
+    | "Hidden";
 }
 
 export interface CoffeeOrder {
@@ -489,7 +495,55 @@ const DEFAULT_SETTINGS = {
   address: "Plot 14 Entebbe Road, Kampala, Uganda",
   mapEmbedUrl:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15959.035313936648!2d32.5711!3d0.3136!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x177dbb8a7b97c0f1%3A0x6b77741d4f23b20!2sEntebbe%20Rd%2C%20Kampala!5e0!3m2!1sen!2sug!4v1700000000000!5m2!1sen!2sug",
+  moderationMode: "auto" as "auto" | "manual",
 };
+
+const MY_REVIEWS_KEY = "sonnenpfad_my_review_ids";
+const MY_COMMENTS_KEY = "sonnenpfad_my_comment_ids";
+
+function readIdSet(storageKey: string): string[] {
+  try {
+    const raw = localStorage.getItem(storageKey);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+function addIdToSet(storageKey: string, id: string) {
+  try {
+    const existing = readIdSet(storageKey);
+    if (!existing.includes(id)) {
+      existing.unshift(id);
+      localStorage.setItem(storageKey, JSON.stringify(existing.slice(0, 200)));
+    }
+  } catch {}
+}
+
+function removeIdFromSet(storageKey: string, id: string) {
+  try {
+    const filtered = readIdSet(storageKey).filter((x) => x !== id);
+    localStorage.setItem(storageKey, JSON.stringify(filtered));
+  } catch {}
+}
+
+function isPublicStatus(status?: string): boolean {
+  return status !== "Hidden" && status !== "Pending Approval";
+}
+
+function mapCommentRow(d: any): CommentItem {
+  return {
+    id: d.id,
+    itemId: d.item_id,
+    author: d.author,
+    rating: Number(d.rating) || 5,
+    text: d.text,
+    itemType: d.item_type || "general",
+    date: d.date,
+    status: (d.status as CommentItem["status"]) || "Published",
+  };
+}
 
 const DEFAULT_TIKTOKS: TikTokItem[] = [
   {
@@ -610,7 +664,7 @@ function mapOrderRow(d: any): CoffeeOrder {
 export const db = {
   async fetchLive() {
     try {
-      const [settingsRes, safarisRes, productsRes, tiktoksRes, reviewsRes, ordersRes] =
+      const [settingsRes, safarisRes, productsRes, tiktoksRes, reviewsRes, ordersRes, likesRes, commentsRes] =
         await Promise.allSettled([
           supabase.from("settings").select("*").eq("id", "primary_config").maybeSingle(),
           supabase.from("safaris").select("*").order("created_at", { ascending: false }),
@@ -618,10 +672,13 @@ export const db = {
           supabase.from("tiktoks").select("*").order("created_at", { ascending: false }),
           supabase.from("reviews").select("*").order("created_at", { ascending: false }),
           supabase.from("orders").select("*").order("created_at", { ascending: false }),
+          supabase.from("likes").select("item_id, count"),
+          supabase.from("comments").select("*").order("created_at", { ascending: false }),
         ]);
 
       if (settingsRes.status === "fulfilled" && !settingsRes.value.error && settingsRes.value.data) {
         const s = settingsRes.value.data;
+        const localSaved = this.getSettings();
         const merged = {
           ...DEFAULT_SETTINGS,
           phone: s.phone || DEFAULT_SETTINGS.phone,
@@ -631,6 +688,7 @@ export const db = {
           tiktokUrl: s.tiktok_url || DEFAULT_SETTINGS.tiktokUrl,
           address: s.address || DEFAULT_SETTINGS.address,
           mapEmbedUrl: s.map_embed_url || DEFAULT_SETTINGS.mapEmbedUrl,
+          moderationMode: (s.moderation_mode || localSaved.moderationMode || "auto") as "auto" | "manual",
         };
         localStorage.setItem("sonnenpfad_settings", JSON.stringify(merged));
         if (s.admin_passcode) {
@@ -677,6 +735,36 @@ export const db = {
           JSON.stringify(ordersRes.value.data.map(mapOrderRow))
         );
       }
+
+      if (likesRes.status === "fulfilled" && !likesRes.value.error && likesRes.value.data) {
+        for (const row of likesRes.value.data as any[]) {
+          if (row && row.item_id) {
+            localStorage.setItem("sonnenpfad_likes_" + row.item_id, String(Number(row.count) || 0));
+          }
+        }
+      }
+
+      if (commentsRes.status === "fulfilled" && !commentsRes.value.error && commentsRes.value.data) {
+        const grouped: Record<string, CommentItem[]> = {};
+        for (const row of commentsRes.value.data as any[]) {
+          const item = mapCommentRow(row);
+          if (!grouped[item.itemId]) grouped[item.itemId] = [];
+          grouped[item.itemId].push(item);
+        }
+        // Refresh cached per-item comment keys from cloud snapshot
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith("sonnenpfad_comments_")) {
+            const itemId = k.replace("sonnenpfad_comments_", "");
+            if (!grouped[itemId]) {
+              localStorage.setItem(k, "[]");
+            }
+          }
+        }
+        for (const [itemId, items] of Object.entries(grouped)) {
+          localStorage.setItem("sonnenpfad_comments_" + itemId, JSON.stringify(items));
+        }
+      }
     } catch {
       // Offline fallback cleanly uses local storage
     }
@@ -686,6 +774,14 @@ export const db = {
       settings: this.getSettings(),
       tiktoks: this.getTiktoks(),
     };
+  },
+
+  getItemLikeCount(itemId: string, fallbackCount: number = 0): number {
+    try {
+      const val = localStorage.getItem("sonnenpfad_likes_" + itemId);
+      if (val !== null) return Number(val) || 0;
+    } catch {}
+    return Number(fallbackCount) || 0;
   },
 
   async getSafaris(): Promise<SafariPackage[]> {
@@ -742,6 +838,7 @@ export const db = {
     const existing = await this.getSafaris();
     const deduped = [completeItem, ...existing.filter((s) => s.id !== completeItem.id)];
     await this.saveSafaris(deduped);
+    hydrateLiveSiteContent();
     return completeItem;
   },
 
@@ -753,6 +850,7 @@ export const db = {
     const current: SafariPackage[] = storedRaw ? JSON.parse(storedRaw) : await this.getSafaris();
     const filtered = current.filter((s) => s.id !== id);
     await this.saveSafaris(filtered);
+    hydrateLiveSiteContent();
   },
 
   async getProducts(): Promise<ShopProduct[]> {
@@ -807,6 +905,7 @@ export const db = {
     const existing = await this.getProducts();
     const deduped = [completeItem, ...existing.filter((p) => p.id !== completeItem.id)];
     await this.saveProducts(deduped);
+    hydrateLiveSiteContent();
     return completeItem;
   },
 
@@ -818,6 +917,7 @@ export const db = {
     const current: ShopProduct[] = storedRaw ? JSON.parse(storedRaw) : await this.getProducts();
     const filtered = current.filter((p) => p.id !== id);
     await this.saveProducts(filtered);
+    hydrateLiveSiteContent();
   },
 
   async getOrders(): Promise<CoffeeOrder[]> {
@@ -903,26 +1003,47 @@ export const db = {
     localStorage.setItem("sonnenpfad_coffee_orders", "[]");
   },
 
-  // Reviews System (Authentic user-submitted reviews only — zero fabricated defaults)
-  async getReviews(): Promise<CustomerReview[]> {
+  // Authorship Ownership Helpers (so visitors can edit/delete their own posts without login)
+  getMyReviewIds(): string[] {
+    return readIdSet(MY_REVIEWS_KEY);
+  },
+
+  isMyReview(id: string): boolean {
+    return readIdSet(MY_REVIEWS_KEY).includes(id);
+  },
+
+  getMyCommentIds(): string[] {
+    return readIdSet(MY_COMMENTS_KEY);
+  },
+
+  isMyComment(id: string): boolean {
+    return readIdSet(MY_COMMENTS_KEY).includes(id);
+  },
+
+  // Reviews System (Authentic user-submitted reviews + Owner moderation control)
+  async getReviews(includeUnpublished: boolean = false): Promise<CustomerReview[]> {
+    let list: CustomerReview[] = [];
     try {
       const { data, error } = await supabase
         .from("reviews")
         .select("*")
         .order("created_at", { ascending: false });
       if (!error && data) {
-        const mapped = data.map(mapReviewRow);
-        localStorage.setItem("sonnenpfad_reviews", JSON.stringify(mapped));
-        return mapped;
+        list = data.map(mapReviewRow);
+        localStorage.setItem("sonnenpfad_reviews", JSON.stringify(list));
       }
     } catch {}
 
-    try {
-      const stored = localStorage.getItem("sonnenpfad_reviews");
-      return stored ? JSON.parse(stored) : DEFAULT_REVIEWS;
-    } catch {
-      return DEFAULT_REVIEWS;
+    if (list.length === 0) {
+      try {
+        const stored = localStorage.getItem("sonnenpfad_reviews");
+        list = stored ? JSON.parse(stored) : DEFAULT_REVIEWS;
+      } catch {
+        list = DEFAULT_REVIEWS;
+      }
     }
+
+    return includeUnpublished ? list : list.filter((r) => isPublicStatus(r.status));
   },
 
   async addReview(input: {
@@ -932,6 +1053,10 @@ export const db = {
     rating: number;
     content: string;
   }): Promise<CustomerReview> {
+    const modMode = this.getSettings().moderationMode || "auto";
+    const initialStatus: CustomerReview["status"] =
+      modMode === "manual" ? "Pending Approval" : "Verified Guest";
+
     const newRev: CustomerReview = {
       id: "rev-" + Date.now(),
       author: input.author.trim(),
@@ -944,7 +1069,7 @@ export const db = {
       guideScore: Math.min(100, (Number(input.rating) || 5) * 20),
       lodgingScore: Math.min(100, (Number(input.rating) || 5) * 20),
       content: input.content.trim(),
-      status: "Verified Guest",
+      status: initialStatus,
     };
 
     try {
@@ -965,12 +1090,99 @@ export const db = {
     } catch {}
 
     try {
-      const existing = JSON.parse(localStorage.getItem("sonnenpfad_reviews") || "[]");
+      const existing: CustomerReview[] = JSON.parse(
+        localStorage.getItem("sonnenpfad_reviews") || "[]"
+      );
       existing.unshift(newRev);
       localStorage.setItem("sonnenpfad_reviews", JSON.stringify(existing));
+      addIdToSet(MY_REVIEWS_KEY, newRev.id);
     } catch {}
 
+    hydrateLiveSiteContent();
     return newRev;
+  },
+
+  async updateReview(
+    id: string,
+    patch: Partial<{
+      author: string;
+      country: string;
+      tourName: string;
+      rating: number;
+      content: string;
+      status: CustomerReview["status"];
+    }>
+  ): Promise<CustomerReview | null> {
+    const existingList = await this.getReviews(true);
+    const current = existingList.find((r) => r.id === id);
+    if (!current) return null;
+
+    const nextRating = patch.rating !== undefined ? Number(patch.rating) || 5 : current.rating;
+    const score = Math.min(100, nextRating * 20);
+    const updated: CustomerReview = {
+      ...current,
+      author: patch.author !== undefined ? patch.author.trim() : current.author,
+      country: patch.country !== undefined ? patch.country.trim() : current.country,
+      tourName: patch.tourName !== undefined ? patch.tourName.trim() : current.tourName,
+      rating: nextRating,
+      overallScore: score,
+      wildlifeScore: score,
+      guideScore: score,
+      lodgingScore: score,
+      content: patch.content !== undefined ? patch.content.trim() : current.content,
+      status: patch.status !== undefined ? patch.status : current.status,
+    };
+
+    try {
+      await supabase
+        .from("reviews")
+        .update({
+          author: updated.author,
+          country: updated.country,
+          tour_name: updated.tourName,
+          rating: updated.rating,
+          overall_score: updated.overallScore,
+          wildlife_score: updated.wildlifeScore,
+          guide_score: updated.guideScore,
+          lodging_score: updated.lodgingScore,
+          content: updated.content,
+          status: updated.status,
+        })
+        .eq("id", id);
+    } catch {}
+
+    try {
+      const localList: CustomerReview[] = JSON.parse(
+        localStorage.getItem("sonnenpfad_reviews") || "[]"
+      );
+      const nextLocal = localList.some((r) => r.id === id)
+        ? localList.map((r) => (r.id === id ? updated : r))
+        : [updated, ...localList];
+      localStorage.setItem("sonnenpfad_reviews", JSON.stringify(nextLocal));
+    } catch {}
+
+    hydrateLiveSiteContent();
+    return updated;
+  },
+
+  async deleteReview(id: string): Promise<boolean> {
+    try {
+      await supabase.from("reviews").delete().eq("id", id);
+    } catch {}
+
+    try {
+      const localList: CustomerReview[] = JSON.parse(
+        localStorage.getItem("sonnenpfad_reviews") || "[]"
+      );
+      localStorage.setItem(
+        "sonnenpfad_reviews",
+        JSON.stringify(localList.filter((r) => r.id !== id))
+      );
+      removeIdFromSet(MY_REVIEWS_KEY, id);
+    } catch {}
+
+    hydrateLiveSiteContent();
+    return true;
   },
 
   saveReviews(items: CustomerReview[]) {
@@ -1013,7 +1225,22 @@ export const db = {
     }
   },
 
-  async getComments(itemId: string): Promise<CommentItem[]> {
+  getCommentCount(itemId: string): number {
+    try {
+      const raw = localStorage.getItem("sonnenpfad_comments_" + itemId);
+      if (!raw) return 0;
+      const arr: CommentItem[] = JSON.parse(raw);
+      return Array.isArray(arr) ? arr.filter((c) => isPublicStatus(c.status)).length : 0;
+    } catch {
+      return 0;
+    }
+  },
+
+  async getComments(
+    itemId: string,
+    includeUnpublished: boolean = false
+  ): Promise<CommentItem[]> {
+    let list: CommentItem[] = [];
     try {
       const { data, error } = await supabase
         .from("comments")
@@ -1021,26 +1248,24 @@ export const db = {
         .eq("item_id", itemId)
         .order("created_at", { ascending: false });
       if (!error && data) {
-        const mapped = data.map((d: any) => ({
-          id: d.id,
-          itemId: d.item_id,
-          author: d.author,
-          rating: Number(d.rating) || 5,
-          text: d.text,
-          itemType: d.item_type || "general",
-          date: d.date,
-        }));
-        localStorage.setItem("sonnenpfad_comments_" + itemId, JSON.stringify(mapped));
-        return mapped;
+        list = data.map(mapCommentRow);
+        localStorage.setItem("sonnenpfad_comments_" + itemId, JSON.stringify(list));
       }
     } catch {}
 
-    const local = localStorage.getItem("sonnenpfad_comments_" + itemId);
-    if (local) return JSON.parse(local);
-    return DEFAULT_COMMENTS[itemId] || [];
+    if (list.length === 0) {
+      try {
+        const local = localStorage.getItem("sonnenpfad_comments_" + itemId);
+        list = local ? JSON.parse(local) : DEFAULT_COMMENTS[itemId] || [];
+      } catch {
+        list = DEFAULT_COMMENTS[itemId] || [];
+      }
+    }
+
+    return includeUnpublished ? list : list.filter((c) => isPublicStatus(c.status));
   },
 
-  async getAllComments(): Promise<CommentItem[]> {
+  async getAllComments(includeUnpublished: boolean = true): Promise<CommentItem[]> {
     const combined: CommentItem[] = [];
     const seen = new Set<string>();
 
@@ -1052,15 +1277,7 @@ export const db = {
       if (!error && data) {
         for (const d of data) {
           seen.add(d.id);
-          combined.push({
-            id: d.id,
-            itemId: d.item_id,
-            author: d.author,
-            rating: Number(d.rating) || 5,
-            text: d.text,
-            itemType: d.item_type || "general",
-            date: d.date,
-          });
+          combined.push(mapCommentRow(d));
         }
       }
     } catch {}
@@ -1073,14 +1290,16 @@ export const db = {
           for (const c of arr) {
             if (!seen.has(c.id)) {
               seen.add(c.id);
-              combined.push(c);
+              combined.push({ ...c, status: c.status || "Published" });
             }
           }
         } catch {}
       }
     }
 
-    return combined;
+    return includeUnpublished
+      ? combined
+      : combined.filter((c) => isPublicStatus(c.status));
   },
 
   async addComment(
@@ -1090,11 +1309,15 @@ export const db = {
     rating: number = 5,
     itemType: string = "general"
   ): Promise<CommentItem> {
+    const modMode = this.getSettings().moderationMode || "auto";
+    const status: CommentItem["status"] =
+      modMode === "manual" ? "Pending Approval" : "Published";
+
     const created: CommentItem = {
       id: "c-" + Date.now(),
       itemId,
       author: author.trim(),
-      rating,
+      rating: Number(rating) || 5,
       text: text.trim(),
       itemType,
       date: new Date().toLocaleDateString("en-US", {
@@ -1102,10 +1325,11 @@ export const db = {
         day: "numeric",
         year: "numeric",
       }),
+      status,
     };
 
     try {
-      await supabase.from("comments").insert({
+      const payload = {
         id: created.id,
         item_id: created.itemId,
         author: created.author,
@@ -1113,14 +1337,100 @@ export const db = {
         text: created.text,
         item_type: created.itemType,
         date: created.date,
-      });
+        status: created.status,
+      };
+      const { error } = await supabase.from("comments").insert(payload);
+      if (error && error.message?.toLowerCase().includes("status")) {
+        const { status: _omit, ...legacyPayload } = payload;
+        await supabase.from("comments").insert(legacyPayload);
+      }
     } catch {}
 
     const localKey = "sonnenpfad_comments_" + itemId;
     const localExisting: CommentItem[] = JSON.parse(localStorage.getItem(localKey) || "[]");
     const merged = [created, ...localExisting.filter((c) => c.id !== created.id)];
     localStorage.setItem(localKey, JSON.stringify(merged));
+    addIdToSet(MY_COMMENTS_KEY, created.id);
+    updateSectionCommentBadges();
     return created;
+  },
+
+  async updateComment(
+    id: string,
+    itemId: string,
+    patch: Partial<{
+      author: string;
+      text: string;
+      rating: number;
+      status: CommentItem["status"];
+    }>
+  ): Promise<CommentItem | null> {
+    const all = await this.getAllComments(true);
+    const current = all.find((c) => c.id === id);
+    if (!current) return null;
+
+    const targetItemId = itemId || current.itemId;
+    const updated: CommentItem = {
+      ...current,
+      author: patch.author !== undefined ? patch.author.trim() : current.author,
+      text: patch.text !== undefined ? patch.text.trim() : current.text,
+      rating: patch.rating !== undefined ? Number(patch.rating) || 5 : current.rating,
+      status: patch.status !== undefined ? patch.status : current.status || "Published",
+    };
+
+    try {
+      const updatePayload: Record<string, any> = {
+        author: updated.author,
+        text: updated.text,
+        rating: updated.rating,
+        status: updated.status,
+      };
+      const { error } = await supabase.from("comments").update(updatePayload).eq("id", id);
+      if (error && error.message?.toLowerCase().includes("status")) {
+        const { status: _omit, ...legacyUpdate } = updatePayload;
+        await supabase.from("comments").update(legacyUpdate).eq("id", id);
+      }
+    } catch {}
+
+    const localKey = "sonnenpfad_comments_" + targetItemId;
+    try {
+      const localExisting: CommentItem[] = JSON.parse(localStorage.getItem(localKey) || "[]");
+      const nextLocal = localExisting.some((c) => c.id === id)
+        ? localExisting.map((c) => (c.id === id ? updated : c))
+        : [updated, ...localExisting];
+      localStorage.setItem(localKey, JSON.stringify(nextLocal));
+    } catch {}
+
+    updateSectionCommentBadges();
+    return updated;
+  },
+
+  async deleteComment(id: string, itemId?: string): Promise<boolean> {
+    try {
+      await supabase.from("comments").delete().eq("id", id);
+    } catch {}
+
+    try {
+      if (itemId) {
+        const key = "sonnenpfad_comments_" + itemId;
+        const arr: CommentItem[] = JSON.parse(localStorage.getItem(key) || "[]");
+        localStorage.setItem(key, JSON.stringify(arr.filter((c) => c.id !== id)));
+      } else {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith("sonnenpfad_comments_")) {
+            const arr: CommentItem[] = JSON.parse(localStorage.getItem(k) || "[]");
+            if (arr.some((c) => c.id === id)) {
+              localStorage.setItem(k, JSON.stringify(arr.filter((c) => c.id !== id)));
+            }
+          }
+        }
+      }
+      removeIdFromSet(MY_COMMENTS_KEY, id);
+    } catch {}
+
+    updateSectionCommentBadges();
+    return true;
   },
 
   // Data Deletion & Privacy Compliance API
@@ -1264,6 +1574,7 @@ export const db = {
         .eq("id", "primary_config")
         .maybeSingle();
       if (!error && data) {
+        const localSaved = this.getSettings();
         const merged = {
           ...DEFAULT_SETTINGS,
           phone: data.phone || DEFAULT_SETTINGS.phone,
@@ -1273,6 +1584,7 @@ export const db = {
           tiktokUrl: data.tiktok_url || DEFAULT_SETTINGS.tiktokUrl,
           address: data.address || DEFAULT_SETTINGS.address,
           mapEmbedUrl: data.map_embed_url || DEFAULT_SETTINGS.mapEmbedUrl,
+          moderationMode: (data.moderation_mode || localSaved.moderationMode || "auto") as "auto" | "manual",
         };
         localStorage.setItem("sonnenpfad_settings", JSON.stringify(merged));
         if (data.admin_passcode) {
@@ -1291,7 +1603,7 @@ export const db = {
     let cloudSynced = false;
     try {
       const activePass = localStorage.getItem("sonnenpfad_admin_pw") || "sonnenpfad2026";
-      const { error } = await supabase.from("settings").upsert({
+      const payload = {
         id: "primary_config",
         phone: merged.phone,
         whatsapp: merged.whatsapp,
@@ -1301,9 +1613,17 @@ export const db = {
         address: merged.address,
         map_embed_url: merged.mapEmbedUrl,
         admin_passcode: activePass,
+        moderation_mode: merged.moderationMode || "auto",
         updated_at: new Date().toISOString(),
-      });
-      if (!error) cloudSynced = true;
+      };
+      const { error } = await supabase.from("settings").upsert(payload);
+      if (error && error.message?.toLowerCase().includes("moderation_mode")) {
+        const { moderation_mode: _omit, ...legacyPayload } = payload;
+        const { error: retryErr } = await supabase.from("settings").upsert(legacyPayload);
+        if (!retryErr) cloudSynced = true;
+      } else if (!error) {
+        cloudSynced = true;
+      }
     } catch {}
 
     hydrateLiveSiteContent();
@@ -1352,7 +1672,7 @@ export const db = {
     let cloudSynced = false;
     try {
       const curSettings = this.getSettings();
-      const { error } = await supabase.from("settings").upsert({
+      const payload = {
         id: "primary_config",
         phone: curSettings.phone,
         whatsapp: curSettings.whatsapp,
@@ -1362,9 +1682,17 @@ export const db = {
         address: curSettings.address,
         map_embed_url: curSettings.mapEmbedUrl,
         admin_passcode: cleanNew,
+        moderation_mode: curSettings.moderationMode || "auto",
         updated_at: new Date().toISOString(),
-      });
-      if (!error) cloudSynced = true;
+      };
+      const { error } = await supabase.from("settings").upsert(payload);
+      if (error && error.message?.toLowerCase().includes("moderation_mode")) {
+        const { moderation_mode: _omit, ...legacyPayload } = payload;
+        const { error: retryErr } = await supabase.from("settings").upsert(legacyPayload);
+        if (!retryErr) cloudSynced = true;
+      } else if (!error) {
+        cloudSynced = true;
+      }
     } catch {}
 
     return { ok: true, cloudSynced };
@@ -1433,12 +1761,12 @@ export const db = {
     const products = await this.getProducts();
     const settings = this.getSettings();
     const tiktoks = this.getTiktoks();
-    const reviews = await this.getReviews();
+    const reviews = await this.getReviews(true);
     const activePass = localStorage.getItem("sonnenpfad_admin_pw") || "sonnenpfad2026";
 
     const errors: string[] = [];
 
-    const { error: settingsErr } = await supabase.from("settings").upsert({
+    const settingsPayload = {
       id: "primary_config",
       phone: settings.phone,
       whatsapp: settings.whatsapp,
@@ -1448,8 +1776,14 @@ export const db = {
       address: settings.address,
       map_embed_url: settings.mapEmbedUrl,
       admin_passcode: activePass,
+      moderation_mode: settings.moderationMode || "auto",
       updated_at: new Date().toISOString(),
-    });
+    };
+    let { error: settingsErr } = await supabase.from("settings").upsert(settingsPayload);
+    if (settingsErr && settingsErr.message?.toLowerCase().includes("moderation_mode")) {
+      const { moderation_mode: _omit, ...legacyPayload } = settingsPayload;
+      settingsErr = (await supabase.from("settings").upsert(legacyPayload)).error;
+    }
     if (settingsErr) errors.push(`settings: ${settingsErr.message}`);
 
     if (safaris.length > 0) {
@@ -1746,22 +2080,243 @@ export function initHeroShowcase() {
 }
 
 // =========================================================================
-// 5. LIVE CONTENT HYDRATION (HOMEPAGE REVIEWS + TIKTOK + SETTINGS)
+// 5. LIVE CONTENT HYDRATION (SAFARIS + SHOP + REVIEWS + TIKTOK + SETTINGS)
 // =========================================================================
 export async function hydrateLiveSiteContent() {
   if (typeof document === "undefined") return;
   const s = db.getSettings();
+  const waDigits = String(s.whatsapp || "+256773333108").replace(/[^0-9]/g, "") || "256773333108";
+  const phoneDigits = String(s.phone || "+256773333108").replace(/[^0-9+]/g, "") || "+256773333108";
+
+  // 1) Sync Global Header & Contact Links Across Any Page
+  const topPhoneLink = document.getElementById("topPhoneLink") as HTMLAnchorElement | null;
+  if (topPhoneLink && s.phone) {
+    topPhoneLink.href = `tel:${phoneDigits}`;
+    topPhoneLink.textContent = s.phone;
+  }
+
+  const topTiktokLink = document.getElementById("topTiktokLink") as HTMLAnchorElement | null;
+  if (topTiktokLink && s.tiktokUrl) {
+    topTiktokLink.href = s.tiktokUrl;
+    topTiktokLink.title = `TikTok ${s.tiktok || "@kisacathy1900"}`;
+  }
+
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="https://wa.me/"]').forEach((anchor) => {
+    try {
+      const url = new URL(anchor.href);
+      anchor.href = `https://wa.me/${waDigits}${url.search}`;
+    } catch {}
+  });
+
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="mailto:"]').forEach((anchor) => {
+    if (s.email) {
+      anchor.href = `mailto:${s.email}`;
+      if (anchor.textContent && anchor.textContent.includes("@")) {
+        anchor.textContent = s.email;
+      }
+    }
+  });
+
+  const closingWaText = document.getElementById("closingWhatsappText");
+  if (closingWaText && s.whatsapp) {
+    closingWaText.textContent = `WhatsApp: ${s.whatsapp}`;
+  }
+
+  const footerWaLink = document.getElementById("footerWhatsappLink") as HTMLAnchorElement | null;
+  if (footerWaLink && s.whatsapp) {
+    footerWaLink.textContent = s.whatsapp;
+    footerWaLink.href = `https://wa.me/${waDigits}`;
+  }
+
+  const drawerWaLink = document.getElementById("mobileDrawerWhatsapp") as HTMLAnchorElement | null;
+  if (drawerWaLink && s.whatsapp) {
+    drawerWaLink.textContent = s.whatsapp;
+    drawerWaLink.href = `https://wa.me/${waDigits}`;
+  }
+
+  const drawerTiktok = document.getElementById("mobileDrawerTiktok") as HTMLAnchorElement | null;
+  if (drawerTiktok && s.tiktokUrl) {
+    drawerTiktok.href = s.tiktokUrl;
+    drawerTiktok.textContent = `TikTok ${s.tiktok || "@kisacathy1900"}`;
+  }
+
+  const homeTiktokHandle = document.getElementById("homeTiktokHandle");
+  if (homeTiktokHandle && s.tiktok) {
+    homeTiktokHandle.textContent = `TikTok Feed: ${s.tiktok}`;
+  }
+
+  const homeTiktokFollowBtn = document.getElementById("homeTiktokFollowBtn") as HTMLAnchorElement | null;
+  if (homeTiktokFollowBtn && s.tiktokUrl) {
+    homeTiktokFollowBtn.href = s.tiktokUrl;
+    const span = homeTiktokFollowBtn.querySelector("span");
+    if (span) span.textContent = `Follow ${s.tiktok || "@kisacathy1900"} on TikTok`;
+  }
 
   const addrEl = document.getElementById("liveAddressDisplay");
   if (addrEl && s.address) addrEl.textContent = s.address;
 
+  const footerAddrEl = document.getElementById("footerAddressDisplay");
+  if (footerAddrEl && s.address) footerAddrEl.textContent = s.address;
+
+  const drawerAddrEl = document.getElementById("mobileDrawerAddress");
+  if (drawerAddrEl && s.address) drawerAddrEl.textContent = `Head Office: ${s.address}`;
+
   const mapIframe = document.getElementById("liveMapIframe") as HTMLIFrameElement | null;
   if (mapIframe && s.mapEmbedUrl) mapIframe.src = s.mapEmbedUrl;
 
-  // Hydrate Homepage Reviews Grid with ONLY genuine submitted database reviews
+  // 2) Hydrate Featured Safaris + Header Tours Dropdown From Live DB
+  const homeSafarisGrid = document.getElementById("homeSafarisGrid");
+  const navToursDropdown = document.getElementById("navToursDropdown");
+  if (homeSafarisGrid || navToursDropdown) {
+    const safaris = await db.getSafaris();
+
+    const safarisCountLabel = document.getElementById("homeSafarisCountLabel");
+    if (safarisCountLabel && safaris.length > 0) {
+      safarisCountLabel.textContent = `View All ${safaris.length} Safaris (UGX)`;
+    }
+
+    if (navToursDropdown && safaris.length > 0) {
+      navToursDropdown.innerHTML = safaris
+        .slice(0, 5)
+        .map(
+          (saf) =>
+            `<a href="safaris.html" class="block px-3 py-2 rounded-xl text-xs text-[#0F172A] hover:bg-[#F1F5F9] truncate">${escapeHtml(saf.title)} (${escapeHtml(saf.formattedPriceUGX || formatUGX(saf.priceUGX))})</a>`
+        )
+        .join("");
+    }
+
+    if (homeSafarisGrid && safaris.length > 0) {
+      const sortedSafaris = [...safaris].sort((a, b) => Number(Boolean(b.isFlagship)) - Number(Boolean(a.isFlagship)));
+      const featuredSafaris = sortedSafaris.slice(0, 3);
+
+      homeSafarisGrid.innerHTML = featuredSafaris
+        .map((saf) => {
+          const priceStr = saf.formattedPriceUGX || formatUGX(saf.priceUGX);
+          const likes = db.getItemLikeCount(saf.id, saf.likesCount || 0);
+          const waMsg = encodeURIComponent(
+            `Hello Sonnenpfad Safaris, I am inquiring about the ${saf.title} (${priceStr}).`
+          );
+          return `
+            <article class="bg-white ${saf.isFlagship ? "border-2 border-[#073F27] shadow-md relative" : "border border-[#CBD5E1] shadow-sm hover:border-[#073F27]"} rounded-3xl overflow-hidden flex flex-col justify-between transition-all">
+              ${saf.isFlagship ? `<div class="absolute top-3 left-3 bg-[#073F27] text-[#F4B41A] text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full z-10">Flagship Circuit</div>` : ""}
+              <div>
+                <div class="relative h-60 w-full overflow-hidden bg-[#F1F5F9]">
+                  <img src="${escapeHtml(saf.image)}" alt="${escapeHtml(saf.altText || saf.title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
+                  <div class="absolute bottom-3 left-3 flex flex-wrap items-center gap-2 pr-3">
+                    <span class="bg-[#073F27] px-2.5 py-1 text-white font-bold text-xs rounded-full">${escapeHtml(saf.duration)}</span>
+                    <span class="bg-white px-2.5 py-1 text-[#0F172A] font-bold text-xs rounded-full border border-[#CBD5E1] font-mono">${escapeHtml(priceStr)}</span>
+                  </div>
+                  <button type="button" onclick="handleLikeClick(this, '${escapeHtml(saf.id)}')" aria-label="Like ${escapeHtml(saf.title)}" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-full bg-white hover:bg-[#F1F5F9] text-slate-700 flex items-center gap-1.5 text-xs shadow border border-[#CBD5E1] cursor-pointer">
+                    <svg class="w-3.5 h-3.5 fill-current text-rose-600" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <span class="like-count font-mono font-bold text-[#0F172A] text-[11px]" data-like-id="${escapeHtml(saf.id)}">${likes}</span>
+                  </button>
+                </div>
+                <div class="p-6 space-y-2">
+                  <span class="text-xs text-[#7C4D00] font-bold block">${escapeHtml(saf.destinationsFormatted || (saf.destinations || []).join(" · "))}</span>
+                  <h3 class="font-editorial text-2xl font-bold text-[#0F172A]">${escapeHtml(saf.title)}</h3>
+                  <p class="text-xs text-[#334155] leading-relaxed line-clamp-3">${escapeHtml(saf.overview)}</p>
+                </div>
+              </div>
+              <div class="p-6 pt-3 border-t border-[#E2E8F0] space-y-3">
+                <button type="button" onclick="openItemFeedbackModal('${escapeHtml(saf.id)}', '${escapeHtml(saf.title).replace(/'/g, "\\'")}', 'safari')" class="text-xs font-bold text-[#073F27] hover:underline cursor-pointer block text-left">
+                  Comments &amp; Traveller Notes (<span data-comment-count-id="${escapeHtml(saf.id)}">${db.getCommentCount(saf.id)}</span>)
+                </button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <a href="safaris.html" class="btn-glass-forest w-full text-xs py-2.5 px-3 text-center justify-center">View Itinerary</a>
+                  <a href="https://wa.me/${waDigits}?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="btn-glass-gold w-full text-xs py-2.5 px-3 text-center justify-center">Inquire Tour</a>
+                </div>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+  }
+
+  // 3) Hydrate Homepage Featured Shop Collection Directly From Live Shop Database (1:1 Parity With shop.html)
+  const homeShopGrid = document.getElementById("homeShopGrid");
+  if (homeShopGrid) {
+    const allProducts = await db.getProducts();
+    const activeProducts = allProducts.filter((p) => p.inStock !== false);
+    const countLabel = document.getElementById("homeShopCountLabel");
+    if (countLabel && activeProducts.length > 0) {
+      countLabel.textContent = `Explore All ${activeProducts.length} Shop Items`;
+    }
+
+    if (activeProducts.length === 0) {
+      homeShopGrid.innerHTML = `
+        <div class="sm:col-span-2 lg:col-span-3 p-8 bg-white border border-[#CBD5E1] rounded-3xl text-center space-y-2 shadow-sm">
+          <h3 class="font-editorial text-xl font-bold text-[#0F172A]">No Active Shop Products Listed</h3>
+          <p class="text-xs text-[#334155]">Add or publish items inside Shop Catalog Manager to display them here.</p>
+        </div>
+      `;
+    } else {
+      const highlightProducts = activeProducts.slice(0, 6);
+      homeShopGrid.innerHTML = highlightProducts
+        .map((item) => {
+          const likes = db.getItemLikeCount(item.id, item.likesCount || 0);
+          return `
+            <article class="p-5 bg-white border border-[#CBD5E1] rounded-3xl flex flex-col justify-between hover:border-[#073F27] transition-all duration-300 shadow-sm">
+              <div>
+                <div class="relative h-52 w-full overflow-hidden rounded-2xl mb-4 bg-[#F1F5F9]">
+                  <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.altText || item.name)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
+                  ${item.isSale ? `<span class="absolute top-3 left-3 bg-[#073F27] text-[#F4B41A] text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full">Featured Offer</span>` : ""}
+                  <span class="absolute bottom-3 left-3 bg-white/95 text-[#0F172A] text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-lg border border-[#CBD5E1]">${escapeHtml(item.weight || item.origin)}</span>
+                </div>
+
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between gap-2 text-[10px] font-bold tracking-wider uppercase">
+                    <span class="text-[#7C4D00] truncate">${escapeHtml(item.category)}</span>
+                    <span class="text-[#073F27] shrink-0">${Number(item.rating || 5).toFixed(1)} / 5.0</span>
+                  </div>
+
+                  <h3 class="font-editorial text-xl font-bold text-[#0F172A] line-clamp-2">${escapeHtml(item.name)}</h3>
+
+                  <div class="flex flex-wrap items-center gap-2.5">
+                    <span class="text-base font-mono font-bold text-[#073F27]">${escapeHtml(formatUGX(item.price))}</span>
+                    ${item.originalPrice ? `<span class="text-xs text-[#64748B] line-through font-mono">${escapeHtml(formatUGX(item.originalPrice))}</span>` : ""}
+                  </div>
+
+                  <p class="text-xs text-[#334155] leading-relaxed line-clamp-3">${escapeHtml(item.description)}</p>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-[#E2E8F0] mt-4 space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <button type="button" onclick="handleLikeClick(this, '${escapeHtml(item.id)}')" aria-label="Like ${escapeHtml(item.name)}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-slate-700 transition-colors cursor-pointer shrink-0">
+                    <svg class="w-4 h-4 fill-current text-rose-600" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <span class="like-count font-mono font-bold text-[#0F172A]" data-like-id="${escapeHtml(item.id)}">${likes}</span>
+                  </button>
+
+                  <button type="button" onclick="openItemFeedbackModal('${escapeHtml(item.id)}', '${escapeHtml(item.name).replace(/'/g, "\\'")}', 'product')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-[#073F27] text-xs font-bold transition-colors cursor-pointer whitespace-nowrap">
+                    <span>Comments (<span data-comment-count-id="${escapeHtml(item.id)}">${db.getCommentCount(item.id)}</span>)</span>
+                  </button>
+                </div>
+
+                <a href="shop.html?order=${encodeURIComponent(item.id)}" class="btn-glass-gold w-full text-center justify-center text-xs py-3 px-4 leading-snug">
+                  Order Now (${escapeHtml(formatUGX(item.price))})
+                </a>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+  }
+
+  // 4) Sync Likes Badges & Section Comment Counts On Any Rendered Card
+  document.querySelectorAll<HTMLElement>(".like-count[data-like-id]").forEach((el) => {
+    const itemId = el.getAttribute("data-like-id");
+    if (itemId) {
+      el.textContent = String(db.getItemLikeCount(itemId, Number(el.textContent) || 0));
+    }
+  });
+  updateSectionCommentBadges();
+
+  // 5) Hydrate Homepage Reviews Grid with ONLY approved public reviews (Featured first)
   const homeReviewsGrid = document.getElementById("homeReviewsGrid");
   if (homeReviewsGrid) {
-    const reviews = await db.getReviews();
+    const reviews = await db.getReviews(false);
     const summaryEl = document.getElementById("homeReviewsSummary");
 
     if (reviews.length === 0) {
@@ -1780,21 +2335,26 @@ export async function hydrateLiveSiteContent() {
         </div>
       `;
     } else {
+      const sorted = [...reviews].sort(
+        (a, b) =>
+          Number(b.status === "Featured on Homepage") -
+          Number(a.status === "Featured on Homepage")
+      );
       const avg = (
-        reviews.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / reviews.length
+        sorted.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / sorted.length
       ).toFixed(1);
       if (summaryEl) {
-        summaryEl.textContent = `Average ${avg} / 5.0 across ${reviews.length} guest ${reviews.length === 1 ? "review" : "reviews"}`;
+        summaryEl.textContent = `Average ${avg} / 5.0 across ${sorted.length} guest ${sorted.length === 1 ? "review" : "reviews"}`;
       }
-      homeReviewsGrid.innerHTML = reviews
+      homeReviewsGrid.innerHTML = sorted
         .slice(0, 3)
         .map(
           (r) => `
-          <article class="p-6 bg-white border border-[#CBD5E1] rounded-3xl space-y-4 shadow-sm flex flex-col justify-between">
+          <article class="p-6 bg-white border ${r.status === "Featured on Homepage" ? "border-2 border-[#073F27]" : "border-[#CBD5E1]"} rounded-3xl space-y-4 shadow-sm flex flex-col justify-between">
             <div class="space-y-3">
-              <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center justify-between text-xs gap-2">
                 <span class="text-[#7C4D00] font-bold" aria-label="${Number(r.rating) || 5} out of 5 stars">${Number(r.rating) || 5}.0 / 5.0 Stars</span>
-                <span class="text-[11px] font-semibold text-[#073F27]">${escapeHtml(r.status || "Verified Guest")}</span>
+                <span class="px-2 py-0.5 rounded-full ${r.status === "Featured on Homepage" ? "bg-[#073F27] text-[#F4B41A]" : "bg-[#F1F5F9] text-[#073F27] border border-[#CBD5E1]"} text-[10px] font-bold">${escapeHtml(r.status || "Verified Guest")}</span>
               </div>
               <p class="text-sm text-[#334155] leading-relaxed italic">"${escapeHtml(r.content)}"</p>
             </div>
@@ -1810,7 +2370,7 @@ export async function hydrateLiveSiteContent() {
     }
   }
 
-  // Hydrate TikTok Grid (Clean UI without emojis)
+  // 6) Hydrate TikTok Grid (Clean UI without emojis)
   const ttGrid = document.getElementById("tiktokFeedGrid");
   if (ttGrid) {
     const tiktoks = db.getTiktoks();
@@ -2014,13 +2574,24 @@ export function initNavigation() {
   });
 }
 
+export function updateSectionCommentBadges() {
+  if (typeof document === "undefined") return;
+  document.querySelectorAll<HTMLElement>("[data-comment-count-id]").forEach((el) => {
+    const itemId = el.getAttribute("data-comment-count-id");
+    if (itemId) {
+      el.textContent = String(db.getCommentCount(itemId));
+    }
+  });
+}
+
 // =========================================================================
-// 8. INTERACTIVE COMMENT & RATING MODAL (DATA MINIMIZATION + AGE CONSENT)
+// 8. INTERACTIVE COMMENT & RATING MODAL (CUSTOMER EDIT/DELETE + MODERATION)
 // =========================================================================
 export async function openItemFeedbackModal(
   itemId: string,
   itemName: string,
-  itemType: string = "item"
+  itemType: string = "item",
+  options: { editingId?: string | null; confirmingDeleteId?: string | null } = {}
 ) {
   let modal = document.getElementById("globalFeedbackModal");
   if (!modal) {
@@ -2033,17 +2604,20 @@ export async function openItemFeedbackModal(
       "fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto";
     modal.innerHTML = `
       <div class="relative w-full max-w-xl bg-white border-2 border-[#CBD5E1] rounded-3xl p-6 sm:p-8 text-[#0F172A] shadow-2xl space-y-5 animate-slide-up my-8">
-        <button id="closeFeedbackModalBtn" type="button" aria-label="Close review dialog" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#0F172A] flex items-center justify-center cursor-pointer border border-[#CBD5E1]">
+        <button id="closeFeedbackModalBtn" type="button" aria-label="Close comments dialog" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#0F172A] flex items-center justify-center cursor-pointer border border-[#CBD5E1]">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
         <div class="border-b border-[#CBD5E1] pb-3 pr-10">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-[#7C4D00] block">Community Comments</span>
-          <h2 id="feedbackItemTitle" class="font-editorial text-2xl font-bold text-[#0F172A] mt-0.5">Item Name</h2>
+          <span id="feedbackTypeBadge" class="text-[10px] font-bold uppercase tracking-widest text-[#7C4D00] block">Community Comments</span>
+          <h2 id="feedbackItemTitle" class="font-editorial text-2xl font-bold text-[#0F172A] mt-0.5">Section Name</h2>
         </div>
 
         <form id="feedbackForm" class="space-y-3 bg-[#F8FAFC] p-4 rounded-2xl border border-[#CBD5E1]">
-          <span class="text-xs font-bold uppercase text-[#7C4D00] block">Share Your Experience (Only Name &amp; Comment Stored)</span>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-bold uppercase text-[#7C4D00] block">Share Your Comment (Display Name Only)</span>
+            <span id="feedbackModerationNotice" class="hidden text-[10px] font-bold text-[#073F27] bg-amber-50 border border-amber-300 px-2 py-0.5 rounded-full">Reviewed before publishing</span>
+          </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label for="feedbackAuthor" class="sr-only">Your Display Name</label>
@@ -2060,7 +2634,7 @@ export async function openItemFeedbackModal(
           </div>
           <div>
             <label for="feedbackText" class="sr-only">Comment text</label>
-            <textarea id="feedbackText" required rows="2" maxlength="600" placeholder="Share helpful notes for fellow travellers..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] resize-none"></textarea>
+            <textarea id="feedbackText" required rows="2" maxlength="600" placeholder="Share helpful notes or questions for this section..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] resize-none"></textarea>
           </div>
           <label class="flex items-start gap-2 text-[11px] text-[#334155] cursor-pointer">
             <input id="feedbackAgeConsent" type="checkbox" required class="mt-0.5 accent-[#073F27]" />
@@ -2070,8 +2644,11 @@ export async function openItemFeedbackModal(
         </form>
 
         <div class="space-y-3">
-          <span class="text-xs font-bold uppercase text-[#334155] tracking-wider block">Published Comments</span>
-          <div id="feedbackCommentsList" class="space-y-2.5 max-h-60 overflow-y-auto pr-1"></div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase text-[#334155] tracking-wider block">Published Comments</span>
+            <span id="feedbackCommentsCountLabel" class="text-[11px] font-mono font-bold text-[#073F27]">0 comments</span>
+          </div>
+          <div id="feedbackCommentsList" class="space-y-2.5 max-h-72 overflow-y-auto pr-1"></div>
         </div>
       </div>
     `;
@@ -2085,25 +2662,158 @@ export async function openItemFeedbackModal(
   const titleEl = document.getElementById("feedbackItemTitle");
   if (titleEl) titleEl.textContent = itemName;
 
-  const comments = await db.getComments(itemId);
+  const badgeEl = document.getElementById("feedbackTypeBadge");
+  if (badgeEl) {
+    const typeMap: Record<string, string> = {
+      safari: "Safari Itinerary Comments",
+      product: "Shop Product Comments",
+      destination: "National Park Section Comments",
+      circuit: "East Africa Circuit Comments",
+      gallery: "Photography Archive Comments",
+      section: "Section Comments & Questions",
+    };
+    badgeEl.textContent = typeMap[itemType] || "Community Comments";
+  }
+
+  const modNoticeEl = document.getElementById("feedbackModerationNotice");
+  const isManualMod = (db.getSettings().moderationMode || "auto") === "manual";
+  if (modNoticeEl) {
+    modNoticeEl.classList.toggle("hidden", !isManualMod);
+  }
+
+  // Show approved public comments + visitor's own pending comments so they can see/edit/delete them
+  const allItemComments = await db.getComments(itemId, true);
+  const myIds = new Set(db.getMyCommentIds());
+  const visibleComments = allItemComments.filter(
+    (c) => isPublicStatus(c.status) || (c.status === "Pending Approval" && myIds.has(c.id))
+  );
+
+  const countLabelEl = document.getElementById("feedbackCommentsCountLabel");
+  if (countLabelEl) {
+    const pubCount = visibleComments.filter((c) => isPublicStatus(c.status)).length;
+    countLabelEl.textContent = `${pubCount} ${pubCount === 1 ? "published comment" : "published comments"}`;
+  }
+
   const listEl = document.getElementById("feedbackCommentsList");
   if (listEl) {
-    listEl.innerHTML =
-      comments.length === 0
-        ? `<p class="text-xs text-[#475569] italic">No comments submitted yet.</p>`
-        : comments
-            .map(
-              (c) => `
-      <div class="p-3 bg-[#F8FAFC] border border-[#CBD5E1] rounded-xl space-y-1">
-        <div class="flex items-center justify-between text-xs">
-          <span class="font-bold text-[#0F172A]">${escapeHtml(c.author)}</span>
-          <span class="text-[#7C4D00] font-bold">${Number(c.rating) || 5}.0 Stars · <span class="text-[#475569] text-[10px]">${escapeHtml(c.date)}</span></span>
-        </div>
-        <p class="text-xs text-[#334155]">${escapeHtml(c.text)}</p>
-      </div>
-    `
-            )
-            .join("");
+    if (visibleComments.length === 0) {
+      listEl.innerHTML = `<p class="text-xs text-[#475569] italic">No published comments for this section yet.</p>`;
+    } else {
+      listEl.innerHTML = visibleComments
+        .map((c) => {
+          const isMine = myIds.has(c.id);
+          const isEditing = options.editingId === c.id;
+          const isConfirmingDelete = options.confirmingDeleteId === c.id;
+          const isPending = c.status === "Pending Approval";
+
+          if (isEditing) {
+            return `
+              <form data-inline-edit-id="${escapeHtml(c.id)}" class="p-3.5 bg-amber-50/70 border-2 border-[#D99A00] rounded-xl space-y-2.5">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-[#7C4D00] uppercase tracking-wider text-[10px]">Editing Your Comment</span>
+                  <button type="button" data-cancel-edit class="text-[11px] font-bold text-[#475569] hover:text-[#0F172A] cursor-pointer">Cancel</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input type="text" data-edit-author required maxlength="80" value="${escapeHtml(c.author)}" class="w-full bg-white border border-[#94A3B8] rounded-lg px-2.5 py-1.5 text-xs text-[#0F172A]" />
+                  <select data-edit-rating class="w-full bg-white border border-[#94A3B8] rounded-lg px-2.5 py-1.5 text-xs text-[#0F172A]">
+                    <option value="5" ${Number(c.rating) === 5 ? "selected" : ""}>5.0 Stars (Excellent)</option>
+                    <option value="4" ${Number(c.rating) === 4 ? "selected" : ""}>4.0 Stars (Very Good)</option>
+                    <option value="3" ${Number(c.rating) === 3 ? "selected" : ""}>3.0 Stars (Good)</option>
+                  </select>
+                </div>
+                <textarea data-edit-text required rows="2" maxlength="600" class="w-full bg-white border border-[#94A3B8] rounded-lg px-2.5 py-1.5 text-xs text-[#0F172A] resize-none">${escapeHtml(c.text)}</textarea>
+                <div class="flex items-center justify-end gap-2">
+                  <button type="button" data-cancel-edit class="px-3 py-1 rounded-lg bg-white border border-[#CBD5E1] text-[11px] font-bold text-[#0F172A] cursor-pointer">Cancel</button>
+                  <button type="submit" class="px-3.5 py-1 rounded-lg bg-[#073F27] text-white text-[11px] font-bold cursor-pointer">Save Changes</button>
+                </div>
+              </form>
+            `;
+          }
+
+          return `
+            <div class="p-3 bg-[#F8FAFC] border border-[#CBD5E1] rounded-xl space-y-1.5">
+              <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-[#0F172A]">${escapeHtml(c.author)}</span>
+                  ${isMine ? `<span class="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-300 text-[#073F27] text-[10px] font-bold">Yours</span>` : ""}
+                  ${isPending ? `<span class="px-2 py-0.5 rounded-full bg-amber-50 border border-amber-300 text-[#7C4D00] text-[10px] font-bold">Awaiting Owner Approval</span>` : ""}
+                </div>
+                <span class="text-[#7C4D00] font-bold">${Number(c.rating) || 5}.0 Stars · <span class="text-[#475569] text-[10px]">${escapeHtml(c.date)}</span></span>
+              </div>
+              <p class="text-xs text-[#334155]">${escapeHtml(c.text)}</p>
+              ${
+                isMine
+                  ? isConfirmingDelete
+                    ? `<div class="pt-2 border-t border-[#E2E8F0] flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                        <span class="font-bold text-red-800">Delete your comment permanently?</span>
+                        <div class="flex items-center gap-1.5">
+                          <button type="button" data-cancel-delete class="px-2.5 py-1 rounded-lg bg-white border border-[#CBD5E1] font-bold text-[#0F172A] cursor-pointer">Keep</button>
+                          <button type="button" data-confirm-delete-id="${escapeHtml(c.id)}" class="px-2.5 py-1 rounded-lg bg-red-600 text-white font-bold cursor-pointer">Confirm Delete</button>
+                        </div>
+                      </div>`
+                    : `<div class="pt-1.5 border-t border-[#E2E8F0] flex items-center justify-end gap-2">
+                        <button type="button" data-start-edit-id="${escapeHtml(c.id)}" class="px-2.5 py-1 rounded-lg bg-white hover:bg-[#E2E8F0] border border-[#CBD5E1] text-[11px] font-bold text-[#073F27] cursor-pointer">Edit</button>
+                        <button type="button" data-start-delete-id="${escapeHtml(c.id)}" class="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 border border-red-300 text-[11px] font-bold text-red-800 cursor-pointer">Delete</button>
+                      </div>`
+                  : ""
+              }
+            </div>
+          `;
+        })
+        .join("");
+
+      listEl.querySelectorAll<HTMLButtonElement>("[data-start-edit-id]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const cid = btn.getAttribute("data-start-edit-id");
+          openItemFeedbackModal(itemId, itemName, itemType, { editingId: cid });
+        });
+      });
+
+      listEl.querySelectorAll<HTMLButtonElement>("[data-cancel-edit]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          openItemFeedbackModal(itemId, itemName, itemType);
+        });
+      });
+
+      listEl.querySelectorAll<HTMLFormElement>("[data-inline-edit-id]").forEach((editForm) => {
+        editForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const cid = editForm.getAttribute("data-inline-edit-id") || "";
+          const nextAuthor = (editForm.querySelector("[data-edit-author]") as HTMLInputElement).value;
+          const nextRating = Number((editForm.querySelector("[data-edit-rating]") as HTMLSelectElement).value);
+          const nextText = (editForm.querySelector("[data-edit-text]") as HTMLTextAreaElement).value;
+          await db.updateComment(cid, itemId, {
+            author: nextAuthor,
+            rating: nextRating,
+            text: nextText,
+          });
+          showToast("Your comment has been updated.");
+          openItemFeedbackModal(itemId, itemName, itemType);
+        });
+      });
+
+      listEl.querySelectorAll<HTMLButtonElement>("[data-start-delete-id]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const cid = btn.getAttribute("data-start-delete-id");
+          openItemFeedbackModal(itemId, itemName, itemType, { confirmingDeleteId: cid });
+        });
+      });
+
+      listEl.querySelectorAll<HTMLButtonElement>("[data-cancel-delete]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          openItemFeedbackModal(itemId, itemName, itemType);
+        });
+      });
+
+      listEl.querySelectorAll<HTMLButtonElement>("[data-confirm-delete-id]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const cid = btn.getAttribute("data-confirm-delete-id") || "";
+          await db.deleteComment(cid, itemId);
+          showToast("Your comment has been deleted.");
+          openItemFeedbackModal(itemId, itemName, itemType);
+        });
+      });
+    }
   }
 
   const form = document.getElementById("feedbackForm");
@@ -2114,15 +2824,21 @@ export async function openItemFeedbackModal(
       const rating = Number((document.getElementById("feedbackRating") as HTMLSelectElement).value);
       const text = (document.getElementById("feedbackText") as HTMLTextAreaElement).value;
 
-      await db.addComment(itemId, author, text, rating, itemType);
+      const created = await db.addComment(itemId, author, text, rating, itemType);
       (document.getElementById("feedbackText") as HTMLTextAreaElement).value = "";
-      showToast("Your comment has been published.");
+      if (created.status === "Pending Approval") {
+        showToast("Comment submitted and awaiting owner approval before public display.", "info");
+      } else {
+        showToast("Your comment has been published.");
+      }
       openItemFeedbackModal(itemId, itemName, itemType);
     };
   }
 
   modal.classList.remove("hidden");
-  (document.getElementById("feedbackAuthor") as HTMLInputElement | null)?.focus();
+  if (!options.editingId && !options.confirmingDeleteId) {
+    (document.getElementById("feedbackAuthor") as HTMLInputElement | null)?.focus();
+  }
 }
 
 export async function handleLikeClick(btnEl: HTMLElement, itemId: string) {
@@ -2157,6 +2873,7 @@ if (typeof window !== "undefined") {
   (window as any).escapeHtml = escapeHtml;
   (window as any).showToast = showToast;
   (window as any).hydrateLiveSiteContent = hydrateLiveSiteContent;
+  (window as any).updateSectionCommentBadges = updateSectionCommentBadges;
 }
 
 if (typeof document !== "undefined") {
@@ -2168,5 +2885,19 @@ if (typeof document !== "undefined") {
     initCookieConsent();
     hydrateLiveSiteContent();
     db.fetchLive();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && !window.location.pathname.includes("admin.html")) {
+      db.fetchLive();
+    }
+  });
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e: StorageEvent) => {
+    if (e.key && e.key.startsWith("sonnenpfad_")) {
+      hydrateLiveSiteContent();
+    }
   });
 }

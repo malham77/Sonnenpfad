@@ -149,7 +149,8 @@
           <p class="text-xs text-[#334155]">Only your chosen display name, city/country, itinerary, rating, and message are saved.</p>
         </div>
 
-        <form onsubmit="handleReviewSubmit(event)" class="space-y-4">
+        <form id="reviewForm" onsubmit="handleReviewSubmit(event)" class="space-y-4">
+          <input id="editReviewId" type="hidden" value="" />
           <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl text-center space-y-2">
             <span class="text-xs font-bold uppercase tracking-wider text-[#7C4D00] block">Select Star Rating</span>
             <div class="flex items-center justify-center gap-2" role="group" aria-label="Select 1 to 5 star rating">
@@ -196,10 +197,25 @@
             <span>I confirm I am 18+ years old (or submitting with parent/guardian consent) and accept our <a href="privacy-policy.html" class="underline font-bold text-[#073F27]">Privacy Policy</a>.</span>
           </label>
 
-          <button type="submit" class="btn-glass-gold w-full text-center justify-center text-xs py-3.5">
+          <button id="revSubmitBtn" type="submit" class="btn-glass-gold w-full text-center justify-center text-xs py-3.5">
             Submit Genuine Review to Database
           </button>
         </form>
+      </div>
+    </div>
+
+    <!-- IN-PAGE DELETE REVIEW CONFIRMATION MODAL -->
+    <div id="deleteReviewConfirmModal" role="dialog" aria-modal="true" aria-labelledby="deleteReviewTitle" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+      <div class="w-full max-w-md bg-white border-2 border-[#CBD5E1] rounded-3xl p-6 text-[#0F172A] shadow-2xl space-y-4">
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-red-700 block">Remove Guest Feedback</span>
+          <h2 id="deleteReviewTitle" class="font-editorial text-2xl font-bold text-[#0F172A]">Delete Your Review?</h2>
+          <p class="text-xs text-[#334155]">This action permanently removes your review from our public ledger and database.</p>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" onclick="closeDeleteReviewModal()" class="px-4 py-2 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-xs font-bold text-[#0F172A] cursor-pointer">Keep Review</button>
+          <button id="confirmDeleteReviewBtn" type="button" onclick="confirmDeleteReview()" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-xs font-bold text-white cursor-pointer">Delete Permanently</button>
+        </div>
       </div>
     </div>
 
@@ -246,6 +262,8 @@
     <script type="module" src="/src/site.ts"></script>
     <script>
       let selectedRating = 5;
+      let loadedReviewsCache = [];
+      let pendingDeleteReviewId = null;
 
       function setStars(n) {
         selectedRating = n;
@@ -261,6 +279,38 @@
       }
 
       function openReviewModal() {
+        const form = document.getElementById("reviewForm");
+        if (form) form.reset();
+        document.getElementById("editReviewId").value = "";
+        document.getElementById("revModalHeading").textContent = "Submit Your Expedition Review";
+        document.getElementById("revSubmitBtn").textContent = "Submit Genuine Review to Database";
+        setStars(5);
+        document.getElementById("reviewModal").classList.remove("hidden");
+        document.getElementById("revAuthor").focus();
+      }
+
+      function openEditReviewModal(reviewId) {
+        const review = loadedReviewsCache.find((r) => String(r.id) === String(reviewId));
+        if (!review) return;
+        document.getElementById("editReviewId").value = review.id;
+        document.getElementById("revModalHeading").textContent = "Edit Your Review";
+        document.getElementById("revSubmitBtn").textContent = "Save Updated Review";
+        document.getElementById("revAuthor").value = review.author || "";
+        document.getElementById("revCountry").value = review.country || "";
+        document.getElementById("revContent").value = review.content || "";
+        document.getElementById("revAgeConsent").checked = true;
+
+        const tourSel = document.getElementById("revTour");
+        const targetTour = review.tourName || "";
+        if (targetTour && !Array.from(tourSel.options).some((o) => o.value === targetTour || o.text === targetTour)) {
+          const opt = document.createElement("option");
+          opt.value = targetTour;
+          opt.textContent = targetTour;
+          tourSel.appendChild(opt);
+        }
+        if (targetTour) tourSel.value = targetTour;
+        setStars(Number(review.rating) || 5);
+
         document.getElementById("reviewModal").classList.remove("hidden");
         document.getElementById("revAuthor").focus();
       }
@@ -269,29 +319,73 @@
         document.getElementById("reviewModal").classList.add("hidden");
       }
 
+      function requestDeleteReview(id) {
+        pendingDeleteReviewId = id;
+        document.getElementById("deleteReviewConfirmModal").classList.remove("hidden");
+      }
+
+      function closeDeleteReviewModal() {
+        pendingDeleteReviewId = null;
+        document.getElementById("deleteReviewConfirmModal").classList.add("hidden");
+      }
+
+      async function confirmDeleteReview() {
+        if (!pendingDeleteReviewId) return;
+        const btn = document.getElementById("confirmDeleteReviewBtn");
+        if (btn) btn.disabled = true;
+        if (window.db && window.db.deleteReview) {
+          await window.db.deleteReview(pendingDeleteReviewId);
+        }
+        if (btn) btn.disabled = false;
+        closeDeleteReviewModal();
+        await renderReviews();
+        if (window.showToast) {
+          window.showToast("Your review has been permanently deleted.");
+        }
+      }
+
       async function renderReviews() {
         const container = document.getElementById("reviewsContainer");
         if (!container) return;
 
-        let reviews = [];
+        let publishedReviews = [];
+        let allReviews = [];
         if (window.db && window.db.getReviews) {
-          reviews = await window.db.getReviews();
+          publishedReviews = await window.db.getReviews(false);
+          allReviews = await window.db.getReviews(true);
         }
+
+        const isMine = (id) => Boolean(window.db && window.db.isMyReview && window.db.isMyReview(id));
+        const visibleReviews = [
+          ...publishedReviews,
+          ...allReviews.filter((r) => isMine(r.id) && r.status === "Pending Approval"),
+        ];
+        loadedReviewsCache = visibleReviews;
 
         const countEl = document.getElementById("statReviewCount");
         const avgEl = document.getElementById("statAvgRating");
         const guideEl = document.getElementById("statGuideAvg");
         const lodgeEl = document.getElementById("statLodgeAvg");
 
-        if (countEl) countEl.textContent = String(reviews.length);
+        if (countEl) countEl.textContent = String(publishedReviews.length);
 
-        if (reviews.length === 0) {
+        if (publishedReviews.length === 0) {
           if (avgEl) avgEl.textContent = "--";
           if (guideEl) guideEl.textContent = "--";
           if (lodgeEl) lodgeEl.textContent = "--";
+        } else {
+          const avgRating = (publishedReviews.reduce((s, r) => s + Number(r.rating || 5), 0) / publishedReviews.length).toFixed(1);
+          const avgGuide = (publishedReviews.reduce((s, r) => s + Number(r.guideScore || r.rating || 5), 0) / publishedReviews.length).toFixed(1);
+          const avgLodge = (publishedReviews.reduce((s, r) => s + Number(r.lodgingScore || r.rating || 5), 0) / publishedReviews.length).toFixed(1);
+          if (avgEl) avgEl.textContent = avgRating + "/5";
+          if (guideEl) guideEl.textContent = avgGuide + "/5";
+          if (lodgeEl) lodgeEl.textContent = avgLodge + "/5";
+        }
+
+        if (visibleReviews.length === 0) {
           container.innerHTML = `
             <div class="md:col-span-2 lg:col-span-3 p-10 bg-white border border-[#CBD5E1] rounded-3xl text-center space-y-3 shadow-sm">
-              <h2 class="font-editorial text-2xl font-bold text-[#0F172A]">No Customer Reviews Submitted Yet</h2>
+              <h2 class="font-editorial text-2xl font-bold text-[#0F172A]">No Customer Reviews Published Yet</h2>
               <p class="text-sm text-[#334155] max-w-xl mx-auto">
                 We never fabricate testimonials. All statistics above update automatically once verified guests submit their expedition reviews.
               </p>
@@ -303,59 +397,100 @@
           return;
         }
 
-        const avgRating = (reviews.reduce((s, r) => s + Number(r.rating || 5), 0) / reviews.length).toFixed(1);
-        const avgGuide = (reviews.reduce((s, r) => s + Number(r.guideScore || r.rating || 5), 0) / reviews.length).toFixed(1);
-        const avgLodge = (reviews.reduce((s, r) => s + Number(r.lodgingScore || r.rating || 5), 0) / reviews.length).toFixed(1);
-        if (avgEl) avgEl.textContent = avgRating + "/5";
-        if (guideEl) guideEl.textContent = avgGuide + "/5";
-        if (lodgeEl) lodgeEl.textContent = avgLodge + "/5";
-
         const esc = window.escapeHtml || ((s) => String(s || ""));
-        container.innerHTML = reviews
-          .map(
-            (r) => `
-          <article class="p-6 bg-white border border-[#CBD5E1] rounded-3xl space-y-4 shadow-sm flex flex-col justify-between">
+        container.innerHTML = visibleReviews
+          .map((r) => {
+            const featured = r.status === "Featured on Homepage";
+            const pending = r.status === "Pending Approval";
+            const mine = isMine(r.id);
+            const badgeClass = pending
+              ? "bg-amber-100 text-[#7C4D00] border border-amber-300"
+              : featured
+              ? "bg-[#D99A00] text-[#042617]"
+              : "bg-[#073F27] text-white";
+            const cardBorder = featured
+              ? "border-2 border-[#D99A00]"
+              : pending
+              ? "border-2 border-amber-300"
+              : "border border-[#CBD5E1]";
+
+            return `
+          <article class="p-6 bg-white ${cardBorder} rounded-3xl space-y-4 shadow-sm flex flex-col justify-between">
             <div class="space-y-3">
-              <div class="flex items-center justify-between text-xs">
+              <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span class="text-[#7C4D00] font-bold">${Number(r.rating || 5)}.0 / 5.0 Stars</span>
-                <span class="px-2.5 py-0.5 rounded-full bg-[#073F27] text-white text-[10px] font-bold uppercase">${esc(r.status || "Verified Guest")}</span>
+                <div class="flex items-center gap-1.5">
+                  ${mine ? `<span class="px-2 py-0.5 rounded-full bg-[#F1F5F9] text-[#0F172A] border border-[#CBD5E1] text-[10px] font-bold uppercase">Your Review</span>` : ""}
+                  <span class="px-2.5 py-0.5 rounded-full ${badgeClass} text-[10px] font-bold uppercase">${esc(r.status || "Verified Guest")}</span>
+                </div>
               </div>
               <p class="text-xs sm:text-sm text-[#334155] italic leading-relaxed">"${esc(r.content)}"</p>
             </div>
-            <div class="border-t border-[#E2E8F0] pt-3">
-              <h3 class="font-editorial text-lg font-bold text-[#0F172A]">${esc(r.author)}</h3>
-              <span class="text-xs text-[#7C4D00] font-semibold block">${esc(r.country)} · ${esc(r.date || "Recent")}</span>
-              <span class="text-[11px] text-[#475569] block mt-0.5">${esc(r.tourName)}</span>
+            <div class="border-t border-[#E2E8F0] pt-3 space-y-2.5">
+              <div>
+                <h3 class="font-editorial text-lg font-bold text-[#0F172A]">${esc(r.author)}</h3>
+                <span class="text-xs text-[#7C4D00] font-semibold block">${esc(r.country)} · ${esc(r.date || "Recent")}</span>
+                <span class="text-[11px] text-[#475569] block mt-0.5">${esc(r.tourName)}</span>
+              </div>
+              ${
+                mine
+                  ? `
+              <div class="flex items-center gap-2 pt-1">
+                <button type="button" onclick="openEditReviewModal('${esc(r.id)}')" class="px-3 py-1 rounded-lg bg-[#F8FAFC] hover:bg-[#F1F5F9] border border-[#CBD5E1] text-[11px] font-bold text-[#073F27] cursor-pointer">Edit</button>
+                <button type="button" onclick="requestDeleteReview('${esc(r.id)}')" class="px-3 py-1 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 text-[11px] font-bold text-red-700 cursor-pointer">Delete</button>
+              </div>
+              `
+                  : ""
+              }
             </div>
           </article>
-        `
-          )
+        `;
+          })
           .join("");
       }
 
       async function handleReviewSubmit(e) {
         e.preventDefault();
+        const editId = document.getElementById("editReviewId").value.trim();
         const author = document.getElementById("revAuthor").value.trim();
         const country = document.getElementById("revCountry").value.trim();
         const tour = document.getElementById("revTour").value.trim();
         const content = document.getElementById("revContent").value.trim();
 
-        if (window.db && window.db.addReview) {
-          await window.db.addReview({
+        let savedStatus = "";
+        if (editId && window.db && window.db.updateReview) {
+          await window.db.updateReview(editId, {
             author,
             country,
             tourName: tour,
             rating: selectedRating,
             content,
           });
+          savedStatus = "updated";
+        } else if (window.db && window.db.addReview) {
+          const created = await window.db.addReview({
+            author,
+            country,
+            tourName: tour,
+            rating: selectedRating,
+            content,
+          });
+          savedStatus = created && created.status ? created.status : "created";
         }
 
         await renderReviews();
         closeReviewModal();
         e.target.reset();
+        document.getElementById("editReviewId").value = "";
         setStars(5);
         if (window.showToast) {
-          window.showToast("Thank you. Your guest review has been saved to our live database.");
+          if (savedStatus === "updated") {
+            window.showToast("Your guest review has been updated in our live database.");
+          } else if (savedStatus === "Pending Approval") {
+            window.showToast("Thank you. Your review has been submitted and is awaiting owner approval before public listing.", "info");
+          } else {
+            window.showToast("Thank you. Your guest review has been published to our live database.");
+          }
         }
       }
 
