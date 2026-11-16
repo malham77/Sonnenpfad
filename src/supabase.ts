@@ -1,7 +1,6 @@
 /**
  * Sonnenpfad Safaris Uganda Ltd - Supabase Database Connector (Cloudflare Pages Ready)
  * Project: https://ujodbxzzibfypfgqsnpj.supabase.co
- * Postgres Pooler: postgresql://postgres.ujodbxzzibfypfgqsnpj:[YOUR-PASSWORD]@aws-0-eu-west-3.pooler.supabase.com:5432/postgres
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -107,10 +106,10 @@ CREATE TABLE IF NOT EXISTS public.reviews (
   tour_name TEXT NOT NULL,
   rating INT DEFAULT 5,
   date TEXT NOT NULL,
-  overall_score INT DEFAULT 98,
-  wildlife_score INT DEFAULT 100,
-  guide_score INT DEFAULT 100,
-  lodging_score INT DEFAULT 96,
+  overall_score INT DEFAULT 95,
+  wildlife_score INT DEFAULT 95,
+  guide_score INT DEFAULT 95,
+  lodging_score INT DEFAULT 95,
   content TEXT NOT NULL,
   status TEXT DEFAULT 'Verified Guest',
   created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -150,6 +149,17 @@ CREATE TABLE IF NOT EXISTS public.likes (
   updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+-- 9. Privacy & Data Deletion Requests Table
+CREATE TABLE IF NOT EXISTS public.deletion_requests (
+  id TEXT PRIMARY KEY,
+  full_name TEXT NOT NULL,
+  contact_info TEXT NOT NULL,
+  record_scope TEXT DEFAULT 'All Personal Records',
+  reason TEXT,
+  status TEXT DEFAULT 'Pending Review',
+  created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
 -- Enable Row Level Security & Idempotent Policies
 ALTER TABLE public.safaris ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
@@ -159,6 +169,7 @@ ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tiktoks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.likes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.deletion_requests ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Public access safaris" ON public.safaris;
 CREATE POLICY "Public access safaris" ON public.safaris FOR ALL USING (true) WITH CHECK (true);
@@ -183,6 +194,9 @@ CREATE POLICY "Public access tiktoks" ON public.tiktoks FOR ALL USING (true) WIT
 
 DROP POLICY IF EXISTS "Public access likes" ON public.likes;
 CREATE POLICY "Public access likes" ON public.likes FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public access deletion_requests" ON public.deletion_requests;
+CREATE POLICY "Public access deletion_requests" ON public.deletion_requests FOR ALL USING (true) WITH CHECK (true);
 `;
 
 export interface SupabaseDiagnosticResult {
@@ -208,6 +222,7 @@ export async function testSupabaseConnection(): Promise<SupabaseDiagnosticResult
     { name: 'settings', col: 'id' },
     { name: 'tiktoks', col: 'id' },
     { name: 'likes', col: 'item_id' },
+    { name: 'deletion_requests', col: 'id' },
   ];
 
   const tables: Record<string, { status: 'ok' | 'needs_table_creation'; error?: string | null }> = {};
@@ -231,6 +246,7 @@ export async function testSupabaseConnection(): Promise<SupabaseDiagnosticResult
 
   const latencyMs = Math.round(performance.now() - start);
   const allReady = Object.values(tables).every((t) => t.status === 'ok');
+  const readyCount = Object.values(tables).filter((t) => t.status === 'ok').length;
 
   return {
     connected: anyNetworkSuccess,
@@ -239,8 +255,8 @@ export async function testSupabaseConnection(): Promise<SupabaseDiagnosticResult
     tables,
     allReady,
     message: allReady
-      ? `All 8 tables live & connected at ${SUPABASE_URL} (${latencyMs}ms)`
-      : `Connected to ${SUPABASE_URL} (${latencyMs}ms) — run SQL script once to initialize missing tables.`,
+      ? `All ${tableSpecs.length} tables live & connected at ${SUPABASE_URL} (${latencyMs}ms)`
+      : `${readyCount}/${tableSpecs.length} tables active at ${SUPABASE_URL} (${latencyMs}ms) — run SQL script once to initialize missing tables.`,
   };
 }
 

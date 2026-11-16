@@ -1,10 +1,15 @@
 /**
- * Sonnenpfad Safaris Uganda Ltd - Global Engine & Live Database System
- * Fully connected to Supabase Database (https://ujodbxzzibfypfgqsnpj.supabase.co)
- * with live Express backend API (/api/*) and persistent fallback.
+ * Sonnenpfad Safaris Uganda Ltd - Global Engine & Direct Supabase Database System
+ * Designed for zero-server Cloudflare Pages static hosting with direct Supabase persistence.
  */
 
-import { supabase, testSupabaseConnection, SUPABASE_SCHEMA_SQL, SUPABASE_URL, SUPABASE_DB_URL } from './supabase';
+import {
+  supabase,
+  testSupabaseConnection,
+  SUPABASE_SCHEMA_SQL,
+  SUPABASE_URL,
+  SUPABASE_DB_URL,
+} from "./supabase";
 
 export interface SafariPackage {
   id: string;
@@ -16,6 +21,7 @@ export interface SafariPackage {
   priceUGX: number;
   formattedPriceUGX: string;
   image: string;
+  altText?: string;
   overview: string;
   highlights: string[];
   included: string[];
@@ -35,7 +41,13 @@ export interface ShopProduct {
   id: string;
   name: string;
   origin: string;
-  category: "Specialty Coffee" | "Expedition Gear" | "Optics & Binoculars" | "Apparel & Hats" | "Accessories" | "Skincare";
+  category:
+    | "Specialty Coffee"
+    | "Expedition Gear"
+    | "Optics & Binoculars"
+    | "Apparel & Hats"
+    | "Accessories"
+    | "Skincare";
   roastLevel?: string;
   price: number;
   originalPrice?: number;
@@ -43,6 +55,7 @@ export interface ShopProduct {
   rating: number;
   reviewsCount: number;
   image: string;
+  altText?: string;
   isSale?: boolean;
   inStock: boolean;
   flavorNotes: string[];
@@ -99,216 +112,236 @@ export interface TikTokItem {
   likes: string;
 }
 
+export interface DeletionRequest {
+  id: string;
+  fullName: string;
+  contactInfo: string;
+  recordScope: string;
+  reason?: string;
+  status: "Pending Review" | "Completed";
+  createdAt: string;
+}
+
 export const formatUGX = (amount: number): string => {
-  return "UGX " + amount.toLocaleString("en-US");
+  return "UGX " + Number(amount || 0).toLocaleString("en-US");
 };
 
-// 1. DEFAULT SEED DATA
+export function escapeHtml(str: unknown): string {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// =========================================================================
+// 1. LICENSED LOCAL MEDIA & DEFAULT SEED DATA (NO FAKE REVIEWS / CLAIMS)
+// =========================================================================
+
 const DEFAULT_SAFARIS: SafariPackage[] = [
   {
     id: "saf-1",
-    title: "3-Day Bwindi Ultimate Gorilla Trekking Experience",
+    title: "3-Day Bwindi Mountain Gorilla Trekking Expedition",
     duration: "3 Days / 2 Nights",
     durationDays: 3,
     destinations: ["Bwindi Impenetrable Forest", "Equator Crossing"],
     destinationsFormatted: "Bwindi Impenetrable National Park",
     priceUGX: 5200000,
     formattedPriceUGX: "UGX 5,200,000",
-    image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
+    image: "/assets/images/bwindi-gorilla.jpg",
+    altText: "Silverback mountain gorilla resting among emerald ferns in Bwindi Impenetrable Forest, Uganda",
     overview:
-      "A thrilling encounter with endangered mountain gorillas in their ancient mist-shrouded rainforest home. Accompanied by experienced UWA rangers, track habituated gorilla families for a life-defining hour of quiet observation.",
+      "Observe endangered mountain gorillas in Bwindi Impenetrable National Park with licensed Uganda Wildlife Authority rangers. Includes a guided tracking session, forest lodge accommodation, and private 4x4 transport from Entebbe or Kampala. Minimum age for gorilla permits is 15 years per UWA regulations.",
     highlights: [
-      "Guaranteed mountain gorilla tracking permit",
-      "Scenic journey across the Kigezi Highlands (Switzerland of Africa)",
-      "Official Equator monument stop & water vortex experiment",
-      "Stay in boutique forest lodges overlooking the canopy"
+      "Official UWA mountain gorilla tracking permit coordination",
+      "Scenic drive through the Kigezi Highlands and Equator landmark",
+      "Full-board stay at eco-lodges bordering the rainforest canopy",
     ],
     included: [
-      "Official Mountain Gorilla Trekking Permit ($800 value)",
-      "4x4 Safari Land Cruiser with pop-up roof & English-speaking guide",
-      "2 nights full-board accommodation at premier lodge",
-      "All park entry fees, bottled drinking water in vehicle"
+      "UWA Mountain Gorilla Trekking Permit",
+      "Private 4x4 Safari Land Cruiser with pop-up roof & licensed driver-guide",
+      "2 nights full-board lodge accommodation",
+      "National park entry fees and bottled drinking water in vehicle",
     ],
     excluded: [
       "International flights and entry visas",
-      "Porter fees during gorilla trek ($20 recommended)",
-      "Personal travel insurance and gratuities"
+      "Optional community porter fees during the forest trek",
+      "Personal travel insurance and gratuities",
     ],
     accommodationLevel: "Luxury",
-    likesCount: 142,
+    likesCount: 0,
     itinerary: [
       {
         day: 1,
         title: "Entebbe / Kampala to Bwindi Forest",
-        description: "Depart Entebbe in private 4x4 Land Cruiser. Stop at the Equator for photography, then journey through rolling terraced hills to Bwindi.",
-        accommodation: "Buhoma Lodge"
+        description:
+          "Depart Entebbe in a private 4x4 Land Cruiser with an Equator stopover before arriving at Bwindi.",
+        accommodation: "Buhoma Sector Forest Lodge",
       },
       {
         day: 2,
-        title: "The Gorilla Trekking Encounter",
-        description: "Trek into the ancient forest canopy. Once located, spend one unforgettable hour observing the silverback and playful infants.",
-        accommodation: "Buhoma Lodge"
+        title: "Mountain Gorilla Tracking",
+        description:
+          "Morning ranger briefing followed by a guided forest trek to observe a habituated gorilla family for one regulated hour.",
+        accommodation: "Buhoma Sector Forest Lodge",
       },
       {
         day: 3,
-        title: "Scenic Return to Entebbe",
-        description: "Sunrise breakfast over the misty canopy before beginning the scenic return drive to Entebbe."
-      }
-    ]
+        title: "Return Transfer to Kampala / Entebbe",
+        description: "Morning breakfast overlooking the forest canopy followed by the return journey.",
+      },
+    ],
   },
   {
     id: "saf-2",
-    title: "14-Day Grand East Africa: Primates, Savannah & Great Migration",
+    title: "14-Day Grand East Africa: Primates & Great Migration",
     duration: "14 Days / 13 Nights",
     durationDays: 14,
     destinations: ["Bwindi", "Kibale", "Queen Elizabeth", "Serengeti", "Masai Mara", "Ngorongoro"],
-    destinationsFormatted: "Uganda, Kenya & Tanzania Multi-Country Circuit",
+    destinationsFormatted: "Uganda, Kenya & Tanzania Cross-Border Circuit",
     priceUGX: 24500000,
     formattedPriceUGX: "UGX 24,500,000",
-    image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80",
+    image: "/assets/images/hero-savannah.jpg",
+    altText: "Private 4x4 safari Land Cruiser observing elephants across golden East African savannah plains",
     overview:
-      "The pinnacle East African expedition combining Uganda's mountain gorillas and chimpanzees with the thundering herds of the Serengeti and Masai Mara Great Migration, and the volcanic wildlife bowl of Ngorongoro.",
+      "A comprehensive multi-country East African itinerary linking Uganda primate sanctuaries with the seasonal wildlife plains of Serengeti, Ngorongoro Conservation Area, and Masai Mara.",
     highlights: [
-      "Mountain gorillas in Bwindi & chimpanzees in Kibale Forest",
-      "Great Wildebeest Migration across Serengeti and Masai Mara",
-      "Full-day game descent into the Ngorongoro Crater caldera",
-      "Tree-climbing lions of Ishasha & Kazinga Channel boat safari"
+      "Mountain gorilla trekking in Bwindi & chimpanzee tracking in Kibale",
+      "Game drives across Serengeti, Masai Mara & Ngorongoro Crater",
+      "Kazinga Channel boat excursion in Queen Elizabeth National Park",
     ],
     included: [
-      "All primate permits (Gorillas & Chimpanzees)",
-      "Private regional bush flights between parks",
-      "Luxury tented camps & boutique eco-lodges",
-      "Dedicated senior safari architect & professional guide"
+      "Coordinated UWA primate permits (gorillas and chimpanzees)",
+      "Scheduled regional flights & private 4x4 safari vehicles",
+      "Boutique lodges and tented camps on full-board basis",
     ],
-    excluded: ["International long-haul flights", "Luxury champagne upgrades", "Personal travel insurance"],
+    excluded: ["International airfare", "Entry visas", "Personal travel insurance"],
     accommodationLevel: "Luxury",
     isFlagship: true,
-    likesCount: 289,
+    likesCount: 0,
     itinerary: [
-      { day: 1, title: "Arrival in Entebbe, Uganda", description: "VIP airport reception and transfer to luxury lakeside hotel." },
-      { day: 2, title: "Flight to Kibale Primate Capital", description: "Afternoon chimpanzee habituation and Bigodi swamp walk." },
-      { day: 3, title: "Queen Elizabeth National Park", description: "Kazinga Channel boat cruise teeming with hippos and elephants." },
-      { day: 4, title: "Ishasha Tree-Climbing Lions to Bwindi", description: "Search for fig-tree lions and proceed to misty Bwindi." },
-      { day: 5, title: "Mountain Gorilla Trekking", description: "Breathtaking trek to spend one hour with the mountain gorillas." }
-    ]
+      { day: 1, title: "Entebbe Arrival", description: "Airport reception and transfer to lakeside accommodation." },
+      { day: 2, title: "Kibale Primate Sanctuary", description: "Guided chimpanzee forest walk and wetland trail." },
+      { day: 3, title: "Queen Elizabeth National Park", description: "Afternoon launch cruise along the Kazinga Channel." },
+    ],
   },
   {
     id: "saf-3",
-    title: "7-Day Pearls of Uganda: Gorillas, Chimpanzees & Wildlife",
+    title: "7-Day Pearls of Uganda: Gorillas, Chimps & Savannah",
     duration: "7 Days / 6 Nights",
     durationDays: 7,
     destinations: ["Kibale Forest", "Queen Elizabeth", "Bwindi Impenetrable"],
     destinationsFormatted: "Kibale, Queen Elizabeth & Bwindi Forest",
     priceUGX: 9900000,
     formattedPriceUGX: "UGX 9,900,000",
-    image: "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1200&q=80",
+    image: "/assets/images/ishasha-lions.jpg",
+    altText: "Lions resting on fig tree branches in Ishasha sector of Queen Elizabeth National Park, Uganda",
     overview:
-      "A complete Ugandan primate and savannah circuit. Chimpanzee tracking in Kibale, boat cruises along the Kazinga Channel, savannah game drives with tree-climbing lions, and mountain gorillas in Bwindi.",
+      "Combines chimpanzee tracking in Kibale Forest, tree-climbing lion game drives in Ishasha, a Kazinga Channel boat cruise, and Bwindi mountain gorilla trekking in one continuous Ugandan circuit.",
     highlights: [
-      "Mountain gorilla trekking in Bwindi Impenetrable Forest",
-      "Chimpanzee tracking in Kibale Forest (primate capital)",
-      "Boat cruise on the Kazinga Channel with massive hippo pods",
-      "Game drives across Kasenyi Plains and Ishasha tree-climbing lions"
+      "Bwindi mountain gorilla permit and Kibale chimpanzee permit",
+      "Ishasha southern sector tree-climbing lion game drives",
+      "Private 4x4 Land Cruiser with bilingual Ugandan naturalist guide",
     ],
     included: [
-      "Bwindi gorilla tracking permit & Kibale chimpanzee permit",
-      "Custom 4x4 Land Cruiser with open pop-up photographic roof",
-      "6 nights boutique lodge accommodation, all meals"
+      "Gorilla and chimpanzee tracking permits",
+      "Private 4x4 safari Land Cruiser & driver-guide",
+      "6 nights full-board lodge accommodation",
     ],
-    excluded: ["International airfare", "Visas", "Gratuities"],
+    excluded: ["International flights", "Visas", "Personal insurance"],
     accommodationLevel: "Premium",
-    likesCount: 176,
+    likesCount: 0,
     itinerary: [
-      { day: 1, title: "Drive to Kibale Forest", description: "Scenic transit past tea plantations into Kibale." },
-      { day: 2, title: "Chimpanzee Tracking & Transfer to Queen Elizabeth", description: "Track chimps in morning; afternoon drive to Queen Elizabeth." }
-    ]
+      { day: 1, title: "Kampala to Kibale Forest", description: "Transit through western tea estates to Kibale." },
+      { day: 2, title: "Chimpanzee Tracking & Queen Elizabeth", description: "Morning forest trek and afternoon crater drive." },
+    ],
   },
   {
     id: "saf-4",
-    title: "10-Day Serengeti & Masai Mara Great Migration Odyssey",
+    title: "10-Day Serengeti & Masai Mara Savannah Circuit",
     duration: "10 Days / 9 Nights",
     durationDays: 10,
     destinations: ["Masai Mara", "Serengeti", "Ngorongoro Crater", "Amboseli"],
-    destinationsFormatted: "Kenya & Tanzania Savannah Plains",
+    destinationsFormatted: "Kenya & Tanzania Savannah Reserves",
     priceUGX: 16800000,
     formattedPriceUGX: "UGX 16,800,000",
-    image: "https://images.unsplash.com/photo-1534177616072-ef7dc120449d?auto=format&fit=crop&w=1200&q=80",
+    image: "/assets/images/hero-savannah.jpg",
+    altText: "Elephants crossing East African grasslands near a green 4x4 safari vehicle at sunset",
     overview:
-      "Follow the world's most breathtaking overland wildlife movement across the Mara-Serengeti ecosystem. Experience predator action, dramatic river crossings, and sweeping views of Mount Kilimanjaro.",
+      "Seasonal overland wildlife circuit exploring the Serengeti plains, Masai Mara river corridors, Ngorongoro caldera, and Amboseli elephant reserves.",
     highlights: [
-      "Exclusive Mara River crossing vantage points",
-      "Serengeti big cat tracking with master Maasai trackers",
-      "Full day inside the Ngorongoro volcanic bowl",
-      "Huge elephant tuskers of Amboseli with Kilimanjaro backdrop"
+      "Guided game drives timed to seasonal migration routes",
+      "Full-day descent into Ngorongoro Conservation Area",
+      "Amboseli savannah drives facing Mount Kilimanjaro",
     ],
-    included: ["All national park and conservation fees", "Customized 4x4 safari vehicle", "Luxury tented camp stays and full board"],
-    excluded: ["Optional hot air balloon flight", "Visas and personal insurance"],
+    included: ["Conservation and national park fees", "4x4 safari vehicle", "Full-board lodge stays"],
+    excluded: ["Optional balloon excursions", "Visas and travel insurance"],
     accommodationLevel: "Luxury",
-    likesCount: 215,
+    likesCount: 0,
     itinerary: [
-      { day: 1, title: "Arrive Nairobi, Kenya", description: "Transfer to boutique colonial hotel." },
-      { day: 2, title: "Amboseli National Park", description: "Elephants beneath the snows of Mount Kilimanjaro." }
-    ]
+      { day: 1, title: "Nairobi Reception", description: "Arrival briefing and overnight lodge stay." },
+      { day: 2, title: "Amboseli Wildlife Reserve", description: "Afternoon game drive beneath Kilimanjaro." },
+    ],
   },
   {
     id: "saf-5",
-    title: "5-Day Murchison Falls & Chimpanzee Explorer",
+    title: "5-Day Murchison Falls & Ziwa Rhino Explorer",
     duration: "5 Days / 4 Nights",
     durationDays: 5,
     destinations: ["Murchison Falls", "Budongo Forest", "Ziwa Rhino Sanctuary"],
     destinationsFormatted: "Murchison Falls & Victoria Nile",
     priceUGX: 7800000,
     formattedPriceUGX: "UGX 7,800,000",
-    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80",
+    image: "/assets/images/murchison-nile.jpg",
+    altText: "Murchison Falls surging through narrow gorge on the Victoria Nile at sunrise in Uganda",
     overview:
-      "Witness the world's most powerful surge of water as the Victoria Nile squeezes through a 7-meter gorge. Track wild white rhinos on foot at Ziwa, explore northern savannahs, and encounter chimpanzees in Budongo.",
+      "Track southern white rhinos on foot at Ziwa Rhino Sanctuary, cruise along the Victoria Nile to the base of Murchison Falls, and explore Budongo Forest Reserve.",
     highlights: [
-      "Foot tracking of southern white rhinos at Ziwa Sanctuary",
-      "Boat cruise to the thunderous base of Murchison Falls",
-      "Hike to the top of the falls where the Nile roars",
-      "Northern delta game drives for Rothschild giraffes and lions"
+      "Guided on-foot rhino tracking at Ziwa Rhino Sanctuary",
+      "Victoria Nile boat excursion to the base of Murchison Falls",
+      "Top-of-the-falls geological overlook and northern savannah drive",
     ],
-    included: ["All park entry fees & boat excursions", "Ziwa rhino tracking permit", "Budongo chimp trek", "Full board safari lodge stay"],
-    excluded: ["Optional delta boat cruise upgrade", "Alcoholic drinks & tips"],
+    included: ["Park entry fees, boat launch, Ziwa & Budongo permits", "Full-board safari lodge stays"],
+    excluded: ["Personal drinks", "Travel insurance and gratuities"],
     accommodationLevel: "Premium",
-    likesCount: 164,
+    likesCount: 0,
     itinerary: [
-      { day: 1, title: "Ziwa Rhino Tracking & Drive to Murchison", description: "Walk with rhinos at Ziwa Sanctuary, then drive north." }
-    ]
+      { day: 1, title: "Ziwa Rhino Sanctuary to Murchison Falls", description: "Guided rhino walk en route to northern Uganda." },
+    ],
   },
   {
     id: "saf-6",
-    title: "8-Day Rwanda & Uganda Primate Crown Expedition",
+    title: "8-Day Rwanda & Uganda Primate Route",
     duration: "8 Days / 7 Nights",
     durationDays: 8,
-    destinations: ["Volcanoes National Park", "Lake Kivu", "Bwindi Impenetrable", "Queen Elizabeth"],
+    destinations: ["Volcanoes National Park", "Lake Kivu", "Bwindi Impenetrable"],
     destinationsFormatted: "Rwanda & Southwestern Uganda",
     priceUGX: 12500000,
     formattedPriceUGX: "UGX 12,500,000",
-    image: "https://images.unsplash.com/photo-1544911845-1a7c6b8f4b1e?auto=format&fit=crop&w=1200&q=80",
+    image: "/assets/images/bwindi-gorilla.jpg",
+    altText: "Mountain gorilla surrounded by lush vegetation in the Virunga and Bwindi highlands",
     overview:
-      "A cross-border primate pilgrimage connecting Rwanda's misty bamboo Virunga volcanoes with Uganda's ancient Bwindi rainforest. Experience golden monkey tracking, two unique gorilla habitats, and tranquil Lake Kivu.",
+      "Cross-border primate route linking Rwanda's Volcanoes National Park and Lake Kivu with southwestern Uganda's Bwindi Impenetrable Forest.",
     highlights: [
-      "Volcanoes National Park gorilla & golden monkey trekking",
-      "Cross-border crossing into Uganda's Bwindi forest",
-      "Serene shores and kayaking along Lake Kivu",
-      "Savannah wildlife cruise along Queen Elizabeth's Kazinga Channel"
+      "Volcanoes National Park golden monkey & gorilla habitats",
+      "Lake Kivu shore stay and cross-border Cyanika/Katuna transfer",
+      "Bwindi forest canopy lodge experience",
     ],
-    included: ["All cross-border transfers and permits", "Luxury boutique lodge stays in Musanze and Bwindi", "Professional bilingual guide"],
-    excluded: ["East Africa Tourist Visa ($100)", "Tips and personal souvenirs"],
+    included: ["Cross-border 4x4 transport and scheduled park permits", "Boutique lodge stays"],
+    excluded: ["East Africa Tourist Visa fees", "Gratuities"],
     accommodationLevel: "Luxury",
-    likesCount: 198,
+    likesCount: 0,
     itinerary: [
-      { day: 1, title: "Kigali to Volcanoes National Park", description: "Kigali Genocide Memorial visit and scenic drive into the Virungas." }
-    ]
-  }
+      { day: 1, title: "Kigali to Volcanoes National Park", description: "City transfer north into the Virunga foothills." },
+    ],
+  },
 ];
 
-// 2. EXPANDED LUXURY SAFARI & COFFEE SHOP PRODUCTS (Renamed to "Shop" with more products)
 const DEFAULT_PRODUCTS: ShopProduct[] = [
   {
     id: "prod-1",
-    name: "Mount Elgon Peaberry Reserve",
+    name: "Mount Elgon Peaberry Reserve Coffee",
     origin: "Mount Elgon Slopes, Eastern Uganda",
     category: "Specialty Coffee",
     roastLevel: "Medium Roast",
@@ -316,294 +349,136 @@ const DEFAULT_PRODUCTS: ShopProduct[] = [
     originalPrice: 85000,
     weight: "250g Whole Bean",
     rating: 5,
-    reviewsCount: 38,
-    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=800&q=80",
+    reviewsCount: 0,
+    image: "/assets/images/elgon-coffee.jpg",
+    altText: "Roasted Mount Elgon Ugandan Arabica coffee beans in burlap bag with ceramic pour-over carafe",
     isSale: true,
     inStock: true,
-    flavorNotes: ["Wild Bergamot", "Dark Cocoa", "Candied Orange"],
-    description: "Hand-picked peaberry coffee beans shade-grown on volcanic slopes at 2,000m altitude. Highly prized for intense sweetness and silky crema.",
-    likesCount: 94
+    flavorNotes: ["Citrus Zest", "Dark Cocoa", "Brown Sugar"],
+    description:
+      "Small-batch single-origin Arabica harvested from high-altitude volcanic soils on Mount Elgon (1,800m–2,100m).",
+    likesCount: 0,
   },
   {
     id: "prod-2",
-    name: "Rwenzori Glacier Mist Arabica",
-    origin: "Mountains of the Moon, Western Uganda",
+    name: "Rwenzori Highland Washed Arabica",
+    origin: "Rwenzori Foothills, Western Uganda",
     category: "Specialty Coffee",
     roastLevel: "Medium-Dark Roast",
     price: 75000,
     originalPrice: 90000,
     weight: "250g Whole Bean",
     rating: 5,
-    reviewsCount: 29,
-    image: "https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&w=800&q=80",
+    reviewsCount: 0,
+    image: "/assets/images/elgon-coffee.jpg",
+    altText: "Freshly roasted Ugandan Rwenzori Arabica coffee beans prepared for brewing",
     isSale: false,
     inStock: true,
-    flavorNotes: ["Black Currant", "Roasted Almond", "Brown Sugar"],
-    description: "Grown along glacial runoff slopes of the Rwenzori Mountains. Naturally washed, crisp acidity and lingering dark chocolate finish.",
-    likesCount: 78
+    flavorNotes: ["Black Currant", "Roasted Almond", "Caramel"],
+    description:
+      "Naturally washed Arabica sourced from farming cooperatives bordering the Rwenzori mountain foothills.",
+    likesCount: 0,
   },
   {
     id: "prod-3",
-    name: "Sonnenpfad Savannah Dawn Espresso",
-    origin: "Uganda & Tanzania Rift Valley Blend",
+    name: "Savannah Dawn Espresso Blend",
+    origin: "Uganda Rift Valley Blend",
     category: "Specialty Coffee",
     roastLevel: "Espresso Roast",
     price: 80000,
-    weight: "500g Value Pack",
+    weight: "500g Bag",
     rating: 5,
-    reviewsCount: 42,
-    image: "https://images.unsplash.com/photo-1610889556528-9a770e32642f?auto=format&fit=crop&w=800&q=80",
-    isSale: true,
+    reviewsCount: 0,
+    image: "/assets/images/elgon-coffee.jpg",
+    altText: "Savannah Dawn espresso blend coffee beans and ceramic carafe on travertine stone",
+    isSale: false,
     inStock: true,
-    flavorNotes: ["Caramel Molasses", "Hazelnut", "Spiced Nutmeg"],
-    description: "Our signature early morning safari camp espresso blend. Full-bodied, thick golden crema, developed specifically to energize dawn game drives.",
-    likesCount: 112
+    flavorNotes: ["Molasses", "Hazelnut", "Warm Spice"],
+    description:
+      "Full-bodied morning roast balanced for camp stove brewing, stovetop moka pots, and espresso extraction.",
+    likesCount: 0,
   },
   {
     id: "prod-4",
-    name: "Kigezi Gorilla Highlands Dark Roast",
-    origin: "Bwindi & Kisoro Highlands, Uganda",
-    category: "Specialty Coffee",
-    roastLevel: "Dark Roast",
-    price: 70000,
-    originalPrice: 85000,
-    weight: "250g Ground",
-    rating: 5,
-    reviewsCount: 19,
-    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80",
-    isSale: false,
-    inStock: true,
-    flavorNotes: ["Smoky Oak", "Dark Molasses", "Clove"],
-    description: "Cultivated by local communities directly bordering Bwindi Forest. A portion of every bag funds community gorilla conservation corridors.",
-    likesCount: 63
-  },
-  {
-    id: "prod-5",
-    name: "Kilimanjaro Summit Bourbon Arabica",
-    origin: "Mount Kilimanjaro Slopes, Tanzania",
-    category: "Specialty Coffee",
-    roastLevel: "Medium Roast",
-    price: 85000,
-    weight: "250g Whole Bean",
-    rating: 5,
-    reviewsCount: 31,
-    image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80",
-    isSale: true,
-    inStock: true,
-    flavorNotes: ["Red Apple", "Honey Blossom", "Milk Chocolate"],
-    description: "Pure heirloom bourbon variety grown on fertile volcanic southern slopes of Kilimanjaro. Delicate floral notes and smooth finish.",
-    likesCount: 85
-  },
-  {
-    id: "prod-6",
     name: "Heavy-Duty Gorilla Trekking Gaiters",
-    origin: "Reinforced Waterproof Canvas",
+    origin: "Water-Resistant Canvas",
     category: "Expedition Gear",
     price: 115000,
     originalPrice: 140000,
     weight: "Pair (Adjustable S/M/L)",
     rating: 5,
-    reviewsCount: 22,
-    image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=800&q=80",
+    reviewsCount: 0,
+    image: "/assets/images/safari-gear.jpg",
+    altText: "Olive waterproof gorilla trekking gaiters alongside binoculars, khaki hat, and vacuum flask",
     isSale: true,
     inStock: true,
-    flavorNotes: ["Stinging Nettle Protection", "Steel Underboot Wire", "Breathable Waterproof"],
-    description: "Essential for Bwindi forest trekking. Protects your legs from safari ants, thorny vines, stinging nettles, and thick volcanic mud.",
-    likesCount: 134
+    flavorNotes: ["Mud & Nettle Shield", "Underboot Strap", "Adjustable Calf Closure"],
+    description:
+      "Designed for rainforest trails in Bwindi and Kibale to shield lower trousers and boots from trail mud, moisture, and forest ants.",
+    likesCount: 0,
   },
   {
-    id: "prod-7",
-    name: "Waterproof Expedition Backpack 45L",
-    origin: "Ripstop 600D Military-Grade Nylon",
-    category: "Expedition Gear",
-    price: 280000,
-    originalPrice: 350000,
-    weight: "45 Litres + Rain Cover",
-    rating: 5,
-    reviewsCount: 18,
-    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80",
-    isSale: true,
-    inStock: true,
-    flavorNotes: ["Ergonomic Lumbar Support", "Internal Hydration Sleeve", "Weather-Sealed Zippers"],
-    description: "Rugged expedition daypack tailored for carrying cameras, rain gear, and water across rain-soaked forests and open savannah game reserves.",
-    likesCount: 167
-  },
-  {
-    id: "prod-8",
-    name: "Bushnell NatureView HD Binoculars 10x42",
-    origin: "Multi-Coated Optical Glass",
+    id: "prod-5",
+    name: "Wildlife Field Binoculars 10x42 HD",
+    origin: "Multi-Coated Roof Prism",
     category: "Optics & Binoculars",
     price: 540000,
     originalPrice: 650000,
-    weight: "Fogproof & Nitrogen-Purged",
+    weight: "Fog-Resistant Body",
     rating: 5,
-    reviewsCount: 27,
-    image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80",
+    reviewsCount: 0,
+    image: "/assets/images/safari-gear.jpg",
+    altText: "Matte black 10x42 wildlife safari binoculars with neck strap and lens caps",
     isSale: false,
     inStock: true,
-    flavorNotes: ["10x Magnification", "Low-Light Dawn Clarity", "Shockproof Rubber Armor"],
-    description: "Precision binoculars calibrated for spotting tree-climbing lions, leopard silhouettes, and rare forest birds in Kibale and Serengeti.",
-    likesCount: 189
+    flavorNotes: ["10x42 Magnification", "Dawn Light Clarity", "Rubber Armored Grip"],
+    description:
+      "Calibrated for long-range wildlife observation during early morning savannah drives and canopy primate searches.",
+    likesCount: 0,
   },
   {
-    id: "prod-9",
-    name: "Wide-Brim UPF 50+ UV Safari Hat",
-    origin: "Breathable Quick-Dry Cotton Canvas",
+    id: "prod-6",
+    name: "Wide-Brim UPF Sun Safari Hat",
+    origin: "Breathable Cotton Canvas",
     category: "Apparel & Hats",
     price: 60000,
     originalPrice: 75000,
-    weight: "Universal Fit with Wind Cord",
+    weight: "Adjustable Fit",
     rating: 5,
-    reviewsCount: 35,
-    image: "https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&w=800&q=80",
+    reviewsCount: 0,
+    image: "/assets/images/safari-gear.jpg",
+    altText: "Khaki wide-brim breathable safari sun hat with leather chin cord",
     isSale: true,
     inStock: true,
-    flavorNotes: ["UPF 50+ UV Block", "Mesh Ventilation Crown", "Crushable Packable"],
-    description: "Classic savannah sun hat designed for full neck and face protection during open-roof game drives across Queen Elizabeth and Murchison.",
-    likesCount: 92
+    flavorNotes: ["Wide Sun Brim", "Mesh Crown Vent", "Packable Canvas"],
+    description:
+      "Lightweight sun protection engineered for open pop-up roof game drives across equatorial East Africa.",
+    likesCount: 0,
   },
   {
-    id: "prod-10",
-    name: "Handcrafted Wild Olive Wood 58mm Tamper",
-    origin: "East African Artisan Carvers",
-    category: "Accessories",
-    price: 130000,
-    originalPrice: 160000,
-    weight: "Solid Olive Wood & Steel (58mm)",
-    rating: 5,
-    reviewsCount: 14,
-    image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?auto=format&fit=crop&w=800&q=80",
-    isSale: false,
-    inStock: true,
-    flavorNotes: ["Calibrated Flat Base", "Beeswax Finished", "Ergonomic Grip"],
-    description: "Carved from salvaged wild olive wood with surgical grade stainless steel base. Hand-finished with beeswax by master artisans in Kampala.",
-    likesCount: 57
-  },
-  {
-    id: "prod-11",
-    name: "Organic Arabica Coffee Body Scrub (300g)",
-    origin: "Mount Elgon Peaberry & Cold-Pressed Shea",
-    category: "Skincare",
-    price: 45000,
-    originalPrice: 60000,
-    weight: "300g Glass Jar",
-    rating: 5,
-    reviewsCount: 19,
-    image: "https://images.unsplash.com/photo-1608248597359-052065e89d60?auto=format&fit=crop&w=800&q=80",
-    isSale: true,
-    inStock: true,
-    flavorNotes: ["Caffeine Exfoliation", "Nilotica Shea Butter", "Vitamin E Nourishing"],
-    description: "Revitalizing botanical scrub made from fresh ground Mount Elgon Arabica and wild Ugandan Nilotica shea butter. Leaves skin velvety and energized.",
-    likesCount: 71
-  },
-  {
-    id: "prod-12",
-    name: "Double-Wall Stainless Vacuum Safari Flask 1.2L",
-    origin: "Food-Grade 18/8 Stainless Steel",
+    id: "prod-7",
+    name: "Stainless Vacuum Safari Flask 1.2L",
+    origin: "18/8 Food-Grade Steel",
     category: "Accessories",
     price: 95000,
     originalPrice: 120000,
     weight: "1.2 Litre Capacity",
     rating: 5,
-    reviewsCount: 23,
-    image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=800&q=80",
+    reviewsCount: 0,
+    image: "/assets/images/safari-gear.jpg",
+    altText: "Brushed stainless steel 1.2 litre vacuum insulated safari coffee flask",
     isSale: false,
     inStock: true,
-    flavorNotes: ["Keeps Hot 24 Hours", "Keeps Cold 36 Hours", "Leakproof Push-Button Stopper"],
-    description: "Heavy-duty thermal flask with integrated serving cup. Keeps your Mount Elgon coffee steaming hot during freezing dawn game drives.",
-    likesCount: 88
-  }
+    flavorNotes: ["Double-Wall Insulated", "Integrated Cup Lid", "Leakproof Seal"],
+    description:
+      "Insulated expedition flask keeping hot coffee or cold drinking water temperature-stable during full-day game drives.",
+    likesCount: 0,
+  },
 ];
 
-const DEFAULT_REVIEWS: CustomerReview[] = [
-  {
-    id: "rev-1",
-    author: "Elena & Marcus Weber",
-    country: "Zurich, Switzerland",
-    tourName: "3-Day Bwindi Ultimate Gorilla Trekking Experience",
-    rating: 5,
-    date: "November 2026",
-    overallScore: 99,
-    wildlifeScore: 100,
-    guideScore: 100,
-    lodgingScore: 98,
-    content: "Trekking the mountain gorillas in Bwindi with Sonnenpfad Safaris was the single most transcendent experience of our lives. Standing four meters from the silverback was humbling beyond words. Our driver-guide Alex navigated every terrain with unmatched poise and safety.",
-    status: "Featured on Homepage"
-  },
-  {
-    id: "rev-2",
-    author: "Dr. Arthur Pendelton",
-    country: "Oxford, United Kingdom",
-    tourName: "14-Day Grand East Africa: Primates, Savannah & Great Migration",
-    rating: 5,
-    date: "October 2026",
-    overallScore: 98,
-    wildlifeScore: 99,
-    guideScore: 100,
-    lodgingScore: 96,
-    content: "A masterclass in safari architecture. From tracking chimpanzees in Kibale to witnessing a river crossing of over 10,000 wildebeests in the Serengeti, Sonnenpfad Safaris orchestrated regional flights, park permissions, and five-star bush camps with military precision.",
-    status: "Featured on Homepage"
-  },
-  {
-    id: "rev-3",
-    author: "Kisa Cathy & Family",
-    country: "Kampala, Uganda",
-    tourName: "5-Day Murchison Falls & Chimpanzee Explorer",
-    rating: 5,
-    date: "September 2026",
-    overallScore: 100,
-    wildlifeScore: 100,
-    guideScore: 100,
-    lodgingScore: 100,
-    content: "Sonnenpfad Safaris treats you like royalty from start to finish. Watching the Nile surge through Murchison Falls while sipping fresh Mount Elgon coffee from their roastery was unforgettable. The Land Cruiser was immaculate!",
-    status: "Verified Guest"
-  }
-];
-
-const DEFAULT_COMMENTS: Record<string, CommentItem[]> = {
-  "saf-1": [
-    {
-      id: "com-1",
-      itemId: "saf-1",
-      author: "Beatriz L. (Madrid)",
-      rating: 5,
-      text: "The trek was demanding through the misty slopes, but our guide Alex and the rangers made us feel completely secure. The silverback was calm and majestic!",
-      itemType: "safari",
-      date: "Nov 4, 2026"
-    },
-    {
-      id: "com-2",
-      itemId: "saf-1",
-      author: "Tobias Schmidt (Munich)",
-      rating: 5,
-      text: "Buhoma Lodge was breathtaking. Sleeping with the sounds of the Bwindi rainforest is pure magic. Highly recommend getting a porter!",
-      itemType: "safari",
-      date: "Oct 28, 2026"
-    }
-  ],
-  "prod-1": [
-    {
-      id: "com-3",
-      itemId: "prod-1",
-      author: "Julian Vance (London)",
-      rating: 5,
-      text: "One of the sweetest peaberry coffees I have tasted. The orange blossom and cocoa notes shine through French press.",
-      itemType: "product",
-      date: "Nov 2, 2026"
-    }
-  ],
-  "prod-6": [
-    {
-      id: "com-4",
-      itemId: "prod-6",
-      author: "Claire D. (Nairobi)",
-      rating: 5,
-      text: "Do NOT attempt gorilla trekking without these gaiters! The forest mud and ants are relentless. These kept my boots bone dry.",
-      itemType: "product",
-      date: "Oct 15, 2026"
-    }
-  ]
-};
+// ZERO FAKE REVIEWS: Reviews come exclusively from real guest submissions in Supabase / localStorage
+const DEFAULT_REVIEWS: CustomerReview[] = [];
+const DEFAULT_COMMENTS: Record<string, CommentItem[]> = {};
 
 const DEFAULT_SETTINGS = {
   phone: "+256 773 333108",
@@ -619,35 +494,35 @@ const DEFAULT_SETTINGS = {
 const DEFAULT_TIKTOKS: TikTokItem[] = [
   {
     id: "tt-1",
-    title: "Morning encounter with the Bwindi silverback gorilla family 🦍",
+    title: "Bwindi Impenetrable Forest silverback tracking briefing and canopy scenes",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
-    views: "18.4K",
-    likes: "2.3K",
+    thumbnail: "/assets/images/bwindi-gorilla.jpg",
+    views: "Official Clip",
+    likes: "TikTok Reel",
   },
   {
     id: "tt-2",
-    title: "Cruising the Victoria Nile with massive hippos and Murchison Falls 🌊",
+    title: "Victoria Nile boat launch approaching the gorge at Murchison Falls",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
-    views: "24.9K",
-    likes: "3.1K",
+    thumbnail: "/assets/images/murchison-nile.jpg",
+    views: "Official Clip",
+    likes: "TikTok Reel",
   },
   {
     id: "tt-3",
-    title: "Tree-climbing lions resting in sycamore fig trees in Queen Elizabeth 🦁",
+    title: "Tree-climbing lions in sycamore fig branches in Ishasha, Queen Elizabeth",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=600&q=80",
-    views: "31.2K",
-    likes: "4.8K",
+    thumbnail: "/assets/images/ishasha-lions.jpg",
+    views: "Official Clip",
+    likes: "TikTok Reel",
   },
   {
     id: "tt-4",
-    title: "Fresh harvest and roasting of Mount Elgon Peaberry Arabica coffee ☕",
+    title: "Mount Elgon highland Arabica harvest and roast dispatch in Kampala",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80",
-    views: "12.6K",
-    likes: "1.9K",
+    thumbnail: "/assets/images/elgon-coffee.jpg",
+    views: "Official Clip",
+    likes: "TikTok Reel",
   },
 ];
 
@@ -661,14 +536,15 @@ function mapSafariRow(d: any): SafariPackage {
     destinationsFormatted: d.destinations_formatted || d.title,
     priceUGX: Number(d.price_ugx),
     formattedPriceUGX: d.formatted_price_ugx || "UGX " + Number(d.price_ugx).toLocaleString("en-US"),
-    image: d.image,
+    image: d.image || "/assets/images/hero-savannah.jpg",
+    altText: d.title,
     overview: d.overview || "",
     highlights: d.highlights || [],
     included: d.included || [],
     excluded: d.excluded || [],
     accommodationLevel: d.accommodation_level || "Luxury",
     isFlagship: Boolean(d.is_flagship),
-    likesCount: Number(d.likes_count) || 50,
+    likesCount: Number(d.likes_count) || 0,
     itinerary: d.itinerary || [],
   };
 }
@@ -683,13 +559,14 @@ function mapProductRow(d: any): ShopProduct {
     originalPrice: d.original_price ? Number(d.original_price) : undefined,
     weight: d.weight || "Standard",
     rating: Number(d.rating) || 5,
-    reviewsCount: Number(d.reviews_count) || 12,
-    image: d.image,
+    reviewsCount: Number(d.reviews_count) || 0,
+    image: d.image || "/assets/images/safari-gear.jpg",
+    altText: d.name,
     isSale: Boolean(d.is_sale),
     inStock: d.in_stock !== false,
     flavorNotes: d.flavor_notes || [],
     description: d.description || "",
-    likesCount: Number(d.likes_count) || 20,
+    likesCount: Number(d.likes_count) || 0,
   };
 }
 
@@ -701,10 +578,10 @@ function mapReviewRow(d: any): CustomerReview {
     tourName: d.tour_name,
     rating: Number(d.rating) || 5,
     date: d.date,
-    overallScore: Number(d.overall_score) || 98,
-    wildlifeScore: Number(d.wildlife_score) || 100,
-    guideScore: Number(d.guide_score) || 100,
-    lodgingScore: Number(d.lodging_score) || 96,
+    overallScore: Number(d.overall_score) || 95,
+    wildlifeScore: Number(d.wildlife_score) || 95,
+    guideScore: Number(d.guide_score) || 95,
+    lodgingScore: Number(d.lodging_score) || 95,
     content: d.content,
     status: (d.status as CustomerReview["status"]) || "Verified Guest",
   };
@@ -727,18 +604,21 @@ function mapOrderRow(d: any): CoffeeOrder {
   };
 }
 
-// LIVE SUPABASE + LOCALSTORAGE SYNC ENGINE (100% Cloudflare Pages Static Compatible)
+// =========================================================================
+// 2. LIVE SUPABASE + LOCALSTORAGE SYNC ENGINE
+// =========================================================================
 export const db = {
   async fetchLive() {
     try {
-      const [settingsRes, safarisRes, productsRes, tiktoksRes, reviewsRes, ordersRes] = await Promise.allSettled([
-        supabase.from("settings").select("*").eq("id", "primary_config").maybeSingle(),
-        supabase.from("safaris").select("*").order("created_at", { ascending: false }),
-        supabase.from("products").select("*").order("created_at", { ascending: false }),
-        supabase.from("tiktoks").select("*").order("created_at", { ascending: false }),
-        supabase.from("reviews").select("*").order("created_at", { ascending: false }),
-        supabase.from("orders").select("*").order("created_at", { ascending: false }),
-      ]);
+      const [settingsRes, safarisRes, productsRes, tiktoksRes, reviewsRes, ordersRes] =
+        await Promise.allSettled([
+          supabase.from("settings").select("*").eq("id", "primary_config").maybeSingle(),
+          supabase.from("safaris").select("*").order("created_at", { ascending: false }),
+          supabase.from("products").select("*").order("created_at", { ascending: false }),
+          supabase.from("tiktoks").select("*").order("created_at", { ascending: false }),
+          supabase.from("reviews").select("*").order("created_at", { ascending: false }),
+          supabase.from("orders").select("*").order("created_at", { ascending: false }),
+        ]);
 
       if (settingsRes.status === "fulfilled" && !settingsRes.value.error && settingsRes.value.data) {
         const s = settingsRes.value.data;
@@ -759,11 +639,17 @@ export const db = {
       }
 
       if (safarisRes.status === "fulfilled" && !safarisRes.value.error && safarisRes.value.data?.length) {
-        localStorage.setItem("sonnenpfad_safaris", JSON.stringify(safarisRes.value.data.map(mapSafariRow)));
+        localStorage.setItem(
+          "sonnenpfad_safaris",
+          JSON.stringify(safarisRes.value.data.map(mapSafariRow))
+        );
       }
 
       if (productsRes.status === "fulfilled" && !productsRes.value.error && productsRes.value.data?.length) {
-        localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(productsRes.value.data.map(mapProductRow)));
+        localStorage.setItem(
+          "sonnenpfad_shop_products",
+          JSON.stringify(productsRes.value.data.map(mapProductRow))
+        );
       }
 
       if (tiktoksRes.status === "fulfilled" && !tiktoksRes.value.error && tiktoksRes.value.data?.length) {
@@ -772,21 +658,27 @@ export const db = {
           title: d.title,
           videoUrl: d.video_url,
           thumbnail: d.thumbnail,
-          views: d.views || "15.2K",
-          likes: d.likes || "1.8K",
+          views: d.views || "Official Clip",
+          likes: d.likes || "TikTok Reel",
         }));
         localStorage.setItem("sonnenpfad_tiktoks", JSON.stringify(mappedTt));
       }
 
-      if (reviewsRes.status === "fulfilled" && !reviewsRes.value.error && reviewsRes.value.data?.length) {
-        localStorage.setItem("sonnenpfad_reviews", JSON.stringify(reviewsRes.value.data.map(mapReviewRow)));
+      if (reviewsRes.status === "fulfilled" && !reviewsRes.value.error && reviewsRes.value.data) {
+        localStorage.setItem(
+          "sonnenpfad_reviews",
+          JSON.stringify(reviewsRes.value.data.map(mapReviewRow))
+        );
       }
 
-      if (ordersRes.status === "fulfilled" && !ordersRes.value.error && ordersRes.value.data?.length) {
-        localStorage.setItem("sonnenpfad_coffee_orders", JSON.stringify(ordersRes.value.data.map(mapOrderRow)));
+      if (ordersRes.status === "fulfilled" && !ordersRes.value.error && ordersRes.value.data) {
+        localStorage.setItem(
+          "sonnenpfad_coffee_orders",
+          JSON.stringify(ordersRes.value.data.map(mapOrderRow))
+        );
       }
     } catch {
-      // Offline / table-not-initialized fallback safely uses localStorage defaults
+      // Offline fallback cleanly uses local storage
     }
 
     hydrateLiveSiteContent();
@@ -928,7 +820,6 @@ export const db = {
     await this.saveProducts(filtered);
   },
 
-  // Orders System (Direct Supabase + LocalStorage)
   async getOrders(): Promise<CoffeeOrder[]> {
     try {
       const { data, error } = await supabase
@@ -962,7 +853,11 @@ export const db = {
   }): Promise<CoffeeOrder> {
     const newOrder: CoffeeOrder = {
       id: "ORD-" + Date.now().toString().slice(-6),
-      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      date: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
       customerName: order.customerName,
       phone: order.phone,
       email: order.email || "",
@@ -1008,14 +903,14 @@ export const db = {
     localStorage.setItem("sonnenpfad_coffee_orders", "[]");
   },
 
-  // Reviews System (Direct Supabase + LocalStorage)
+  // Reviews System (Authentic user-submitted reviews only — zero fabricated defaults)
   async getReviews(): Promise<CustomerReview[]> {
     try {
       const { data, error } = await supabase
         .from("reviews")
         .select("*")
         .order("created_at", { ascending: false });
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         const mapped = data.map(mapReviewRow);
         localStorage.setItem("sonnenpfad_reviews", JSON.stringify(mapped));
         return mapped;
@@ -1044,10 +939,10 @@ export const db = {
       tourName: input.tourName.trim(),
       rating: Number(input.rating) || 5,
       date: new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" }),
-      overallScore: 98,
-      wildlifeScore: 100,
-      guideScore: 100,
-      lodgingScore: 96,
+      overallScore: Math.min(100, (Number(input.rating) || 5) * 20),
+      wildlifeScore: Math.min(100, (Number(input.rating) || 5) * 20),
+      guideScore: Math.min(100, (Number(input.rating) || 5) * 20),
+      lodgingScore: Math.min(100, (Number(input.rating) || 5) * 20),
       content: input.content.trim(),
       status: "Verified Guest",
     };
@@ -1070,7 +965,7 @@ export const db = {
     } catch {}
 
     try {
-      const existing = JSON.parse(localStorage.getItem("sonnenpfad_reviews") || JSON.stringify(DEFAULT_REVIEWS));
+      const existing = JSON.parse(localStorage.getItem("sonnenpfad_reviews") || "[]");
       existing.unshift(newRev);
       localStorage.setItem("sonnenpfad_reviews", JSON.stringify(existing));
     } catch {}
@@ -1082,13 +977,12 @@ export const db = {
     localStorage.setItem("sonnenpfad_reviews", JSON.stringify(items));
   },
 
-  // Likes System (Direct Supabase `likes` table + LocalStorage)
   async toggleLike(itemId: string): Promise<{ count: number; liked: boolean }> {
     const likesKey = "sonnenpfad_likes_" + itemId;
     const userLikedKey = "sonnenpfad_user_liked_" + itemId;
     const hasLiked = localStorage.getItem(userLikedKey) === "true";
     const nextLiked = !hasLiked;
-    let currentCount = Number(localStorage.getItem(likesKey) || 24);
+    let currentCount = Number(localStorage.getItem(likesKey) || 0);
 
     try {
       const { data, error } = await supabase
@@ -1119,7 +1013,6 @@ export const db = {
     }
   },
 
-  // Comments System (Direct Supabase + LocalStorage)
   async getComments(itemId: string): Promise<CommentItem[]> {
     try {
       const { data, error } = await supabase
@@ -1127,7 +1020,7 @@ export const db = {
         .select("*")
         .eq("item_id", itemId)
         .order("created_at", { ascending: false });
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         const mapped = data.map((d: any) => ({
           id: d.id,
           itemId: d.item_id,
@@ -1204,7 +1097,11 @@ export const db = {
       rating,
       text: text.trim(),
       itemType,
-      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      date: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
     };
 
     try {
@@ -1226,7 +1123,131 @@ export const db = {
     return created;
   },
 
-  // Settings & Admin Passcode Management
+  // Data Deletion & Privacy Compliance API
+  async submitDeletionRequest(input: {
+    fullName: string;
+    contactInfo: string;
+    recordScope: string;
+    reason?: string;
+  }): Promise<{ request: DeletionRequest; cloudSynced: boolean }> {
+    const req: DeletionRequest = {
+      id: "DEL-" + Date.now().toString().slice(-6),
+      fullName: input.fullName.trim(),
+      contactInfo: input.contactInfo.trim(),
+      recordScope: input.recordScope || "All Personal Records",
+      reason: (input.reason || "").trim(),
+      status: "Pending Review",
+      createdAt: new Date().toISOString(),
+    };
+
+    let cloudSynced = false;
+    try {
+      const { error } = await supabase.from("deletion_requests").insert({
+        id: req.id,
+        full_name: req.fullName,
+        contact_info: req.contactInfo,
+        record_scope: req.recordScope,
+        reason: req.reason || "",
+        status: req.status,
+      });
+      if (!error) cloudSynced = true;
+    } catch {}
+
+    try {
+      const existing: DeletionRequest[] = JSON.parse(
+        localStorage.getItem("sonnenpfad_deletion_requests") || "[]"
+      );
+      existing.unshift(req);
+      localStorage.setItem("sonnenpfad_deletion_requests", JSON.stringify(existing));
+    } catch {}
+
+    return { request: req, cloudSynced };
+  },
+
+  async getDeletionRequests(): Promise<DeletionRequest[]> {
+    try {
+      const { data, error } = await supabase
+        .from("deletion_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) {
+        const mapped: DeletionRequest[] = data.map((d: any) => ({
+          id: d.id,
+          fullName: d.full_name,
+          contactInfo: d.contact_info,
+          recordScope: d.record_scope || "All Personal Records",
+          reason: d.reason || "",
+          status: (d.status as DeletionRequest["status"]) || "Pending Review",
+          createdAt: d.created_at || new Date().toISOString(),
+        }));
+        localStorage.setItem("sonnenpfad_deletion_requests", JSON.stringify(mapped));
+        return mapped;
+      }
+    } catch {}
+
+    try {
+      return JSON.parse(localStorage.getItem("sonnenpfad_deletion_requests") || "[]");
+    } catch {
+      return [];
+    }
+  },
+
+  async fulfillDeletionRequest(requestId: string, fullName: string, contactInfo: string) {
+    const cleanName = fullName.trim();
+    const cleanContact = contactInfo.trim();
+
+    try {
+      if (cleanContact) {
+        await supabase.from("orders").delete().eq("phone", cleanContact);
+        await supabase.from("orders").delete().eq("email", cleanContact);
+      }
+      if (cleanName) {
+        await supabase.from("orders").delete().ilike("customer_name", cleanName);
+        await supabase.from("reviews").delete().ilike("author", cleanName);
+        await supabase.from("comments").delete().ilike("author", cleanName);
+      }
+      await supabase
+        .from("deletion_requests")
+        .update({ status: "Completed" })
+        .eq("id", requestId);
+    } catch {}
+
+    try {
+      const requests: DeletionRequest[] = JSON.parse(
+        localStorage.getItem("sonnenpfad_deletion_requests") || "[]"
+      ).map((r: DeletionRequest) => (r.id === requestId ? { ...r, status: "Completed" } : r));
+      localStorage.setItem("sonnenpfad_deletion_requests", JSON.stringify(requests));
+
+      const orders: CoffeeOrder[] = JSON.parse(
+        localStorage.getItem("sonnenpfad_coffee_orders") || "[]"
+      ).filter(
+        (o: CoffeeOrder) =>
+          o.phone !== cleanContact &&
+          o.email !== cleanContact &&
+          o.customerName.toLowerCase() !== cleanName.toLowerCase()
+      );
+      localStorage.setItem("sonnenpfad_coffee_orders", JSON.stringify(orders));
+
+      const reviews: CustomerReview[] = JSON.parse(
+        localStorage.getItem("sonnenpfad_reviews") || "[]"
+      ).filter((r: CustomerReview) => r.author.toLowerCase() !== cleanName.toLowerCase());
+      localStorage.setItem("sonnenpfad_reviews", JSON.stringify(reviews));
+    } catch {}
+  },
+
+  wipeLocalUserData() {
+    try {
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith("sonnenpfad_") && k !== "sonnenpfad_admin_pw") {
+          keysToRemove.push(k);
+        }
+      }
+      keysToRemove.forEach((k) => localStorage.removeItem(k));
+    } catch {}
+  },
+
   getSettings() {
     try {
       const stored = localStorage.getItem("sonnenpfad_settings");
@@ -1349,7 +1370,6 @@ export const db = {
     return { ok: true, cloudSynced };
   },
 
-  // TikTok Feed Management
   getTiktoks(): TikTokItem[] {
     try {
       const stored = localStorage.getItem("sonnenpfad_tiktoks");
@@ -1370,8 +1390,8 @@ export const db = {
           title: d.title,
           videoUrl: d.video_url,
           thumbnail: d.thumbnail,
-          views: d.views || "18.4K",
-          likes: d.likes || "2.3K",
+          views: d.views || "Official Clip",
+          likes: d.likes || "TikTok Reel",
         }));
         localStorage.setItem("sonnenpfad_tiktoks", JSON.stringify(mapped));
         return mapped;
@@ -1450,7 +1470,7 @@ export const db = {
           excluded: s.excluded || [],
           accommodation_level: s.accommodationLevel || "Luxury",
           is_flagship: Boolean(s.isFlagship),
-          likes_count: s.likesCount || 50,
+          likes_count: s.likesCount || 0,
           itinerary: s.itinerary || [],
         }))
       );
@@ -1468,13 +1488,13 @@ export const db = {
           original_price: p.originalPrice || null,
           weight: p.weight || "Standard",
           rating: p.rating || 5,
-          reviews_count: p.reviewsCount || 12,
+          reviews_count: p.reviewsCount || 0,
           image: p.image,
           is_sale: Boolean(p.isSale),
           in_stock: p.inStock !== false,
           description: p.description || "",
           flavor_notes: p.flavorNotes || [],
-          likes_count: p.likesCount || 20,
+          likes_count: p.likesCount || 0,
         }))
       );
       if (error) errors.push(`products: ${error.message}`);
@@ -1503,10 +1523,10 @@ export const db = {
           tour_name: r.tourName,
           rating: r.rating || 5,
           date: r.date,
-          overall_score: r.overallScore || 98,
-          wildlife_score: r.wildlifeScore || 100,
-          guide_score: r.guideScore || 100,
-          lodging_score: r.lodgingScore || 96,
+          overall_score: r.overallScore || 95,
+          wildlife_score: r.wildlifeScore || 95,
+          guide_score: r.guideScore || 95,
+          lodging_score: r.lodgingScore || 95,
           content: r.content,
           status: r.status || "Verified Guest",
         }))
@@ -1527,28 +1547,42 @@ export const db = {
   },
 };
 
-// IN-PAGE TOAST NOTIFICATION (Replaces browser alert())
-export function showToast(message: string, variant: "success" | "error" | "info" = "success") {
+// =========================================================================
+// 3. IN-PAGE TOAST NOTIFICATION (CLEAN SVG ICONS, ZERO EMOJIS)
+// =========================================================================
+export function showToast(
+  message: string,
+  variant: "success" | "error" | "info" = "success"
+) {
   if (typeof document === "undefined") return;
   let container = document.getElementById("sonnenpfadToastContainer");
   if (!container) {
     container = document.createElement("div");
     container.id = "sonnenpfadToastContainer";
-    container.className = "fixed bottom-5 right-5 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0";
+    container.setAttribute("role", "status");
+    container.setAttribute("aria-live", "polite");
+    container.className =
+      "fixed bottom-5 right-5 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0";
     document.body.appendChild(container);
   }
 
   const toast = document.createElement("div");
   const styles =
     variant === "error"
-      ? "bg-red-50 border-red-400 text-red-900"
+      ? "bg-red-50 border-red-500 text-red-950"
       : variant === "info"
-        ? "bg-amber-50 border-amber-400 text-amber-950"
+        ? "bg-amber-50 border-amber-500 text-amber-950"
         : "bg-[#073F27] border-[#F4B41A] text-white";
 
-  const icon = variant === "error" ? "⚠️" : variant === "info" ? "ℹ️" : "✅";
+  const iconSvg =
+    variant === "error"
+      ? `<svg class="w-4 h-4 shrink-0 text-red-700" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>`
+      : variant === "info"
+        ? `<svg class="w-4 h-4 shrink-0 text-amber-800" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+        : `<svg class="w-4 h-4 shrink-0 text-[#F4B41A]" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
+
   toast.className = `pointer-events-auto flex items-start gap-2.5 p-3.5 rounded-2xl border-2 shadow-2xl text-xs font-semibold transition-all duration-300 ${styles}`;
-  toast.innerHTML = `<span class="text-sm shrink-0">${icon}</span><span class="leading-snug">${message}</span>`;
+  toast.innerHTML = `${iconSvg}<span class="leading-snug">${escapeHtml(message)}</span>`;
   container.appendChild(toast);
 
   setTimeout(() => {
@@ -1558,8 +1592,163 @@ export function showToast(message: string, variant: "success" | "error" | "info"
   }, 4000);
 }
 
-// LIVE CONTENT HYDRATION ACROSS PAGES
-export function hydrateLiveSiteContent() {
+// =========================================================================
+// 4. ROTATING HERO SECTION (CHANGING IMAGES + EDITORIAL HEADLINE/SUBTITLE)
+// =========================================================================
+const HERO_SLIDES = [
+  {
+    image: "/assets/images/hero-savannah.jpg",
+    alt: "Sonnenpfad private 4x4 safari Land Cruiser observing wild elephants across sunlit East African plains",
+    kicker: "East Africa Premier Safaris & Coffee Roastery",
+    tag: "Kenya & Tanzania · Savannah Expeditions",
+    headline: "Your East African Journey Begins Here",
+    subtext:
+      "Private 4x4 Land Cruiser safaris, licensed national park permits, and small-batch Mount Elgon Arabica coffee curated from our Kampala operations center.",
+    ctaLabel: "Explore All Tours",
+    ctaHref: "safaris.html",
+  },
+  {
+    image: "/assets/images/bwindi-gorilla.jpg",
+    alt: "Silverback mountain gorilla resting among emerald ferns in misty Bwindi Impenetrable Forest, Uganda",
+    kicker: "Bwindi Impenetrable Forest · UNESCO Sanctuary",
+    tag: "Uganda · Mountain Gorilla Trekking (Ages 15+)",
+    headline: "Face to Face With Bwindi Silverbacks",
+    subtext:
+      "Guided primate expeditions led by licensed Uganda Wildlife Authority rangers in southwestern Uganda, paired with full-board rainforest lodge stays.",
+    ctaLabel: "View Gorilla Itineraries",
+    ctaHref: "safaris.html",
+  },
+  {
+    image: "/assets/images/murchison-nile.jpg",
+    alt: "Murchison Falls crashing through the Victoria Nile gorge under warm morning sunlight in Uganda",
+    kicker: "Victoria Nile · Murchison Falls & Ziwa",
+    tag: "Uganda · Nile Cruises & Rhino Tracking",
+    headline: "Discover the Surge of the Victoria Nile",
+    subtext:
+      "Combine on-foot white rhino tracking at Ziwa Sanctuary with private Victoria Nile boat launches to the base of Murchison Falls.",
+    ctaLabel: "Discover National Parks",
+    ctaHref: "destinations.html",
+  },
+];
+
+export function initHeroShowcase() {
+  const heroBg = document.getElementById("heroBg") as HTMLImageElement | null;
+  const heroKicker = document.getElementById("heroKicker");
+  const heroTag = document.getElementById("heroTag");
+  const heroHeadline = document.getElementById("heroHeadline");
+  const heroSubtext = document.getElementById("heroSubtext");
+  const heroCtaPrimary = document.getElementById("heroCtaPrimary") as HTMLAnchorElement | null;
+  const heroPrevBtn = document.getElementById("heroPrevBtn");
+  const heroNextBtn = document.getElementById("heroNextBtn");
+  const heroPauseBtn = document.getElementById("heroPauseBtn");
+  const dotsContainer = document.getElementById("heroSlideDots");
+
+  if (!heroBg || !heroHeadline) return;
+
+  let index = 0;
+  let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let intervalId: number | null = null;
+
+  function renderSlide(nextIdx: number) {
+    index = (nextIdx + HERO_SLIDES.length) % HERO_SLIDES.length;
+    const slide = HERO_SLIDES[index];
+
+    if (heroBg) {
+      heroBg.style.opacity = "0.25";
+      setTimeout(() => {
+        heroBg.src = slide.image;
+        heroBg.alt = slide.alt;
+        heroBg.style.opacity = "1";
+      }, 180);
+    }
+    if (heroKicker) heroKicker.textContent = slide.kicker;
+    if (heroTag) heroTag.textContent = slide.tag;
+    if (heroHeadline) heroHeadline.textContent = slide.headline;
+    if (heroSubtext) heroSubtext.textContent = slide.subtext;
+    if (heroCtaPrimary) {
+      const span = heroCtaPrimary.querySelector("span");
+      if (span) span.textContent = slide.ctaLabel;
+      heroCtaPrimary.href = slide.ctaHref;
+    }
+
+    if (dotsContainer) {
+      const buttons = dotsContainer.querySelectorAll("button");
+      buttons.forEach((b, i) => {
+        b.setAttribute("aria-selected", i === index ? "true" : "false");
+        if (i === index) {
+          b.className =
+            "px-3.5 py-1.5 rounded-full text-[11px] font-extrabold bg-[#F4B41A] text-[#042617] border-2 border-white shadow-md transition-all cursor-pointer";
+        } else {
+          b.className =
+            "px-3.5 py-1.5 rounded-full text-[11px] font-bold bg-[#042617]/90 text-white border border-white/60 hover:bg-[#073F27] transition-all cursor-pointer";
+        }
+      });
+    }
+  }
+
+  function startTimer() {
+    if (intervalId) window.clearInterval(intervalId);
+    if (!paused) {
+      intervalId = window.setInterval(() => renderSlide(index + 1), 6500);
+    }
+  }
+
+  if (heroPrevBtn) {
+    heroPrevBtn.addEventListener("click", () => {
+      renderSlide(index - 1);
+      startTimer();
+    });
+  }
+
+  if (heroNextBtn) {
+    heroNextBtn.addEventListener("click", () => {
+      renderSlide(index + 1);
+      startTimer();
+    });
+  }
+
+  if (heroPauseBtn) {
+    heroPauseBtn.textContent = paused ? "Resume Slides" : "Pause Slides";
+    heroPauseBtn.setAttribute("aria-pressed", String(paused));
+    heroPauseBtn.addEventListener("click", () => {
+      paused = !paused;
+      heroPauseBtn.textContent = paused ? "Resume Slides" : "Pause Slides";
+      heroPauseBtn.setAttribute("aria-pressed", String(paused));
+      startTimer();
+    });
+  }
+
+  if (dotsContainer) {
+    dotsContainer.querySelectorAll("button").forEach((btn, idx) => {
+      btn.addEventListener("click", () => {
+        renderSlide(idx);
+        startTimer();
+      });
+    });
+  }
+
+  // Keyboard arrow navigation when focused inside hero controls
+  const heroSection = heroHeadline.closest("section");
+  if (heroSection) {
+    heroSection.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        renderSlide(index - 1);
+        startTimer();
+      } else if (e.key === "ArrowRight") {
+        renderSlide(index + 1);
+        startTimer();
+      }
+    });
+  }
+
+  renderSlide(0);
+  startTimer();
+}
+
+// =========================================================================
+// 5. LIVE CONTENT HYDRATION (HOMEPAGE REVIEWS + TIKTOK + SETTINGS)
+// =========================================================================
+export async function hydrateLiveSiteContent() {
   if (typeof document === "undefined") return;
   const s = db.getSettings();
 
@@ -1569,6 +1758,59 @@ export function hydrateLiveSiteContent() {
   const mapIframe = document.getElementById("liveMapIframe") as HTMLIFrameElement | null;
   if (mapIframe && s.mapEmbedUrl) mapIframe.src = s.mapEmbedUrl;
 
+  // Hydrate Homepage Reviews Grid with ONLY genuine submitted database reviews
+  const homeReviewsGrid = document.getElementById("homeReviewsGrid");
+  if (homeReviewsGrid) {
+    const reviews = await db.getReviews();
+    const summaryEl = document.getElementById("homeReviewsSummary");
+
+    if (reviews.length === 0) {
+      if (summaryEl) {
+        summaryEl.textContent = "0 Verified Submissions Yet";
+      }
+      homeReviewsGrid.innerHTML = `
+        <div class="md:col-span-3 p-8 bg-white border border-[#CBD5E1] rounded-3xl text-center space-y-3 shadow-sm">
+          <h3 class="font-editorial text-2xl font-bold text-[#0F172A]">No Guest Reviews Published Yet</h3>
+          <p class="text-sm text-[#334155] max-w-xl mx-auto">
+            We publish only genuine expedition feedback submitted directly by travellers. Share your review after completing your safari or coffee order.
+          </p>
+          <div class="pt-2">
+            <a href="reviews.html" class="btn-glass-gold text-xs py-2.5 px-6">Be the First to Leave a Review</a>
+          </div>
+        </div>
+      `;
+    } else {
+      const avg = (
+        reviews.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / reviews.length
+      ).toFixed(1);
+      if (summaryEl) {
+        summaryEl.textContent = `Average ${avg} / 5.0 across ${reviews.length} guest ${reviews.length === 1 ? "review" : "reviews"}`;
+      }
+      homeReviewsGrid.innerHTML = reviews
+        .slice(0, 3)
+        .map(
+          (r) => `
+          <article class="p-6 bg-white border border-[#CBD5E1] rounded-3xl space-y-4 shadow-sm flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-[#7C4D00] font-bold" aria-label="${Number(r.rating) || 5} out of 5 stars">${Number(r.rating) || 5}.0 / 5.0 Stars</span>
+                <span class="text-[11px] font-semibold text-[#073F27]">${escapeHtml(r.status || "Verified Guest")}</span>
+              </div>
+              <p class="text-sm text-[#334155] leading-relaxed italic">"${escapeHtml(r.content)}"</p>
+            </div>
+            <div class="border-t border-[#CBD5E1] pt-3">
+              <h3 class="font-editorial text-lg font-bold text-[#0F172A]">${escapeHtml(r.author)}</h3>
+              <span class="text-xs text-[#7C4D00] font-semibold block">${escapeHtml(r.country)} · ${escapeHtml(r.date)}</span>
+              <span class="text-[11px] text-[#475569] block mt-0.5">${escapeHtml(r.tourName)}</span>
+            </div>
+          </article>
+        `
+        )
+        .join("");
+    }
+  }
+
+  // Hydrate TikTok Grid (Clean UI without emojis)
   const ttGrid = document.getElementById("tiktokFeedGrid");
   if (ttGrid) {
     const tiktoks = db.getTiktoks();
@@ -1577,25 +1819,25 @@ export function hydrateLiveSiteContent() {
         .slice(0, 4)
         .map(
           (tt) => `
-          <a href="${tt.videoUrl}" target="_blank" rel="noopener noreferrer" class="group bg-white border border-[#CBD5E1] rounded-3xl overflow-hidden shadow-lg hover:border-[#996500] transition-all flex flex-col justify-between">
-            <div class="relative aspect-[9/16] w-full overflow-hidden bg-black">
-              <img src="${tt.thumbnail}" alt="${tt.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+          <a href="${escapeHtml(tt.videoUrl)}" target="_blank" rel="noopener noreferrer" class="group bg-white border border-[#CBD5E1] rounded-3xl overflow-hidden shadow-md hover:border-[#7C4D00] transition-all flex flex-col justify-between">
+            <div class="relative aspect-[9/16] w-full overflow-hidden bg-[#0F172A]">
+              <img src="${escapeHtml(tt.thumbnail)}" alt="${escapeHtml(tt.title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
               <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-14 h-14 rounded-full bg-[#073F27]/90 border border-[#F4B41A] text-[#F4B41A] flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
-                  ▶
+                <div class="w-14 h-14 rounded-full bg-[#073F27]/95 border-2 border-[#F4B41A] text-[#F4B41A] flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform" aria-hidden="true">
+                  <svg class="w-6 h-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                 </div>
               </div>
-              <div class="absolute top-3 left-3 bg-black/70 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold text-white keep-white">
-                👁 ${tt.views} views
+              <div class="absolute top-3 left-3 bg-black/75 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold text-white keep-white">
+                ${escapeHtml(tt.views || "TikTok Video")}
               </div>
               <div class="absolute bottom-3 left-3 right-3 text-xs text-white">
-                <span class="font-bold text-[#F4B41A] block">${s.tiktok || "@kisacathy1900"}</span>
-                <p class="line-clamp-2 text-[11px] text-white/90 keep-white">${tt.title}</p>
+                <span class="font-bold text-[#F4B41A] block">${escapeHtml(s.tiktok || "@kisacathy1900")}</span>
+                <p class="line-clamp-2 text-[11px] text-white keep-white">${escapeHtml(tt.title)}</p>
               </div>
             </div>
-            <div class="p-3 bg-[#F8FAFC] text-center border-t border-[#CBD5E1] text-xs font-bold text-[#996500] group-hover:text-[#073F27] transition-colors">
-              Tap to Watch on TikTok →
+            <div class="p-3 bg-[#F8FAFC] text-center border-t border-[#CBD5E1] text-xs font-bold text-[#073F27] group-hover:text-[#7C4D00] transition-colors">
+              Watch Reel on TikTok
             </div>
           </a>
         `
@@ -1605,7 +1847,67 @@ export function hydrateLiveSiteContent() {
   }
 }
 
-// UI INITIALIZATION - Universal Daylight Light Theme (Dark Theme Removed)
+// =========================================================================
+// 6. SEO CANONICAL SYNC & COOKIE / PRIVACY PREFERENCES BANNER
+// =========================================================================
+export function syncCanonicalSeo() {
+  if (typeof document === "undefined" || typeof window === "undefined") return;
+  const cleanUrl = window.location.origin + window.location.pathname;
+  let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+  if (!link) {
+    link = document.createElement("link");
+    link.rel = "canonical";
+    document.head.appendChild(link);
+  }
+  link.href = cleanUrl;
+}
+
+export function initCookieConsent() {
+  if (typeof document === "undefined") return;
+  if (window.location.pathname.includes("admin.html")) return;
+  if (localStorage.getItem("sonnenpfad_cookie_choice")) return;
+
+  const bar = document.createElement("div");
+  bar.id = "cookieConsentBar";
+  bar.setAttribute("role", "dialog");
+  bar.setAttribute("aria-label", "Privacy and browser storage preferences");
+  bar.className =
+    "fixed bottom-3 left-3 right-3 sm:left-auto sm:right-5 sm:max-w-md z-40 bg-white border-2 border-[#073F27] rounded-2xl p-4 shadow-2xl text-xs text-[#0F172A]";
+  bar.innerHTML = `
+    <div class="space-y-2.5">
+      <div class="flex items-center justify-between gap-2">
+        <strong class="text-[#073F27] font-bold uppercase tracking-wider text-[11px]">Privacy &amp; Essential Storage</strong>
+        <a href="cookie-policy.html" class="text-[11px] font-bold text-[#7C4D00] underline">Cookie Policy</a>
+      </div>
+      <p class="text-[11px] text-[#334155] leading-relaxed">
+        We use strictly necessary browser storage only to keep your inquiry preferences and item likes working. We do not use advertising or cross-site tracking cookies.
+      </p>
+      <div class="flex flex-wrap items-center gap-2 pt-1">
+        <button type="button" id="acceptEssentialBtn" class="px-3.5 py-2 rounded-full bg-[#073F27] text-white font-bold text-[11px] cursor-pointer hover:bg-[#0A5233]">
+          Accept Essential Storage
+        </button>
+        <a href="privacy-policy.html#data-deletion" class="px-3 py-2 rounded-full bg-[#F1F5F9] text-[#0F172A] border border-[#CBD5E1] font-bold text-[11px] hover:bg-[#E2E8F0]">
+          Data Deletion
+        </a>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(bar);
+
+  const acceptBtn = document.getElementById("acceptEssentialBtn");
+  if (acceptBtn) {
+    acceptBtn.addEventListener("click", () => {
+      try {
+        localStorage.setItem("sonnenpfad_cookie_choice", "essential_only");
+      } catch {}
+      bar.remove();
+    });
+  }
+}
+
+// =========================================================================
+// 7. THEME, KEYBOARD NAVIGATION & ACCESSIBLE CONTROLS
+// =========================================================================
 export function initTheme() {
   const html = document.documentElement;
   html.classList.add("light");
@@ -1620,15 +1922,25 @@ export function initNavigation() {
   const mobileDrawer = document.getElementById("mobileDrawer");
   const mobileClose = document.getElementById("mobileDrawerClose");
 
+  const openMobileDrawer = () => {
+    if (!mobileDrawer) return;
+    mobileDrawer.classList.remove("hidden");
+    mobileToggle?.setAttribute("aria-expanded", "true");
+    mobileClose?.focus();
+  };
+
+  const closeMobileDrawer = () => {
+    if (!mobileDrawer) return;
+    mobileDrawer.classList.add("hidden");
+    mobileToggle?.setAttribute("aria-expanded", "false");
+    mobileToggle?.focus();
+  };
+
   if (mobileToggle && mobileDrawer) {
-    mobileToggle.addEventListener("click", () => {
-      mobileDrawer.classList.remove("hidden");
-    });
+    mobileToggle.addEventListener("click", openMobileDrawer);
   }
   if (mobileClose && mobileDrawer) {
-    mobileClose.addEventListener("click", () => {
-      mobileDrawer.classList.add("hidden");
-    });
+    mobileClose.addEventListener("click", closeMobileDrawer);
   }
 
   const searchBtn = document.getElementById("navSearchBtn");
@@ -1645,49 +1957,129 @@ export function initNavigation() {
   if (searchClose && searchOverlay) {
     searchClose.addEventListener("click", () => {
       searchOverlay.classList.add("hidden");
+      searchBtn?.focus();
     });
   }
+
+  // Keyboard accessible dropdown menus
+  document.querySelectorAll<HTMLElement>("[data-nav-dropdown]").forEach((wrapper) => {
+    const trigger = wrapper.querySelector<HTMLElement>("[data-dropdown-trigger]");
+    if (!trigger) return;
+
+    trigger.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+        if (e.key !== "Enter" || !wrapper.classList.contains("nav-dropdown-open")) {
+          e.preventDefault();
+          wrapper.classList.add("nav-dropdown-open");
+          trigger.setAttribute("aria-expanded", "true");
+          const firstItem = wrapper.querySelector<HTMLElement>(".dropdown-menu a");
+          firstItem?.focus();
+        }
+      } else if (e.key === "Escape") {
+        wrapper.classList.remove("nav-dropdown-open");
+        trigger.setAttribute("aria-expanded", "false");
+        trigger.focus();
+      }
+    });
+
+    wrapper.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        wrapper.classList.remove("nav-dropdown-open");
+        trigger.setAttribute("aria-expanded", "false");
+        trigger.focus();
+      }
+    });
+  });
+
+  // Global Escape handler for drawers, overlays, and modals
+  document.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key !== "Escape") return;
+    if (mobileDrawer && !mobileDrawer.classList.contains("hidden")) closeMobileDrawer();
+    if (searchOverlay && !searchOverlay.classList.contains("hidden")) {
+      searchOverlay.classList.add("hidden");
+      searchBtn?.focus();
+    }
+    const feedbackModal = document.getElementById("globalFeedbackModal");
+    if (feedbackModal && !feedbackModal.classList.contains("hidden")) {
+      feedbackModal.classList.add("hidden");
+    }
+    const prodModal = document.getElementById("productOrderModal");
+    if (prodModal && !prodModal.classList.contains("hidden")) {
+      prodModal.classList.add("hidden");
+    }
+    const revModal = document.getElementById("reviewModal");
+    if (revModal && !revModal.classList.contains("hidden")) {
+      revModal.classList.add("hidden");
+    }
+  });
 }
 
-// INTERACTIVE COMMENT & LIKE MODAL GENERATOR
-export async function openItemFeedbackModal(itemId: string, itemName: string, itemType: string = "item") {
+// =========================================================================
+// 8. INTERACTIVE COMMENT & RATING MODAL (DATA MINIMIZATION + AGE CONSENT)
+// =========================================================================
+export async function openItemFeedbackModal(
+  itemId: string,
+  itemName: string,
+  itemType: string = "item"
+) {
   let modal = document.getElementById("globalFeedbackModal");
   if (!modal) {
     modal = document.createElement("div");
     modal.id = "globalFeedbackModal";
-    modal.className = "fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "feedbackItemTitle");
+    modal.className =
+      "fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto";
     modal.innerHTML = `
       <div class="relative w-full max-w-xl bg-white border-2 border-[#CBD5E1] rounded-3xl p-6 sm:p-8 text-[#0F172A] shadow-2xl space-y-5 animate-slide-up my-8">
-        <button onclick="document.getElementById('globalFeedbackModal').classList.add('hidden')" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#0F172A] flex items-center justify-center cursor-pointer border border-[#CBD5E1]">
+        <button id="closeFeedbackModalBtn" type="button" aria-label="Close review dialog" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#0F172A] flex items-center justify-center cursor-pointer border border-[#CBD5E1]">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
-        <div class="border-b border-[#CBD5E1] pb-3">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-[#996500] block">Community Reviews & Comments</span>
+        <div class="border-b border-[#CBD5E1] pb-3 pr-10">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-[#7C4D00] block">Community Comments</span>
           <h2 id="feedbackItemTitle" class="font-editorial text-2xl font-bold text-[#0F172A] mt-0.5">Item Name</h2>
         </div>
 
         <form id="feedbackForm" class="space-y-3 bg-[#F8FAFC] p-4 rounded-2xl border border-[#CBD5E1]">
-          <span class="text-xs font-bold uppercase text-[#996500] block">Post Your Comment & Rating</span>
-          <div class="grid grid-cols-2 gap-3">
-            <input id="feedbackAuthor" type="text" required placeholder="Your Name" class="bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
-            <select id="feedbackRating" class="bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]">
-              <option value="5">★★★★★ (5 Stars)</option>
-              <option value="4">★★★★ (4 Stars)</option>
-              <option value="3">★★★ (3 Stars)</option>
-            </select>
+          <span class="text-xs font-bold uppercase text-[#7C4D00] block">Share Your Experience (Only Name &amp; Comment Stored)</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="feedbackAuthor" class="sr-only">Your Display Name</label>
+              <input id="feedbackAuthor" type="text" required maxlength="80" placeholder="Your Display Name *" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+            </div>
+            <div>
+              <label for="feedbackRating" class="sr-only">Rating</label>
+              <select id="feedbackRating" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]">
+                <option value="5">5.0 Stars (Excellent)</option>
+                <option value="4">4.0 Stars (Very Good)</option>
+                <option value="3">3.0 Stars (Good)</option>
+              </select>
+            </div>
           </div>
-          <textarea id="feedbackText" required rows="2" placeholder="Write your experience or question..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] resize-none"></textarea>
-          <button type="submit" class="btn-glass-gold text-xs py-2 px-5">Submit Comment</button>
+          <div>
+            <label for="feedbackText" class="sr-only">Comment text</label>
+            <textarea id="feedbackText" required rows="2" maxlength="600" placeholder="Share helpful notes for fellow travellers..." class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] resize-none"></textarea>
+          </div>
+          <label class="flex items-start gap-2 text-[11px] text-[#334155] cursor-pointer">
+            <input id="feedbackAgeConsent" type="checkbox" required class="mt-0.5 accent-[#073F27]" />
+            <span>I confirm I am 18+ years old (or submitting with parent/guardian consent) and agree to our <a href="privacy-policy.html" class="underline font-bold text-[#073F27]">Privacy Policy</a>.</span>
+          </label>
+          <button type="submit" class="btn-glass-gold text-xs py-2 px-5">Publish Comment</button>
         </form>
 
         <div class="space-y-3">
-          <span class="text-xs font-bold uppercase text-[#475569] tracking-wider block">Live Comments Feed</span>
+          <span class="text-xs font-bold uppercase text-[#334155] tracking-wider block">Published Comments</span>
           <div id="feedbackCommentsList" class="space-y-2.5 max-h-60 overflow-y-auto pr-1"></div>
         </div>
       </div>
     `;
     document.body.appendChild(modal);
+
+    document.getElementById("closeFeedbackModalBtn")?.addEventListener("click", () => {
+      modal?.classList.add("hidden");
+    });
   }
 
   const titleEl = document.getElementById("feedbackItemTitle");
@@ -1698,16 +2090,16 @@ export async function openItemFeedbackModal(itemId: string, itemName: string, it
   if (listEl) {
     listEl.innerHTML =
       comments.length === 0
-        ? `<p class="text-xs text-[#64748B] italic">No comments yet. Be the first to review!</p>`
+        ? `<p class="text-xs text-[#475569] italic">No comments submitted yet.</p>`
         : comments
             .map(
               (c) => `
       <div class="p-3 bg-[#F8FAFC] border border-[#CBD5E1] rounded-xl space-y-1">
         <div class="flex items-center justify-between text-xs">
-          <span class="font-bold text-[#0F172A]">${c.author}</span>
-          <span class="text-[#996500] font-bold">${"★".repeat(c.rating || 5)} · <span class="text-[#64748B] text-[10px]">${c.date}</span></span>
+          <span class="font-bold text-[#0F172A]">${escapeHtml(c.author)}</span>
+          <span class="text-[#7C4D00] font-bold">${Number(c.rating) || 5}.0 Stars · <span class="text-[#475569] text-[10px]">${escapeHtml(c.date)}</span></span>
         </div>
-        <p class="text-xs text-[#334155]">${c.text}</p>
+        <p class="text-xs text-[#334155]">${escapeHtml(c.text)}</p>
       </div>
     `
             )
@@ -1724,12 +2116,13 @@ export async function openItemFeedbackModal(itemId: string, itemName: string, it
 
       await db.addComment(itemId, author, text, rating, itemType);
       (document.getElementById("feedbackText") as HTMLTextAreaElement).value = "";
-      showToast("Your comment has been published!");
+      showToast("Your comment has been published.");
       openItemFeedbackModal(itemId, itemName, itemType);
     };
   }
 
   modal.classList.remove("hidden");
+  (document.getElementById("feedbackAuthor") as HTMLInputElement | null)?.focus();
 }
 
 export async function handleLikeClick(btnEl: HTMLElement, itemId: string) {
@@ -1739,15 +2132,15 @@ export async function handleLikeClick(btnEl: HTMLElement, itemId: string) {
     countEl.textContent = String(result.count);
   }
   if (result.liked) {
-    btnEl.classList.add("text-rose-600", "border-rose-400");
+    btnEl.classList.add("text-rose-700", "border-rose-400");
     btnEl.classList.remove("text-slate-700");
   } else {
-    btnEl.classList.remove("text-rose-600", "border-rose-400");
+    btnEl.classList.remove("text-rose-700", "border-rose-400");
     btnEl.classList.add("text-slate-700");
   }
 }
 
-// Attach globally to window for standalone HTML pages
+// Attach globally to window for standalone multi-page HTML pages
 if (typeof window !== "undefined") {
   (window as any).db = db;
   (window as any).supabase = supabase;
@@ -1758,8 +2151,10 @@ if (typeof window !== "undefined") {
   (window as any).openItemFeedbackModal = openItemFeedbackModal;
   (window as any).openFeedbackModal = openItemFeedbackModal;
   (window as any).handleLikeClick = handleLikeClick;
-  (window as any).handleCardLike = (itemId: string, btnEl: HTMLElement) => handleLikeClick(btnEl, itemId);
+  (window as any).handleCardLike = (itemId: string, btnEl: HTMLElement) =>
+    handleLikeClick(btnEl, itemId);
   (window as any).formatUGX = formatUGX;
+  (window as any).escapeHtml = escapeHtml;
   (window as any).showToast = showToast;
   (window as any).hydrateLiveSiteContent = hydrateLiveSiteContent;
 }
@@ -1767,9 +2162,11 @@ if (typeof window !== "undefined") {
 if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
     initTheme();
+    syncCanonicalSeo();
     initNavigation();
+    initHeroShowcase();
+    initCookieConsent();
     hydrateLiveSiteContent();
     db.fetchLive();
   });
 }
-

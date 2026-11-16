@@ -9,6 +9,7 @@ const rootDir = path.dirname(__filename);
 
 export default defineConfig(() => {
   return {
+    base: './',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
@@ -28,6 +29,10 @@ export default defineConfig(() => {
           about: path.resolve(rootDir, 'about.html'),
           contact: path.resolve(rootDir, 'contact.html'),
           admin: path.resolve(rootDir, 'admin.html'),
+          privacyPolicy: path.resolve(rootDir, 'privacy-policy.html'),
+          termsOfService: path.resolve(rootDir, 'terms-of-service.html'),
+          refundPolicy: path.resolve(rootDir, 'refund-policy.html'),
+          cookiePolicy: path.resolve(rootDir, 'cookie-policy.html'),
         },
       },
     },

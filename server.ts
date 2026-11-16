@@ -30,7 +30,7 @@ const DEFAULT_SETTINGS = {
   facebookUrl: "https://www.facebook.com/sonnenpfadsafaris",
   twitterUrl: "https://twitter.com/sonnenpfad",
   address: "Plot 14 Entebbe Road, Kampala, Uganda",
-  operatingHours: "Mon – Sun: 24/7 Operations",
+  operatingHours: "Mon – Sat: 08:00 – 18:00 EAT",
   location: {
     title: "Sonnenpfad Safaris Operations Centre",
     address: "Plot 14 Entebbe Road, Kampala, Uganda",
@@ -44,35 +44,35 @@ const DEFAULT_SETTINGS = {
 const DEFAULT_TIKTOKS = [
   {
     id: "tt-1",
-    title: "Morning encounter with the Bwindi silverback gorilla family 🦍",
+    title: "Morning encounter with the Bwindi silverback gorilla family",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
-    views: "18.4K",
-    likes: "2.3K"
+    thumbnail: "/assets/images/bwindi-gorilla.jpg",
+    views: "Official Clip",
+    likes: "@kisacathy1900"
   },
   {
     id: "tt-2",
-    title: "Cruising the Victoria Nile with massive hippos and Murchison Falls 🌊",
+    title: "Cruising the Victoria Nile past hippos toward Murchison Falls",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
-    views: "24.9K",
-    likes: "3.1K"
+    thumbnail: "/assets/images/murchison-nile.jpg",
+    views: "Official Clip",
+    likes: "@kisacathy1900"
   },
   {
     id: "tt-3",
-    title: "Tree-climbing lions resting in sycamore fig trees in Queen Elizabeth 🦁",
+    title: "Tree-climbing lions resting in sycamore fig trees in Queen Elizabeth",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=600&q=80",
-    views: "31.2K",
-    likes: "4.8K"
+    thumbnail: "/assets/images/ishasha-lions.jpg",
+    views: "Official Clip",
+    likes: "@kisacathy1900"
   },
   {
     id: "tt-4",
-    title: "Fresh harvest and roasting of Mount Elgon Peaberry Arabica coffee ☕",
+    title: "Small-batch roasting of Mount Elgon Peaberry Arabica coffee",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80",
-    views: "12.6K",
-    likes: "1.9K"
+    thumbnail: "/assets/images/elgon-coffee.jpg",
+    views: "Official Clip",
+    likes: "@kisacathy1900"
   }
 ];
 
@@ -219,7 +219,7 @@ const supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 app.get('/api/supabase/status', async (req, res) => {
   try {
     const start = Date.now();
-    const tableNames = ['safaris', 'products', 'orders', 'comments', 'settings', 'tiktoks'];
+    const tableNames = ['safaris', 'products', 'orders', 'comments', 'reviews', 'settings', 'tiktoks', 'likes', 'deletion_requests'];
     const tables: Record<string, { status: string; error?: string | null }> = {};
 
     await Promise.all(
