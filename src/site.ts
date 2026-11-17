@@ -155,7 +155,7 @@ const DEFAULT_SAFARIS: SafariPackage[] = [
     destinationsFormatted: "Bwindi Impenetrable National Park",
     priceUGX: 5200000,
     formattedPriceUGX: "UGX 5,200,000",
-    image: "/assets/images/bwindi-gorilla.jpg",
+    image: "./assets/images/bwindi-gorilla.jpg",
     altText: "Silverback mountain gorilla resting among emerald ferns in Bwindi Impenetrable Forest, Uganda",
     overview:
       "Observe endangered mountain gorillas in Bwindi Impenetrable National Park with licensed Uganda Wildlife Authority rangers. Includes a guided tracking session, forest lodge accommodation, and private 4x4 transport from Entebbe or Kampala. Minimum age for gorilla permits is 15 years per UWA regulations.",
@@ -208,7 +208,7 @@ const DEFAULT_SAFARIS: SafariPackage[] = [
     destinationsFormatted: "Uganda, Kenya & Tanzania Cross-Border Circuit",
     priceUGX: 24500000,
     formattedPriceUGX: "UGX 24,500,000",
-    image: "/assets/images/hero-savannah.jpg",
+    image: "./assets/images/hero-savannah.jpg",
     altText: "Private 4x4 safari Land Cruiser observing elephants across golden East African savannah plains",
     overview:
       "A comprehensive multi-country East African itinerary linking Uganda primate sanctuaries with the seasonal wildlife plains of Serengeti, Ngorongoro Conservation Area, and Masai Mara.",
@@ -241,7 +241,7 @@ const DEFAULT_SAFARIS: SafariPackage[] = [
     destinationsFormatted: "Kibale, Queen Elizabeth & Bwindi Forest",
     priceUGX: 9900000,
     formattedPriceUGX: "UGX 9,900,000",
-    image: "/assets/images/ishasha-lions.jpg",
+    image: "./assets/images/ishasha-lions.jpg",
     altText: "Lions resting on fig tree branches in Ishasha sector of Queen Elizabeth National Park, Uganda",
     overview:
       "Combines chimpanzee tracking in Kibale Forest, tree-climbing lion game drives in Ishasha, a Kazinga Channel boat cruise, and Bwindi mountain gorilla trekking in one continuous Ugandan circuit.",
@@ -272,7 +272,7 @@ const DEFAULT_SAFARIS: SafariPackage[] = [
     destinationsFormatted: "Kenya & Tanzania Savannah Reserves",
     priceUGX: 16800000,
     formattedPriceUGX: "UGX 16,800,000",
-    image: "/assets/images/hero-savannah.jpg",
+    image: "./assets/images/hero-savannah.jpg",
     altText: "Elephants crossing East African grasslands near a green 4x4 safari vehicle at sunset",
     overview:
       "Seasonal overland wildlife circuit exploring the Serengeti plains, Masai Mara river corridors, Ngorongoro caldera, and Amboseli elephant reserves.",
@@ -299,7 +299,7 @@ const DEFAULT_SAFARIS: SafariPackage[] = [
     destinationsFormatted: "Murchison Falls & Victoria Nile",
     priceUGX: 7800000,
     formattedPriceUGX: "UGX 7,800,000",
-    image: "/assets/images/murchison-nile.jpg",
+    image: "./assets/images/murchison-nile.jpg",
     altText: "Murchison Falls surging through narrow gorge on the Victoria Nile at sunrise in Uganda",
     overview:
       "Track southern white rhinos on foot at Ziwa Rhino Sanctuary, cruise along the Victoria Nile to the base of Murchison Falls, and explore Budongo Forest Reserve.",
@@ -325,7 +325,7 @@ const DEFAULT_SAFARIS: SafariPackage[] = [
     destinationsFormatted: "Rwanda & Southwestern Uganda",
     priceUGX: 12500000,
     formattedPriceUGX: "UGX 12,500,000",
-    image: "/assets/images/bwindi-gorilla.jpg",
+    image: "./assets/images/bwindi-gorilla.jpg",
     altText: "Mountain gorilla surrounded by lush vegetation in the Virunga and Bwindi highlands",
     overview:
       "Cross-border primate route linking Rwanda's Volcanoes National Park and Lake Kivu with southwestern Uganda's Bwindi Impenetrable Forest.",
@@ -356,7 +356,7 @@ const DEFAULT_PRODUCTS: ShopProduct[] = [
     weight: "250g Whole Bean",
     rating: 5,
     reviewsCount: 0,
-    image: "/assets/images/elgon-coffee.jpg",
+    image: "./assets/images/elgon-coffee.jpg",
     altText: "Roasted Mount Elgon Ugandan Arabica coffee beans in burlap bag with ceramic pour-over carafe",
     isSale: true,
     inStock: true,
@@ -376,7 +376,7 @@ const DEFAULT_PRODUCTS: ShopProduct[] = [
     weight: "250g Whole Bean",
     rating: 5,
     reviewsCount: 0,
-    image: "/assets/images/elgon-coffee.jpg",
+    image: "./assets/images/elgon-coffee.jpg",
     altText: "Freshly roasted Ugandan Rwenzori Arabica coffee beans prepared for brewing",
     isSale: false,
     inStock: true,
@@ -395,7 +395,7 @@ const DEFAULT_PRODUCTS: ShopProduct[] = [
     weight: "500g Bag",
     rating: 5,
     reviewsCount: 0,
-    image: "/assets/images/elgon-coffee.jpg",
+    image: "./assets/images/elgon-coffee.jpg",
     altText: "Savannah Dawn espresso blend coffee beans and ceramic carafe on travertine stone",
     isSale: false,
     inStock: true,
@@ -414,7 +414,7 @@ const DEFAULT_PRODUCTS: ShopProduct[] = [
     weight: "Pair (Adjustable S/M/L)",
     rating: 5,
     reviewsCount: 0,
-    image: "/assets/images/safari-gear.jpg",
+    image: "./assets/images/safari-gear.jpg",
     altText: "Olive waterproof gorilla trekking gaiters alongside binoculars, khaki hat, and vacuum flask",
     isSale: true,
     inStock: true,
@@ -433,7 +433,7 @@ const DEFAULT_PRODUCTS: ShopProduct[] = [
     weight: "Fog-Resistant Body",
     rating: 5,
     reviewsCount: 0,
-    image: "/assets/images/safari-gear.jpg",
+    image: "./assets/images/safari-gear.jpg",
     altText: "Matte black 10x42 wildlife safari binoculars with neck strap and lens caps",
     isSale: false,
     inStock: true,
@@ -452,7 +452,7 @@ const DEFAULT_PRODUCTS: ShopProduct[] = [
     weight: "Adjustable Fit",
     rating: 5,
     reviewsCount: 0,
-    image: "/assets/images/safari-gear.jpg",
+    image: "./assets/images/safari-gear.jpg",
     altText: "Khaki wide-brim breathable safari sun hat with leather chin cord",
     isSale: true,
     inStock: true,
@@ -471,7 +471,7 @@ const DEFAULT_PRODUCTS: ShopProduct[] = [
     weight: "1.2 Litre Capacity",
     rating: 5,
     reviewsCount: 0,
-    image: "/assets/images/safari-gear.jpg",
+    image: "./assets/images/safari-gear.jpg",
     altText: "Brushed stainless steel 1.2 litre vacuum insulated safari coffee flask",
     isSale: false,
     inStock: true,
@@ -545,12 +545,19 @@ function mapCommentRow(d: any): CommentItem {
   };
 }
 
+function normalizeAssetPath(url?: string, fallback = "./assets/images/hero-savannah.jpg"): string {
+  const raw = String(url || "").trim();
+  if (!raw) return fallback;
+  if (raw.startsWith("/assets/")) return "." + raw;
+  return raw;
+}
+
 const DEFAULT_TIKTOKS: TikTokItem[] = [
   {
     id: "tt-1",
     title: "Bwindi Impenetrable Forest silverback tracking briefing and canopy scenes",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "/assets/images/bwindi-gorilla.jpg",
+    thumbnail: "./assets/images/bwindi-gorilla.jpg",
     views: "Official Clip",
     likes: "TikTok Reel",
   },
@@ -558,7 +565,7 @@ const DEFAULT_TIKTOKS: TikTokItem[] = [
     id: "tt-2",
     title: "Victoria Nile boat launch approaching the gorge at Murchison Falls",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "/assets/images/murchison-nile.jpg",
+    thumbnail: "./assets/images/murchison-nile.jpg",
     views: "Official Clip",
     likes: "TikTok Reel",
   },
@@ -566,7 +573,7 @@ const DEFAULT_TIKTOKS: TikTokItem[] = [
     id: "tt-3",
     title: "Tree-climbing lions in sycamore fig branches in Ishasha, Queen Elizabeth",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "/assets/images/ishasha-lions.jpg",
+    thumbnail: "./assets/images/ishasha-lions.jpg",
     views: "Official Clip",
     likes: "TikTok Reel",
   },
@@ -574,7 +581,7 @@ const DEFAULT_TIKTOKS: TikTokItem[] = [
     id: "tt-4",
     title: "Mount Elgon highland Arabica harvest and roast dispatch in Kampala",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "/assets/images/elgon-coffee.jpg",
+    thumbnail: "./assets/images/elgon-coffee.jpg",
     views: "Official Clip",
     likes: "TikTok Reel",
   },
@@ -590,7 +597,7 @@ function mapSafariRow(d: any): SafariPackage {
     destinationsFormatted: d.destinations_formatted || d.title,
     priceUGX: Number(d.price_ugx),
     formattedPriceUGX: d.formatted_price_ugx || "UGX " + Number(d.price_ugx).toLocaleString("en-US"),
-    image: d.image || "/assets/images/hero-savannah.jpg",
+    image: normalizeAssetPath(d.image, "./assets/images/hero-savannah.jpg"),
     altText: d.title,
     overview: d.overview || "",
     highlights: d.highlights || [],
@@ -614,7 +621,7 @@ function mapProductRow(d: any): ShopProduct {
     weight: d.weight || "Standard",
     rating: Number(d.rating) || 5,
     reviewsCount: Number(d.reviews_count) || 0,
-    image: d.image || "/assets/images/safari-gear.jpg",
+    image: normalizeAssetPath(d.image, "./assets/images/safari-gear.jpg"),
     altText: d.name,
     isSale: Boolean(d.is_sale),
     inStock: d.in_stock !== false,
@@ -715,7 +722,7 @@ export const db = {
           id: d.id,
           title: d.title,
           videoUrl: d.video_url,
-          thumbnail: d.thumbnail,
+          thumbnail: normalizeAssetPath(d.thumbnail, "./assets/images/bwindi-gorilla.jpg"),
           views: d.views || "Official Clip",
           likes: d.likes || "TikTok Reel",
         }));
@@ -799,7 +806,8 @@ export const db = {
 
     try {
       const stored = localStorage.getItem("sonnenpfad_safaris");
-      return stored ? JSON.parse(stored) : DEFAULT_SAFARIS;
+      const parsed: SafariPackage[] = stored ? JSON.parse(stored) : DEFAULT_SAFARIS;
+      return parsed.map((s) => ({ ...s, image: normalizeAssetPath(s.image, "./assets/images/hero-savannah.jpg") }));
     } catch {
       return DEFAULT_SAFARIS;
     }
@@ -868,7 +876,8 @@ export const db = {
 
     try {
       const stored = localStorage.getItem("sonnenpfad_shop_products");
-      return stored ? JSON.parse(stored) : DEFAULT_PRODUCTS;
+      const parsed: ShopProduct[] = stored ? JSON.parse(stored) : DEFAULT_PRODUCTS;
+      return parsed.map((p) => ({ ...p, image: normalizeAssetPath(p.image, "./assets/images/safari-gear.jpg") }));
     } catch {
       return DEFAULT_PRODUCTS;
     }
@@ -1701,7 +1710,10 @@ export const db = {
   getTiktoks(): TikTokItem[] {
     try {
       const stored = localStorage.getItem("sonnenpfad_tiktoks");
-      if (stored) return JSON.parse(stored);
+      if (stored) {
+        const parsed: TikTokItem[] = JSON.parse(stored);
+        return parsed.map((t) => ({ ...t, thumbnail: normalizeAssetPath(t.thumbnail, "./assets/images/bwindi-gorilla.jpg") }));
+      }
     } catch {}
     return DEFAULT_TIKTOKS;
   },
@@ -1717,7 +1729,7 @@ export const db = {
           id: d.id,
           title: d.title,
           videoUrl: d.video_url,
-          thumbnail: d.thumbnail,
+          thumbnail: normalizeAssetPath(d.thumbnail, "./assets/images/bwindi-gorilla.jpg"),
           views: d.views || "Official Clip",
           likes: d.likes || "TikTok Reel",
         }));
@@ -1931,7 +1943,7 @@ export function showToast(
 // =========================================================================
 const HERO_SLIDES = [
   {
-    image: "/assets/images/hero-savannah.jpg",
+    image: "./assets/images/hero-savannah.jpg",
     alt: "Sonnenpfad private 4x4 safari Land Cruiser observing wild elephants across sunlit East African plains",
     kicker: "East Africa Premier Safaris & Coffee Roastery",
     tag: "Kenya & Tanzania · Savannah Expeditions",
@@ -1942,7 +1954,7 @@ const HERO_SLIDES = [
     ctaHref: "safaris.html",
   },
   {
-    image: "/assets/images/bwindi-gorilla.jpg",
+    image: "./assets/images/bwindi-gorilla.jpg",
     alt: "Silverback mountain gorilla resting among emerald ferns in misty Bwindi Impenetrable Forest, Uganda",
     kicker: "Bwindi Impenetrable Forest · UNESCO Sanctuary",
     tag: "Uganda · Mountain Gorilla Trekking (Ages 15+)",
@@ -1953,7 +1965,7 @@ const HERO_SLIDES = [
     ctaHref: "safaris.html",
   },
   {
-    image: "/assets/images/murchison-nile.jpg",
+    image: "./assets/images/murchison-nile.jpg",
     alt: "Murchison Falls crashing through the Victoria Nile gorge under warm morning sunlight in Uganda",
     kicker: "Victoria Nile · Murchison Falls & Ziwa",
     tag: "Uganda · Nile Cruises & Rhino Tracking",
@@ -2876,16 +2888,22 @@ if (typeof window !== "undefined") {
   (window as any).updateSectionCommentBadges = updateSectionCommentBadges;
 }
 
+function bootSonnenpfadSite() {
+  initTheme();
+  syncCanonicalSeo();
+  initNavigation();
+  initHeroShowcase();
+  initCookieConsent();
+  hydrateLiveSiteContent();
+  db.fetchLive();
+}
+
 if (typeof document !== "undefined") {
-  document.addEventListener("DOMContentLoaded", () => {
-    initTheme();
-    syncCanonicalSeo();
-    initNavigation();
-    initHeroShowcase();
-    initCookieConsent();
-    hydrateLiveSiteContent();
-    db.fetchLive();
-  });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootSonnenpfadSite);
+  } else {
+    bootSonnenpfadSite();
+  }
 
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden && !window.location.pathname.includes("admin.html")) {

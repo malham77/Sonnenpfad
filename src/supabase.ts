@@ -6,9 +6,11 @@
 import { createClient } from '@supabase/supabase-js';
 
 export const SUPABASE_URL =
-  (import.meta as any).env?.VITE_SUPABASE_URL || 'https://ujodbxzzibfypfgqsnpj.supabase.co';
+  (typeof window !== 'undefined' && (window as any).__ENV__?.VITE_SUPABASE_URL) ||
+  'https://ujodbxzzibfypfgqsnpj.supabase.co';
 export const SUPABASE_ANON_KEY =
-  (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 'sb_publishable_uxtIygW_RFAXCSpjmN7Rbw_nd6IqhWX';
+  (typeof window !== 'undefined' && (window as any).__ENV__?.VITE_SUPABASE_ANON_KEY) ||
+  'sb_publishable_uxtIygW_RFAXCSpjmN7Rbw_nd6IqhWX';
 export const SUPABASE_DB_URL =
   'postgresql://postgres.ujodbxzzibfypfgqsnpj:[YOUR-PASSWORD]@aws-0-eu-west-3.pooler.supabase.com:5432/postgres';
 

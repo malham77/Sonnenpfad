@@ -46,7 +46,7 @@ const DEFAULT_TIKTOKS = [
     id: "tt-1",
     title: "Morning encounter with the Bwindi silverback gorilla family",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "/assets/images/bwindi-gorilla.jpg",
+    thumbnail: "./assets/images/bwindi-gorilla.jpg",
     views: "Official Clip",
     likes: "@kisacathy1900"
   },
@@ -54,7 +54,7 @@ const DEFAULT_TIKTOKS = [
     id: "tt-2",
     title: "Cruising the Victoria Nile past hippos toward Murchison Falls",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "/assets/images/murchison-nile.jpg",
+    thumbnail: "./assets/images/murchison-nile.jpg",
     views: "Official Clip",
     likes: "@kisacathy1900"
   },
@@ -62,7 +62,7 @@ const DEFAULT_TIKTOKS = [
     id: "tt-3",
     title: "Tree-climbing lions resting in sycamore fig trees in Queen Elizabeth",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "/assets/images/ishasha-lions.jpg",
+    thumbnail: "./assets/images/ishasha-lions.jpg",
     views: "Official Clip",
     likes: "@kisacathy1900"
   },
@@ -70,7 +70,7 @@ const DEFAULT_TIKTOKS = [
     id: "tt-4",
     title: "Small-batch roasting of Mount Elgon Peaberry Arabica coffee",
     videoUrl: "https://www.tiktok.com/@kisacathy1900",
-    thumbnail: "/assets/images/elgon-coffee.jpg",
+    thumbnail: "./assets/images/elgon-coffee.jpg",
     views: "Official Clip",
     likes: "@kisacathy1900"
   }
@@ -225,7 +225,8 @@ app.get('/api/supabase/status', async (req, res) => {
     await Promise.all(
       tableNames.map(async (tbl) => {
         try {
-          const { error } = await supabase.from(tbl).select('id').limit(1);
+          const col = tbl === 'likes' ? 'item_id' : 'id';
+          const { error } = await supabase.from(tbl).select(col).limit(1);
           if (!error) {
             tables[tbl] = { status: 'ok', error: null };
           } else {
