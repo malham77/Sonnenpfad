@@ -1,7 +1,8 @@
 /**
- * Sonnenpfad Safaris Uganda Ltd - Google Drive & Google Photos Media Connector
- * Client-side Firebase Auth + OAuth token management (in-memory cache only)
- * Supports separated Image & Video uploads, public web sharing, and Google Photos browsing.
+ * Sonnenpfad Safaris Uganda Ltd - Direct Google Workspace / Drive Image Uploader
+ * Client-side Firebase Auth + OAuth token management (in-memory token cache only).
+ * Automatically uploads dashboard images (Safaris, Shop, TikTok thumbnails)
+ * into the verified Google account (default hint: maleham06@gmail.com).
  */
 
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
@@ -16,17 +17,14 @@ import firebaseConfig from '../firebase-applet-config.json';
 
 export const SCOPES = [
   'https://www.googleapis.com/auth/drive.file',
-  'https://www.googleapis.com/auth/drive.metadata.readonly',
-  'https://www.googleapis.com/auth/drive.photos.readonly',
 ];
 
+export const DEFAULT_WORKSPACE_EMAIL = 'maleham06@gmail.com';
+const WORKSPACE_EMAIL_PREF_KEY = 'sonnenpfad_workspace_email';
 const MEDIA_FOLDER_NAME = 'Sonnenpfad Safaris Media';
 
 const app: FirebaseApp = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-const provider = new GoogleAuthProvider();
-SCOPES.forEach((scope) => provider.addScope(scope));
 
 let isSigningIn = false;
 let cachedAccessToken: string | null = null;
@@ -44,6 +42,22 @@ export interface GoogleMediaFile {
   embedUrl?: string;
   createdTime?: string;
   sizeBytes?: number;
+}
+
+export function getPreferredWorkspaceEmail(): string {
+  try {
+    const saved = localStorage.getItem(WORKSPACE_EMAIL_PREF_KEY);
+    if (saved && saved.includes('@')) return saved.trim();
+  } catch {}
+  return DEFAULT_WORKSPACE_EMAIL;
+}
+
+export function setPreferredWorkspaceEmail(email: string): string {
+  const clean = String(email || '').trim() || DEFAULT_WORKSPACE_EMAIL;
+  try {
+    localStorage.setItem(WORKSPACE_EMAIL_PREF_KEY, clean);
+  } catch {}
+  return clean;
 }
 
 export function buildPermanentGoogleUrls(fileId: string, mimeType: string, fallbackThumb?: string) {
@@ -77,16 +91,29 @@ export function initGoogleAuth(
   });
 }
 
-export async function googleSignIn(): Promise<{ user: User; accessToken: string }> {
+export async function googleSignIn(preferredEmail?: string): Promise<{ user: User; accessToken: string }> {
   try {
     isSigningIn = true;
+    const provider = new GoogleAuthProvider();
+    SCOPES.forEach((scope) => provider.addScope(scope));
+
+    const hintEmail = (preferredEmail || getPreferredWorkspaceEmail()).trim();
+    provider.setCustomParameters({
+      prompt: 'select_account',
+      ...(hintEmail ? { login_hint: hintEmail } : {}),
+    });
+
     const result = await signInWithPopup(auth, provider);
     const credential = GoogleAuthProvider.credentialFromResult(result);
     if (!credential?.accessToken) {
       throw new Error('Could not obtain Google access token. Please try signing in again.');
     }
+
     cachedAccessToken = credential.accessToken;
     currentUser = result.user;
+    if (result.user.email) {
+      setPreferredWorkspaceEmail(result.user.email);
+    }
     return { user: result.user, accessToken: cachedAccessToken };
   } finally {
     isSigningIn = false;
@@ -165,21 +192,20 @@ export async function uploadFileToGoogleMedia(
 ): Promise<GoogleMediaFile> {
   const accessToken = cachedAccessToken;
   if (!accessToken) {
-    throw new Error('Please sign in with Google first before uploading.');
+    throw new Error('Please verify your Google Workspace account first.');
   }
 
   if (onProgress) onProgress(10);
   const folderId = await ensureMediaFolder(accessToken);
-  if (onProgress) onProgress(22);
+  if (onProgress) onProgress(25);
 
   const mimeType = file.type || (file.name.match(/\.(mp4|mov|webm|m4v|avi)$/i) ? 'video/mp4' : 'image/jpeg');
   const metadata = {
     name: title ? `${title}${getFileExtension(file.name)}` : file.name,
     parents: [folderId],
-    description: 'Uploaded from Sonnenpfad Safaris Uganda Ltd Website Media Studio',
+    description: 'Uploaded from Sonnenpfad Safaris Uganda Ltd Owner Dashboard',
   };
 
-  // Start resumable upload session so both photos and large HD safari videos upload reliably
   const initRes = await fetch(
     'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id,name,mimeType,thumbnailLink,webViewLink,webContentLink,createdTime,size',
     {
@@ -227,11 +253,10 @@ export async function uploadFileToGoogleMedia(
         reject(new Error(`Google upload returned HTTP ${xhr.status}`));
       }
     };
-    xhr.onerror = () => reject(new Error('Network error during file upload to Google.'));
+    xhr.onerror = () => reject(new Error('Network error during upload to Google Drive.'));
     xhr.send(file);
   });
 
-  // Ensure anyone visiting the public website can view this uploaded image or video
   await makeDriveFilePublic(accessToken, uploadedData.id);
   if (onProgress) onProgress(100);
 
@@ -253,80 +278,6 @@ export async function uploadFileToGoogleMedia(
   };
 }
 
-export async function listGooglePhotosAndMedia(): Promise<{
-  images: GoogleMediaFile[];
-  videos: GoogleMediaFile[];
-}> {
-  const accessToken = cachedAccessToken;
-  if (!accessToken) {
-    throw new Error('Please sign in with Google first.');
-  }
-
-  const query = encodeURIComponent(
-    "(mimeType contains 'image/' or mimeType contains 'video/') and trashed = false"
-  );
-  const fields = encodeURIComponent(
-    'files(id,name,mimeType,thumbnailLink,webViewLink,webContentLink,createdTime,size)'
-  );
-
-  // Query both Drive and Google Photos spaces authorized by scopes
-  const res = await fetch(
-    `https://www.googleapis.com/drive/v3/files?spaces=drive,photos&q=${query}&orderBy=createdTime desc&pageSize=40&fields=${fields}`,
-    {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }
-  );
-
-  if (!res.ok) {
-    // Fallback to drive space if photos space is empty/disabled on this account
-    const fallbackRes = await fetch(
-      `https://www.googleapis.com/drive/v3/files?q=${query}&orderBy=createdTime desc&pageSize=40&fields=${fields}`,
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-    if (!fallbackRes.ok) {
-      throw new Error(`Could not list Google media (${fallbackRes.status}).`);
-    }
-    const fbData = await fallbackRes.json();
-    return splitMediaFiles(fbData.files || []);
-  }
-
-  const data = await res.json();
-  return splitMediaFiles(data.files || []);
-}
-
-function splitMediaFiles(rawFiles: any[]): {
-  images: GoogleMediaFile[];
-  videos: GoogleMediaFile[];
-} {
-  const images: GoogleMediaFile[] = [];
-  const videos: GoogleMediaFile[] = [];
-
-  for (const f of rawFiles) {
-    const mime = String(f.mimeType || '');
-    const mediaType: 'image' | 'video' = mime.startsWith('video/') ? 'video' : 'image';
-    const urls = buildPermanentGoogleUrls(f.id, mime, f.thumbnailLink);
-    const mapped: GoogleMediaFile = {
-      id: f.id,
-      name: f.name || 'Untitled Media',
-      mimeType: mime,
-      mediaType,
-      thumbnailLink: urls.thumbnailUrl,
-      webViewLink: f.webViewLink,
-      webContentLink: f.webContentLink,
-      displayUrl: urls.displayUrl,
-      embedUrl: urls.embedUrl,
-      createdTime: f.createdTime,
-      sizeBytes: Number(f.size || 0),
-    };
-    if (mediaType === 'video') videos.push(mapped);
-    else images.push(mapped);
-  }
-
-  return { images, videos };
-}
-
 export async function deleteGoogleDriveFile(fileId: string): Promise<void> {
   const accessToken = cachedAccessToken;
   if (!accessToken) {
@@ -339,86 +290,6 @@ export async function deleteGoogleDriveFile(fileId: string): Promise<void> {
   if (!res.ok && res.status !== 404) {
     throw new Error(`Failed to delete file from Google Drive (${res.status}).`);
   }
-}
-
-export async function openGoogleMediaPicker(): Promise<GoogleMediaFile | null> {
-  const accessToken = cachedAccessToken;
-  if (!accessToken) {
-    throw new Error('Sign in with Google first.');
-  }
-
-  await loadGooglePickerScript();
-
-  const pickerOrigin =
-    window.location.ancestorOrigins && window.location.ancestorOrigins.length > 0
-      ? window.location.ancestorOrigins[window.location.ancestorOrigins.length - 1]
-      : window.location.origin;
-
-  return new Promise((resolve) => {
-    const gapiObj = (window as any).gapi;
-    if (!gapiObj) {
-      resolve(null);
-      return;
-    }
-    gapiObj.load('picker', () => {
-      const googlePicker = (window as any).google?.picker;
-      if (!googlePicker) {
-        resolve(null);
-        return;
-      }
-
-      const docsView = new googlePicker.DocsView(googlePicker.ViewId.DOCS_IMAGES_AND_VIDEOS)
-        .setIncludeFolders(true)
-        .setSelectFolderEnabled(false);
-
-      const picker = new googlePicker.PickerBuilder()
-        .addView(docsView)
-        .setOAuthToken(accessToken)
-        .setOrigin(pickerOrigin)
-        .setCallback((data: any) => {
-          if (data.action === googlePicker.Action.PICKED && data.docs?.length) {
-            const doc = data.docs[0];
-            const mime = String(doc.mimeType || 'image/jpeg');
-            const mediaType: 'image' | 'video' = mime.startsWith('video/') ? 'video' : 'image';
-            const urls = buildPermanentGoogleUrls(doc.id, mime);
-            resolve({
-              id: doc.id,
-              name: doc.name || 'Selected Google Media',
-              mimeType: mime,
-              mediaType,
-              thumbnailLink: urls.thumbnailUrl,
-              webViewLink: doc.url,
-              displayUrl: urls.displayUrl,
-              embedUrl: urls.embedUrl,
-            });
-          } else if (data.action === googlePicker.Action.CANCEL) {
-            resolve(null);
-          }
-        })
-        .build();
-      picker.setVisible(true);
-    });
-  });
-}
-
-function loadGooglePickerScript(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if ((window as any).gapi?.load) {
-      resolve();
-      return;
-    }
-    const existing = document.querySelector('script[src="https://apis.google.com/js/api.js"]');
-    if (existing) {
-      existing.addEventListener('load', () => resolve(), { once: true });
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Could not load Google Picker script.'));
-    document.head.appendChild(script);
-  });
 }
 
 function getFileExtension(name: string): string {

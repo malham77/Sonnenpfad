@@ -184,13 +184,6 @@
                   <span>TikTok Reels Feed</span>
                 </span>
               </button>
-              <button type="button" onclick="switchTab('media')" id="tabBtn-media" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
-                <span class="flex items-center gap-2.5">
-                  <svg class="w-4 h-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                  <span>Google Photos &amp; Videos</span>
-                </span>
-                <span id="sidebarMediaBadge" class="admin-nav-badge px-2 py-0.5 rounded-full text-[10px] font-mono bg-[#F1F5F9] text-[#0F172A]">0</span>
-              </button>
               <button type="button" onclick="switchTab('comments')" id="tabBtn-comments" class="admin-nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer text-left">
                 <span class="flex items-center gap-2.5">
                   <svg class="w-4 h-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
@@ -245,6 +238,63 @@
 
         <!-- MAIN WORKSPACE -->
         <main id="adminMain" class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 space-y-6">
+          <!-- GOOGLE WORKSPACE IMAGE UPLOAD ACCOUNT BAR -->
+          <section aria-label="Google Workspace Upload Account" class="p-4 sm:p-5 bg-white border border-[#CBD5E1] rounded-2xl shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#7C4D00]">Google Workspace Auto-Upload</span>
+                <span id="admGoogleStatusBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 border border-amber-300 text-[#7C4D00]">
+                  Verification Needed
+                </span>
+              </div>
+              <p class="text-xs text-[#334155]">
+                Every image you upload while adding or editing <strong>Safaris, Shop Products, or TikTok Reels</strong> saves automatically to your verified Google Drive account.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+              <div class="flex items-center gap-1.5">
+                <label for="admWorkspaceEmailInput" class="sr-only">Google Workspace Email</label>
+                <input
+                  id="admWorkspaceEmailInput"
+                  type="email"
+                  value="maleham06@gmail.com"
+                  placeholder="maleham06@gmail.com"
+                  onchange="handleWorkspaceEmailPrefChange(this.value)"
+                  class="w-52 sm:w-60 bg-[#F8FAFC] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-medium"
+                />
+              </div>
+
+              <div id="admGoogleSignInWrap">
+                <button type="button" onclick="handleAdminGoogleSignIn(false)" class="gsi-material-button">
+                  <div class="gsi-material-button-state"></div>
+                  <div class="gsi-material-button-content-wrapper">
+                    <div class="gsi-material-button-icon">
+                      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="display: block;">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                        <path fill="none" d="M0 0h48v48H0z"></path>
+                      </svg>
+                    </div>
+                    <span class="gsi-material-button-contents">Verify Google Account</span>
+                  </div>
+                </button>
+              </div>
+
+              <div id="admGoogleSignedInWrap" class="hidden flex flex-wrap items-center gap-2">
+                <span id="admGoogleUserBadge" class="px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-300 text-xs font-bold text-[#073F27]">Verified</span>
+                <button type="button" onclick="handleAdminGoogleSignIn(true)" class="px-3 py-2 rounded-xl bg-[#F1F5F9] hover:bg-[#E2E8F0] border border-[#CBD5E1] text-xs font-bold text-[#0F172A] cursor-pointer">
+                  Switch Email
+                </button>
+                <button type="button" onclick="handleAdminGoogleSignOut()" class="px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-xs font-bold text-red-800 cursor-pointer">
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </section>
+
           <!-- KPI Metrics Row -->
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div class="p-4 bg-white border border-[#CBD5E1] rounded-2xl shadow-xs">
@@ -553,14 +603,7 @@
                     <input id="ttUrlInput" type="url" required placeholder="https://www.tiktok.com/@kisacathy1900/video/..." value="https://www.tiktok.com/@kisacathy1900" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <div class="flex items-center justify-between mb-1">
-                      <label for="ttThumbInput" class="block text-[11px] font-bold uppercase text-[#7C4D00]">Thumbnail Image Path or URL *</label>
-                      <button type="button" onclick="pickGoogleMediaForInput('ttThumbInput')" class="text-[10px] font-bold text-[#073F27] underline cursor-pointer">Pick Google Photo</button>
-                    </div>
-                    <input id="ttThumbInput" type="text" required placeholder="./assets/images/bwindi-gorilla.jpg" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
-                  </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label for="ttViewsInput" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Category Label</label>
                     <input id="ttViewsInput" type="text" placeholder="Field Reel" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
@@ -570,187 +613,33 @@
                     <input id="ttLikesInput" type="text" placeholder="@kisacathy1900" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
                 </div>
-                <button type="submit" class="btn-glass-gold text-xs py-2.5 px-6 font-bold">
+
+                <!-- Direct Google Image Upload + Thumbnail URL -->
+                <div class="p-4 bg-white border border-[#CBD5E1] rounded-xl space-y-2.5">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <label for="ttThumbFile" class="block text-[11px] font-bold uppercase text-[#7C4D00]">Reel Thumbnail Image * (Auto-Uploads to Verified Google Account)</label>
+                    <span id="ttThumbUploadStatus" class="text-[11px] font-mono font-bold text-[#073F27]">Ready</span>
+                  </div>
+                  <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <img id="ttThumbPreviewImg" src="./assets/images/bwindi-gorilla.jpg" alt="TikTok reel thumbnail preview" class="w-16 h-16 rounded-xl object-cover border border-[#CBD5E1] shrink-0 bg-[#F1F5F9]" />
+                    <div class="flex-1 space-y-2 min-w-0">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <input id="ttThumbFile" type="file" accept="image/*" onchange="handleDashboardImageFileSelect('ttThumbFile', 'ttThumbInput', 'ttThumbUploadStatus', 'ttThumbPreviewImg')" class="flex-1 min-w-0 bg-[#F8FAFC] border border-[#94A3B8] rounded-xl px-3 py-1.5 text-xs text-[#0F172A] file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-[#073F27] file:text-white file:font-bold file:text-xs cursor-pointer" />
+                        <button id="ttThumbFileVerifyBtn" type="button" onclick="triggerPendingUploadForField('ttThumbFile', 'ttThumbInput', 'ttThumbUploadStatus', 'ttThumbPreviewImg')" class="hidden px-3 py-2 rounded-xl bg-[#073F27] text-white text-xs font-bold cursor-pointer whitespace-nowrap">
+                          Verify &amp; Upload Now
+                        </button>
+                      </div>
+                      <input id="ttThumbInput" type="text" placeholder="Or paste image URL / auto-filled after Google upload" oninput="syncImagePreviewFromUrl('ttThumbInput', 'ttThumbPreviewImg')" class="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-xl px-3 py-1.5 text-[11px] text-[#334155]" />
+                    </div>
+                  </div>
+                </div>
+
+                <button id="ttSubmitBtn" type="submit" class="btn-glass-gold text-xs py-2.5 px-6 font-bold">
                   Publish Video to Homepage Feed
                 </button>
               </form>
 
               <div id="adminTiktokList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-            </div>
-          </div>
-
-          <!-- TAB 5B: GOOGLE PHOTOS & VIDEOS MEDIA STUDIO -->
-          <div id="tabContent-media" class="admin-tab-content hidden space-y-6">
-            <div class="p-6 sm:p-8 bg-white border border-[#CBD5E1] rounded-3xl shadow-sm space-y-6">
-              <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#CBD5E1] pb-5">
-                <div>
-                  <span class="text-xs font-bold uppercase tracking-wider text-[#7C4D00]">Google Photos &amp; Drive Connector</span>
-                  <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-1">Media Upload Studio (Images &amp; Videos)</h2>
-                  <p class="text-xs text-[#334155] mt-1">
-                    Upload photos and videos directly to your connected Google account and display them automatically across your Homepage, Hero Slideshow, Safaris, Shop, and Gallery.
-                  </p>
-                </div>
-                <div class="flex flex-wrap items-center gap-2.5">
-                  <div id="admGoogleSignInWrap">
-                    <button type="button" onclick="handleAdminGoogleSignIn()" class="gsi-material-button">
-                      <div class="gsi-material-button-state"></div>
-                      <div class="gsi-material-button-content-wrapper">
-                        <div class="gsi-material-button-icon">
-                          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="display: block;">
-                            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
-                            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
-                            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
-                            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
-                            <path fill="none" d="M0 0h48v48H0z"></path>
-                          </svg>
-                        </div>
-                        <span class="gsi-material-button-contents">Sign in with Google</span>
-                      </div>
-                    </button>
-                  </div>
-                  <div id="admGoogleSignedInWrap" class="hidden flex flex-wrap items-center gap-2">
-                    <span id="admGoogleUserBadge" class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-300 text-xs font-bold text-[#073F27]">Connected</span>
-                    <button type="button" onclick="handleAdminBrowseGoogleMedia()" class="px-3.5 py-2 rounded-full bg-[#073F27] text-white text-xs font-bold cursor-pointer">Browse Google Photos</button>
-                    <button type="button" onclick="handleAdminPickGoogleMedia()" class="px-3.5 py-2 rounded-full bg-[#F1F5F9] border border-[#CBD5E1] text-[#0F172A] text-xs font-bold cursor-pointer">Open Picker</button>
-                    <button type="button" onclick="handleAdminGoogleSignOut()" class="px-3 py-2 rounded-full bg-red-50 border border-red-200 text-red-800 text-xs font-bold cursor-pointer">Sign Out</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- TWO DISTINCT UPLOAD SECTIONS: IMAGES & VIDEOS -->
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- IMAGE UPLOAD SECTION -->
-                <form onsubmit="handleAdminMediaUpload(event, 'image')" class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
-                  <div class="flex items-center justify-between border-b border-[#CBD5E1] pb-2">
-                    <div>
-                      <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#7C4D00] block">Section 1 · Images Upload</span>
-                      <h3 class="font-editorial text-xl font-bold text-[#0F172A]">Upload Image to Google Photos</h3>
-                    </div>
-                    <span class="px-2.5 py-1 rounded-full bg-white border border-[#CBD5E1] text-[10px] font-bold text-[#073F27]">JPG · PNG · WEBP</span>
-                  </div>
-
-                  <div>
-                    <label for="admImgTitle" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Image Title *</label>
-                    <input id="admImgTitle" type="text" required placeholder="e.g. Gorilla Trekking Canopy Mist" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
-                  </div>
-
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label for="admImgPlacement" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Where To Display Automatically</label>
-                      <select id="admImgPlacement" onchange="toggleAdminImgTargetSelect()" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]">
-                        <option value="all">Homepage &amp; Gallery (Everywhere)</option>
-                        <option value="hero">Homepage Hero Slideshow + Gallery</option>
-                        <option value="homepage">Homepage Showcase Only</option>
-                        <option value="gallery">Gallery Archive Only</option>
-                        <option value="safari">Update a Safari Package Cover + Gallery</option>
-                        <option value="product">Update a Shop Product Image + Gallery</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label for="admImgCaption" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Caption / Field Note</label>
-                      <input id="admImgCaption" type="text" placeholder="Optional details for visitors" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
-                    </div>
-                  </div>
-
-                  <div id="admImgTargetWrap" class="hidden">
-                    <label for="admImgTargetItem" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Select Target Safari or Shop Product</label>
-                    <select id="admImgTargetItem" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]"></select>
-                  </div>
-
-                  <div>
-                    <label for="admImgFile" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Choose Image File *</label>
-                    <input id="admImgFile" type="file" accept="image/*" required class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#073F27] file:text-white file:font-bold file:text-xs cursor-pointer" />
-                  </div>
-
-                  <div id="admImgProgressWrap" class="hidden space-y-1">
-                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-                      <div id="admImgProgressBar" class="h-full bg-[#073F27] transition-all" style="width: 0%"></div>
-                    </div>
-                    <span id="admImgProgressText" class="text-[11px] font-mono text-[#073F27] block">Preparing image upload...</span>
-                  </div>
-
-                  <button id="admImgSubmitBtn" type="submit" class="btn-glass-gold w-full justify-center py-2.5 text-xs font-extrabold">
-                    Upload Image to Google &amp; Publish Live
-                  </button>
-                </form>
-
-                <!-- VIDEO UPLOAD SECTION -->
-                <form onsubmit="handleAdminMediaUpload(event, 'video')" class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
-                  <div class="flex items-center justify-between border-b border-[#CBD5E1] pb-2">
-                    <div>
-                      <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#7C4D00] block">Section 2 · Videos Upload</span>
-                      <h3 class="font-editorial text-xl font-bold text-[#0F172A]">Upload Video to Google Photos</h3>
-                    </div>
-                    <span class="px-2.5 py-1 rounded-full bg-white border border-[#CBD5E1] text-[10px] font-bold text-[#073F27]">MP4 · MOV · WEBM</span>
-                  </div>
-
-                  <div>
-                    <label for="admVidTitle" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Video Title *</label>
-                    <input id="admVidTitle" type="text" required placeholder="e.g. Victoria Nile Waterfall Boat Safari" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
-                  </div>
-
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label for="admVidPlacement" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Where To Display Automatically</label>
-                      <select id="admVidPlacement" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]">
-                        <option value="all">Homepage &amp; Gallery (Everywhere)</option>
-                        <option value="homepage">Homepage Expedition Videos</option>
-                        <option value="gallery">Gallery Archive Only</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label for="admVidCaption" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Video Description / Caption</label>
-                      <input id="admVidCaption" type="text" placeholder="Optional safari context" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label for="admVidFile" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Choose Video File *</label>
-                    <input id="admVidFile" type="file" accept="video/*" required class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#073F27] file:text-white file:font-bold file:text-xs cursor-pointer" />
-                  </div>
-
-                  <div id="admVidProgressWrap" class="hidden space-y-1">
-                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-                      <div id="admVidProgressBar" class="h-full bg-[#073F27] transition-all" style="width: 0%"></div>
-                    </div>
-                    <span id="admVidProgressText" class="text-[11px] font-mono text-[#073F27] block">Preparing video upload...</span>
-                  </div>
-
-                  <button id="admVidSubmitBtn" type="submit" class="btn-glass-forest w-full justify-center py-2.5 text-xs font-extrabold">
-                    Upload Video to Google &amp; Publish Live
-                  </button>
-                </form>
-              </div>
-
-              <!-- GOOGLE PHOTOS / DRIVE BROWSER RESULTS -->
-              <div id="admGoogleBrowserBox" class="hidden p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <h3 class="text-xs font-bold uppercase tracking-wider text-[#073F27]">Your Google Photos &amp; Drive Media</h3>
-                  <span id="admGoogleBrowserCount" class="text-xs font-mono text-[#475569]">0 items</span>
-                </div>
-                <div class="space-y-4">
-                  <div>
-                    <span class="text-[11px] font-bold uppercase text-[#7C4D00] block mb-2">Google Photos (Images)</span>
-                    <div id="admGoogleBrowserImages" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 max-h-64 overflow-y-auto pr-1"></div>
-                  </div>
-                  <div>
-                    <span class="text-[11px] font-bold uppercase text-[#7C4D00] block mb-2">Google Videos</span>
-                    <div id="admGoogleBrowserVideos" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-64 overflow-y-auto pr-1"></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- LIVE PUBLISHED SITE MEDIA LIBRARY -->
-              <div class="space-y-4 pt-2 border-t border-[#CBD5E1]">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#073F27]">Currently Published on Website</h3>
-                    <p class="text-[11px] text-[#475569]">Images &amp; Videos currently auto-displayed across Gallery, Hero Slideshow &amp; Homepage.</p>
-                  </div>
-                  <span id="admPublishedMediaCount" class="text-xs font-mono font-bold text-[#7C4D00]">0 Published</span>
-                </div>
-                <div id="adminSiteMediaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-              </div>
             </div>
           </div>
 
@@ -796,7 +685,7 @@
                   </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label for="addProdOrigPrice" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Compare Price (Optional)</label>
                     <input id="addProdOrigPrice" type="number" step="100" min="0" placeholder="e.g. 150000" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-mono" />
@@ -809,12 +698,25 @@
                     <label for="addProdWeight" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Weight / Sizing</label>
                     <input id="addProdWeight" type="text" placeholder="e.g. 500g / Standard" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
-                  <div>
-                    <div class="flex items-center justify-between mb-1">
-                      <label for="addProdImage" class="block text-[11px] font-bold uppercase text-[#7C4D00]">Image Path or URL *</label>
-                      <button type="button" onclick="pickGoogleMediaForInput('addProdImage')" class="text-[10px] font-bold text-[#073F27] underline cursor-pointer">Pick Google Photo</button>
+                </div>
+
+                <!-- Direct Google Image Upload + Product Image URL -->
+                <div class="p-4 bg-white border border-[#CBD5E1] rounded-xl space-y-2.5">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <label for="addProdImageFile" class="block text-[11px] font-bold uppercase text-[#7C4D00]">Product Image * (Auto-Uploads to Verified Google Account)</label>
+                    <span id="addProdUploadStatus" class="text-[11px] font-mono font-bold text-[#073F27]">Ready</span>
+                  </div>
+                  <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <img id="addProdImagePreviewImg" src="./assets/images/safari-gear.jpg" alt="Product image preview" class="w-16 h-16 rounded-xl object-cover border border-[#CBD5E1] shrink-0 bg-[#F1F5F9]" />
+                    <div class="flex-1 space-y-2 min-w-0">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <input id="addProdImageFile" type="file" accept="image/*" onchange="handleDashboardImageFileSelect('addProdImageFile', 'addProdImage', 'addProdUploadStatus', 'addProdImagePreviewImg')" class="flex-1 min-w-0 bg-[#F8FAFC] border border-[#94A3B8] rounded-xl px-3 py-1.5 text-xs text-[#0F172A] file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-[#073F27] file:text-white file:font-bold file:text-xs cursor-pointer" />
+                        <button id="addProdImageFileVerifyBtn" type="button" onclick="triggerPendingUploadForField('addProdImageFile', 'addProdImage', 'addProdUploadStatus', 'addProdImagePreviewImg')" class="hidden px-3 py-2 rounded-xl bg-[#073F27] text-white text-xs font-bold cursor-pointer whitespace-nowrap">
+                          Verify &amp; Upload Now
+                        </button>
+                      </div>
+                      <input id="addProdImage" type="text" placeholder="Or paste image URL / auto-filled after Google upload" oninput="syncImagePreviewFromUrl('addProdImage', 'addProdImagePreviewImg')" class="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-xl px-3 py-1.5 text-[11px] text-[#334155]" />
                     </div>
-                    <input id="addProdImage" type="text" required placeholder="./assets/images/safari-gear.jpg" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
                 </div>
 
@@ -873,17 +775,28 @@
                   </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label for="addSafDest" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Key Destinations</label>
-                    <input id="addSafDest" type="text" placeholder="e.g. Kidepo Valley National Park &amp; Karamoja" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                <div>
+                  <label for="addSafDest" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Key Destinations</label>
+                  <input id="addSafDest" type="text" placeholder="e.g. Kidepo Valley National Park &amp; Karamoja" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+                </div>
+
+                <!-- Direct Google Image Upload + Safari Cover Image URL -->
+                <div class="p-4 bg-white border border-[#CBD5E1] rounded-xl space-y-2.5">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <label for="addSafImageFile" class="block text-[11px] font-bold uppercase text-[#7C4D00]">Safari Cover Image * (Auto-Uploads to Verified Google Account)</label>
+                    <span id="addSafUploadStatus" class="text-[11px] font-mono font-bold text-[#073F27]">Ready</span>
                   </div>
-                  <div>
-                    <div class="flex items-center justify-between mb-1">
-                      <label for="addSafImage" class="block text-[11px] font-bold uppercase text-[#7C4D00]">Cover Image Path or URL *</label>
-                      <button type="button" onclick="pickGoogleMediaForInput('addSafImage')" class="text-[10px] font-bold text-[#073F27] underline cursor-pointer">Pick Google Photo</button>
+                  <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <img id="addSafImagePreviewImg" src="./assets/images/bwindi-gorilla.jpg" alt="Safari cover image preview" class="w-16 h-16 rounded-xl object-cover border border-[#CBD5E1] shrink-0 bg-[#F1F5F9]" />
+                    <div class="flex-1 space-y-2 min-w-0">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <input id="addSafImageFile" type="file" accept="image/*" onchange="handleDashboardImageFileSelect('addSafImageFile', 'addSafImage', 'addSafUploadStatus', 'addSafImagePreviewImg')" class="flex-1 min-w-0 bg-[#F8FAFC] border border-[#94A3B8] rounded-xl px-3 py-1.5 text-xs text-[#0F172A] file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-[#073F27] file:text-white file:font-bold file:text-xs cursor-pointer" />
+                        <button id="addSafImageFileVerifyBtn" type="button" onclick="triggerPendingUploadForField('addSafImageFile', 'addSafImage', 'addSafUploadStatus', 'addSafImagePreviewImg')" class="hidden px-3 py-2 rounded-xl bg-[#073F27] text-white text-xs font-bold cursor-pointer whitespace-nowrap">
+                          Verify &amp; Upload Now
+                        </button>
+                      </div>
+                      <input id="addSafImage" type="text" placeholder="Or paste image URL / auto-filled after Google upload" oninput="syncImagePreviewFromUrl('addSafImage', 'addSafImagePreviewImg')" class="w-full bg-[#F8FAFC] border border-[#CBD5E1] rounded-xl px-3 py-1.5 text-[11px] text-[#334155]" />
                     </div>
-                    <input id="addSafImage" type="text" required placeholder="./assets/images/bwindi-gorilla.jpg" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
                 </div>
 
@@ -1357,10 +1270,8 @@
           renderOrdersList(),
           renderCommentsAndReviews(),
           renderDeletionsList(),
-          renderAdminSiteMedia(),
           testSupabaseFromAdmin(),
         ]);
-        syncAdminMediaTargetDropdowns();
       }
 
       async function handleSaveLocation(e) {
@@ -1422,11 +1333,23 @@
 
       async function handleAddTiktok(e) {
         e.preventDefault();
+        const btn = document.getElementById("ttSubmitBtn");
         const title = document.getElementById("ttTitleInput").value.trim();
         const videoUrl = document.getElementById("ttUrlInput").value.trim();
-        const thumbnail = document.getElementById("ttThumbInput").value.trim();
         const views = document.getElementById("ttViewsInput").value.trim() || "Field Reel";
         const likes = document.getElementById("ttLikesInput").value.trim() || "@kisacathy1900";
+
+        let thumbnail = document.getElementById("ttThumbInput").value.trim();
+        if (pendingDashboardUploads["ttThumbFile"]) {
+          if (btn) btn.disabled = true;
+          thumbnail = await triggerPendingUploadForField("ttThumbFile", "ttThumbInput", "ttThumbUploadStatus", "ttThumbPreviewImg", title);
+          if (btn) btn.disabled = false;
+          if (!thumbnail) return;
+        }
+        if (!thumbnail) {
+          notify("Please select a thumbnail image file or enter an image URL.", "error");
+          return;
+        }
 
         const tiktoks = window.db.getTiktoks();
         tiktoks.unshift({
@@ -1441,6 +1364,12 @@
         notify("Published TikTok reel live.");
         await renderTiktokList();
         document.getElementById("ttTitleInput").value = "";
+        document.getElementById("ttThumbInput").value = "";
+        document.getElementById("ttThumbFile").value = "";
+        delete pendingDashboardUploads["ttThumbFile"];
+        syncImagePreviewFromUrl("ttThumbInput", "ttThumbPreviewImg", "./assets/images/bwindi-gorilla.jpg");
+        const ttStat = document.getElementById("ttThumbUploadStatus");
+        if (ttStat) ttStat.textContent = "Ready";
       }
 
       async function deleteTiktok(id) {
@@ -1457,6 +1386,11 @@
       function resetProductForm() {
         document.getElementById("addProductForm").reset();
         document.getElementById("editProdId").value = "";
+        delete pendingDashboardUploads["addProdImageFile"];
+        document.getElementById("addProdImageFileVerifyBtn")?.classList.add("hidden");
+        const st = document.getElementById("addProdUploadStatus");
+        if (st) st.textContent = "Ready";
+        syncImagePreviewFromUrl("addProdImage", "addProdImagePreviewImg", "./assets/images/safari-gear.jpg");
         document.getElementById("prodFormHeading").textContent = "Add New Product to Shop";
         document.getElementById("prodSubmitBtn").textContent = "Publish Product to Live Shop";
         document.getElementById("cancelEditProdBtn").classList.add("hidden");
@@ -1473,6 +1407,12 @@
         document.getElementById("addProdOrigin").value = p.origin || "";
         document.getElementById("addProdWeight").value = p.weight || "";
         document.getElementById("addProdImage").value = p.image || "";
+        document.getElementById("addProdImageFile").value = "";
+        delete pendingDashboardUploads["addProdImageFile"];
+        document.getElementById("addProdImageFileVerifyBtn")?.classList.add("hidden");
+        const st = document.getElementById("addProdUploadStatus");
+        if (st) st.textContent = "Ready (upload new image to replace)";
+        syncImagePreviewFromUrl("addProdImage", "addProdImagePreviewImg", "./assets/images/safari-gear.jpg");
         document.getElementById("addProdDesc").value = p.description || "";
         document.getElementById("addProdSale").checked = Boolean(p.isSale);
         document.getElementById("prodFormHeading").textContent = `Editing Product: ${p.name}`;
@@ -1515,6 +1455,7 @@
 
       async function handleAddProduct(e) {
         e.preventDefault();
+        const btn = document.getElementById("prodSubmitBtn");
         const editId = document.getElementById("editProdId").value.trim();
         const existing = editId ? cachedShopProducts.find((item) => item.id === editId) : null;
         const name = document.getElementById("addProdName").value.trim();
@@ -1523,9 +1464,20 @@
         const origPriceRaw = Number(document.getElementById("addProdOrigPrice").value || 0);
         const origin = document.getElementById("addProdOrigin").value.trim() || "East Africa";
         const weight = document.getElementById("addProdWeight").value.trim() || "Standard";
-        const image = document.getElementById("addProdImage").value.trim();
         const description = document.getElementById("addProdDesc").value.trim();
         const isSale = document.getElementById("addProdSale").checked;
+
+        let image = document.getElementById("addProdImage").value.trim();
+        if (pendingDashboardUploads["addProdImageFile"]) {
+          if (btn) btn.disabled = true;
+          image = await triggerPendingUploadForField("addProdImageFile", "addProdImage", "addProdUploadStatus", "addProdImagePreviewImg", name);
+          if (btn) btn.disabled = false;
+          if (!image) return;
+        }
+        if (!image) {
+          notify("Please select a product image file or enter an image URL.", "error");
+          return;
+        }
 
         await window.db.addProduct({
           id: editId || undefined,
@@ -1561,6 +1513,11 @@
       function resetSafariForm() {
         document.getElementById("addSafariForm").reset();
         document.getElementById("editSafId").value = "";
+        delete pendingDashboardUploads["addSafImageFile"];
+        document.getElementById("addSafImageFileVerifyBtn")?.classList.add("hidden");
+        const st = document.getElementById("addSafUploadStatus");
+        if (st) st.textContent = "Ready";
+        syncImagePreviewFromUrl("addSafImage", "addSafImagePreviewImg", "./assets/images/bwindi-gorilla.jpg");
         document.getElementById("safFormHeading").textContent = "Create New Safari Package";
         document.getElementById("safSubmitBtn").textContent = "Publish Safari Package Live";
         document.getElementById("cancelEditSafBtn").classList.add("hidden");
@@ -1575,6 +1532,12 @@
         document.getElementById("addSafPrice").value = String(s.priceUGX || "");
         document.getElementById("addSafDest").value = s.destinationsFormatted || "";
         document.getElementById("addSafImage").value = s.image || "";
+        document.getElementById("addSafImageFile").value = "";
+        delete pendingDashboardUploads["addSafImageFile"];
+        document.getElementById("addSafImageFileVerifyBtn")?.classList.add("hidden");
+        const st = document.getElementById("addSafUploadStatus");
+        if (st) st.textContent = "Ready (upload new image to replace)";
+        syncImagePreviewFromUrl("addSafImage", "addSafImagePreviewImg", "./assets/images/bwindi-gorilla.jpg");
         document.getElementById("addSafOverview").value = s.overview || "";
         document.getElementById("addSafFlagship").checked = Boolean(s.isFlagship);
         document.getElementById("safFormHeading").textContent = `Editing Safari: ${s.title}`;
@@ -1617,15 +1580,27 @@
 
       async function handleAddSafari(e) {
         e.preventDefault();
+        const btn = document.getElementById("safSubmitBtn");
         const editId = document.getElementById("editSafId").value.trim();
         const existing = editId ? cachedSafarisList.find((item) => item.id === editId) : null;
         const title = document.getElementById("addSafTitle").value.trim();
         const duration = document.getElementById("addSafDuration").value.trim();
         const priceUGX = Number(document.getElementById("addSafPrice").value);
         const destinationsFormatted = document.getElementById("addSafDest").value.trim() || "Uganda & East Africa";
-        const image = document.getElementById("addSafImage").value.trim();
         const overview = document.getElementById("addSafOverview").value.trim();
         const isFlagship = document.getElementById("addSafFlagship").checked;
+
+        let image = document.getElementById("addSafImage").value.trim();
+        if (pendingDashboardUploads["addSafImageFile"]) {
+          if (btn) btn.disabled = true;
+          image = await triggerPendingUploadForField("addSafImageFile", "addSafImage", "addSafUploadStatus", "addSafImagePreviewImg", title);
+          if (btn) btn.disabled = false;
+          if (!image) return;
+        }
+        if (!image) {
+          notify("Please select a cover image file or enter an image URL.", "error");
+          return;
+        }
 
         await window.db.addSafari({
           id: editId || undefined,
@@ -2299,346 +2274,165 @@
       }
 
       // =========================================================================
-      // GOOGLE PHOTOS & DRIVE MEDIA STUDIO (SEPARATED IMAGE & VIDEO UPLOADS)
+      // DIRECT GOOGLE WORKSPACE VERIFICATION & INLINE FORM IMAGE UPLOADS
       // =========================================================================
-      let adminGoogleMediaCache = [];
+      const pendingDashboardUploads = {};
+
+      function handleWorkspaceEmailPrefChange(emailVal) {
+        if (window.googleMedia && emailVal) {
+          window.googleMedia.setPreferredWorkspaceEmail(emailVal);
+        }
+      }
+
+      function syncImagePreviewFromUrl(urlInputId, previewImgId, fallbackSrc) {
+        const input = document.getElementById(urlInputId);
+        const img = document.getElementById(previewImgId);
+        if (!img) return;
+        const val = input ? input.value.trim() : "";
+        img.src = val || fallbackSrc || "./assets/images/bwindi-gorilla.jpg";
+      }
 
       function syncAdminGoogleAuthUI(user, hasToken) {
         const inWrap = document.getElementById("admGoogleSignInWrap");
         const outWrap = document.getElementById("admGoogleSignedInWrap");
         const badge = document.getElementById("admGoogleUserBadge");
+        const statusPill = document.getElementById("admGoogleStatusBadge");
+        const emailInput = document.getElementById("admWorkspaceEmailInput");
         if (!inWrap || !outWrap) return;
+
         const connected = Boolean(user && hasToken);
+        const savedPref = window.googleMedia ? window.googleMedia.getPreferredWorkspaceEmail() : "maleham06@gmail.com";
+        if (emailInput && !emailInput.value.trim()) {
+          emailInput.value = savedPref;
+        }
+
         inWrap.classList.toggle("hidden", connected);
         outWrap.classList.toggle("hidden", !connected);
-        if (badge && user) {
-          badge.textContent = "Google: " + (user.email || user.displayName || "Connected");
+
+        if (connected && user) {
+          const verifiedEmail = user.email || savedPref;
+          if (emailInput) emailInput.value = verifiedEmail;
+          if (badge) badge.textContent = "Verified: " + verifiedEmail;
+          if (statusPill) {
+            statusPill.textContent = "Connected (" + verifiedEmail + ")";
+            statusPill.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 border border-emerald-300 text-[#073F27]";
+          }
+        } else {
+          if (statusPill) {
+            statusPill.textContent = "Verification Needed (" + (user?.email || savedPref) + ")";
+            statusPill.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 border border-amber-300 text-[#7C4D00]";
+          }
         }
       }
 
       function initAdminGoogleAuth() {
         if (!window.googleMedia) return;
+        const emailInput = document.getElementById("admWorkspaceEmailInput");
+        if (emailInput) {
+          emailInput.value = window.googleMedia.getPreferredWorkspaceEmail();
+        }
         window.googleMedia.initGoogleAuth(
           (u) => syncAdminGoogleAuthUI(u, true),
           (u) => syncAdminGoogleAuthUI(u, Boolean(window.googleMedia.getGoogleAccessToken()))
         );
       }
 
-      async function handleAdminGoogleSignIn() {
+      async function handleAdminGoogleSignIn(isSwitch) {
+        if (!window.googleMedia) return false;
+        const emailInput = document.getElementById("admWorkspaceEmailInput");
+        const preferred = emailInput ? emailInput.value.trim() : "";
+        if (preferred) window.googleMedia.setPreferredWorkspaceEmail(preferred);
         try {
-          const res = await window.googleMedia.googleSignIn();
+          const res = await window.googleMedia.googleSignIn(preferred || undefined);
           syncAdminGoogleAuthUI(res.user, true);
-          notify("Signed in with Google. Ready to upload images & videos.");
+          notify(
+            (isSwitch ? "Switched Google Workspace account to " : "Verified Google Workspace account ") +
+              (res.user.email || preferred || "Google Drive") +
+              ". Any image uploaded in your forms will save automatically."
+          );
+          return true;
         } catch (err) {
-          notify(err.message || "Google Sign-In failed.", "error");
+          notify(err.message || "Google verification was cancelled.", "error");
+          return false;
         }
       }
 
       async function handleAdminGoogleSignOut() {
+        if (!window.googleMedia) return;
         await window.googleMedia.googleSignOut();
         syncAdminGoogleAuthUI(null, false);
-        const box = document.getElementById("admGoogleBrowserBox");
-        if (box) box.classList.add("hidden");
-        notify("Signed out from Google account.", "info");
+        notify("Signed out of Google Workspace upload session.", "info");
       }
 
-      function toggleAdminImgTargetSelect() {
-        const placement = document.getElementById("admImgPlacement").value;
-        const wrap = document.getElementById("admImgTargetWrap");
-        const isTargeted = placement === "safari" || placement === "product";
-        wrap.classList.toggle("hidden", !isTargeted);
-        if (isTargeted) syncAdminMediaTargetDropdowns();
-      }
+      async function uploadOneFieldFile(file, urlInputId, statusId, previewImgId, customTitle) {
+        const statusEl = document.getElementById(statusId);
+        const urlEl = document.getElementById(urlInputId);
+        const previewEl = document.getElementById(previewImgId);
+        const verifyBtn = document.getElementById(urlInputId === "ttThumbInput" ? "ttThumbFileVerifyBtn" : urlInputId === "addProdImage" ? "addProdImageFileVerifyBtn" : "addSafImageFileVerifyBtn");
+        const activeUser = window.googleMedia.getCurrentGoogleUser();
+        const acctLabel = activeUser?.email || window.googleMedia.getPreferredWorkspaceEmail();
 
-      function syncAdminMediaTargetDropdowns() {
-        const placement = document.getElementById("admImgPlacement")?.value;
-        const sel = document.getElementById("admImgTargetItem");
-        if (!sel) return;
-        if (placement === "safari") {
-          sel.innerHTML = (cachedSafarisList || [])
-            .map((s) => `<option value="safari:${esc(s.id)}">${esc(s.title)}</option>`)
-            .join("");
-        } else if (placement === "product") {
-          sel.innerHTML = (cachedShopProducts || [])
-            .map((p) => `<option value="product:${esc(p.id)}">${esc(p.name)}</option>`)
-            .join("");
-        }
-      }
-
-      async function handleAdminMediaUpload(e, kind) {
-        e.preventDefault();
-        if (!window.googleMedia || !window.googleMedia.getGoogleAccessToken()) {
-          notify("Please click Sign in with Google first.", "info");
-          return;
-        }
-
-        const isVid = kind === "video";
-        const titleEl = document.getElementById(isVid ? "admVidTitle" : "admImgTitle");
-        const captionEl = document.getElementById(isVid ? "admVidCaption" : "admImgCaption");
-        const placeEl = document.getElementById(isVid ? "admVidPlacement" : "admImgPlacement");
-        const fileEl = document.getElementById(isVid ? "admVidFile" : "admImgFile");
-        const progWrap = document.getElementById(isVid ? "admVidProgressWrap" : "admImgProgressWrap");
-        const progBar = document.getElementById(isVid ? "admVidProgressBar" : "admImgProgressBar");
-        const progText = document.getElementById(isVid ? "admVidProgressText" : "admImgProgressText");
-        const submitBtn = document.getElementById(isVid ? "admVidSubmitBtn" : "admImgSubmitBtn");
-
-        const file = fileEl.files && fileEl.files[0];
-        if (!file) {
-          notify("Please select a file first.", "error");
-          return;
-        }
-
-        const title = titleEl.value.trim();
-        const caption = captionEl.value.trim();
-        const placement = placeEl.value || "all";
-
-        submitBtn.disabled = true;
-        progWrap.classList.remove("hidden");
-        progBar.style.width = "10%";
-        progText.textContent = isVid ? "Uploading video to Google..." : "Uploading image to Google...";
-
+        if (statusEl) statusEl.textContent = "Uploading to " + acctLabel + "...";
         try {
-          const uploaded = await window.googleMedia.uploadFileToGoogleMedia(file, title, (pct) => {
-            progBar.style.width = pct + "%";
-            progText.textContent = "Uploading to Google: " + pct + "%";
+          const cleanName = (customTitle || file.name.replace(/\.[^.]+$/, "")).trim();
+          const uploaded = await window.googleMedia.uploadFileToGoogleMedia(file, cleanName, (pct) => {
+            if (statusEl) statusEl.textContent = `Uploading to ${acctLabel}: ${pct}%`;
           });
-
-          const savedSection =
-            placement === "safari" || placement === "product" ? "gallery" : placement;
-
-          await window.db.addSiteMediaItem({
-            title,
-            caption,
-            mediaType: isVid ? "video" : "image",
-            section: savedSection,
-            url: uploaded.displayUrl,
-            embedUrl: uploaded.embedUrl,
-            thumbnailUrl: uploaded.thumbnailLink,
-            googleFileId: uploaded.id,
-            mimeType: uploaded.mimeType,
-          });
-
-          // If target is a specific Safari or Product, automatically assign its cover image too
-          if (!isVid && (placement === "safari" || placement === "product")) {
-            const targetVal = document.getElementById("admImgTargetItem").value || "";
-            if (targetVal.startsWith("safari:")) {
-              const sid = targetVal.replace("safari:", "");
-              const saf = cachedSafarisList.find((x) => x.id === sid);
-              if (saf) {
-                await window.db.addSafari({ ...saf, image: uploaded.displayUrl });
-                await renderSafarisList();
-              }
-            } else if (targetVal.startsWith("product:")) {
-              const pid = targetVal.replace("product:", "");
-              const prod = cachedShopProducts.find((x) => x.id === pid);
-              if (prod) {
-                await window.db.addProduct({ ...prod, image: uploaded.displayUrl });
-                await renderShopList();
-              }
-            }
-          }
-
-          titleEl.value = "";
-          captionEl.value = "";
-          fileEl.value = "";
-          progBar.style.width = "100%";
-          progText.textContent = "Uploaded & Published!";
-          await renderAdminSiteMedia();
-          notify(`"${title}" uploaded to Google Photos/Drive & displayed automatically on site.`);
+          if (urlEl) urlEl.value = uploaded.displayUrl;
+          if (previewEl) previewEl.src = uploaded.displayUrl;
+          if (statusEl) statusEl.textContent = "Uploaded to " + acctLabel;
+          if (verifyBtn) verifyBtn.classList.add("hidden");
+          notify(`Image uploaded automatically to Google (${acctLabel}).`);
+          return uploaded.displayUrl;
         } catch (err) {
+          if (statusEl) statusEl.textContent = "Upload paused — click Verify & Upload";
           notify(err.message || "Google upload failed.", "error");
-        } finally {
-          submitBtn.disabled = false;
-          setTimeout(() => progWrap.classList.add("hidden"), 1800);
+          return "";
         }
       }
 
-      async function handleAdminBrowseGoogleMedia() {
+      async function handleDashboardImageFileSelect(fileInputId, urlInputId, statusId, previewImgId) {
+        const fileEl = document.getElementById(fileInputId);
+        const statusEl = document.getElementById(statusId);
+        const previewEl = document.getElementById(previewImgId);
+        const verifyBtn = document.getElementById(fileInputId + "VerifyBtn");
+        const file = fileEl?.files?.[0];
+        if (!file) return;
+
+        // Instant local preview while selecting
         try {
-          const data = await window.googleMedia.listGooglePhotosAndMedia();
-          adminGoogleMediaCache = [...data.images, ...data.videos];
-          const box = document.getElementById("admGoogleBrowserBox");
-          const count = document.getElementById("admGoogleBrowserCount");
-          const imgGrid = document.getElementById("admGoogleBrowserImages");
-          const vidGrid = document.getElementById("admGoogleBrowserVideos");
+          if (previewEl) previewEl.src = URL.createObjectURL(file);
+        } catch {}
 
-          box.classList.remove("hidden");
-          count.textContent = `${data.images.length} Images · ${data.videos.length} Videos`;
-
-          imgGrid.innerHTML =
-            data.images.length === 0
-              ? `<p class="col-span-full text-xs text-[#475569] italic">No images found in Google Photos/Drive.</p>`
-              : data.images
-                  .map(
-                    (f) => `
-                  <div class="p-2 bg-white border border-[#CBD5E1] rounded-xl space-y-1.5 flex flex-col justify-between">
-                    <div>
-                      <img src="${esc(f.thumbnailLink || f.displayUrl)}" alt="${esc(f.name)}" class="w-full h-20 object-cover rounded-lg" />
-                      <p class="text-[10px] font-bold text-[#0F172A] truncate mt-1">${esc(f.name)}</p>
-                    </div>
-                    <button type="button" onclick="publishExistingGoogleMediaAdmin('${esc(f.id)}')" class="w-full py-1 rounded bg-[#073F27] text-white text-[10px] font-bold cursor-pointer">Add to Site</button>
-                  </div>
-                `
-                  )
-                  .join("");
-
-          vidGrid.innerHTML =
-            data.videos.length === 0
-              ? `<p class="col-span-full text-xs text-[#475569] italic">No videos found in Google Photos/Drive.</p>`
-              : data.videos
-                  .map(
-                    (f) => `
-                  <div class="p-2.5 bg-white border border-[#CBD5E1] rounded-xl space-y-1.5 flex flex-col justify-between">
-                    <div>
-                      <div class="relative h-20 rounded-lg overflow-hidden bg-slate-900">
-                        <img src="${esc(f.thumbnailLink || '')}" alt="${esc(f.name)}" class="w-full h-full object-cover opacity-80" />
-                        <span class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/80 text-[#F4B41A] text-[9px] font-bold">VIDEO</span>
-                      </div>
-                      <p class="text-[11px] font-bold text-[#0F172A] truncate mt-1">${esc(f.name)}</p>
-                    </div>
-                    <button type="button" onclick="publishExistingGoogleMediaAdmin('${esc(f.id)}')" class="w-full py-1.5 rounded bg-[#073F27] text-white text-[10px] font-bold cursor-pointer">Publish Video</button>
-                  </div>
-                `
-                  )
-                  .join("");
-        } catch (err) {
-          notify(err.message || "Could not load Google Photos library.", "error");
+        if (window.googleMedia && window.googleMedia.getGoogleAccessToken()) {
+          delete pendingDashboardUploads[fileInputId];
+          await uploadOneFieldFile(file, urlInputId, statusId, previewImgId);
+        } else {
+          pendingDashboardUploads[fileInputId] = file;
+          const targetEmail = window.googleMedia ? window.googleMedia.getPreferredWorkspaceEmail() : "maleham06@gmail.com";
+          if (statusEl) statusEl.textContent = `Selected "${file.name}" — click Verify & Upload or Save`;
+          if (verifyBtn) verifyBtn.classList.remove("hidden");
+          notify(`Selected "${file.name}". Verify ${targetEmail} or click Save/Publish to upload automatically.`, "info");
         }
       }
 
-      async function handleAdminPickGoogleMedia() {
-        try {
-          const picked = await window.googleMedia.openGoogleMediaPicker();
-          if (!picked) return;
-          adminGoogleMediaCache = [picked, ...adminGoogleMediaCache.filter((x) => x.id !== picked.id)];
-          await publishExistingGoogleMediaAdmin(picked.id);
-        } catch (err) {
-          notify(err.message || "Google Picker could not open.", "error");
-        }
-      }
+      async function triggerPendingUploadForField(fileInputId, urlInputId, statusId, previewImgId, customTitle) {
+        const fileEl = document.getElementById(fileInputId);
+        const file = pendingDashboardUploads[fileInputId] || fileEl?.files?.[0];
+        if (!file) return document.getElementById(urlInputId)?.value.trim() || "";
 
-      async function publishExistingGoogleMediaAdmin(fileId) {
-        const f = adminGoogleMediaCache.find((x) => x.id === fileId);
-        if (!f) return;
-        const ok = await askConfirm(
-          "Publish Google File to Website",
-          `Allow public website visitors to view "${f.name}" from your Google Drive/Photos and add it to your live site?`
-        );
-        if (!ok) return;
-
-        try {
-          const token = window.googleMedia.getGoogleAccessToken();
-          if (token) {
-            try {
-              await window.googleMedia.makeDriveFilePublic(token, f.id);
-            } catch {}
-          }
-          await window.db.addSiteMediaItem({
-            title: f.name.replace(/\.[^.]+$/, ""),
-            caption: "Featured from Google Photos & Drive",
-            mediaType: f.mediaType,
-            section: "all",
-            url: f.displayUrl,
-            embedUrl: f.embedUrl,
-            thumbnailUrl: f.thumbnailLink,
-            googleFileId: f.id,
-            mimeType: f.mimeType,
-          });
-          await renderAdminSiteMedia();
-          notify(`"${f.name}" is now live across your website.`);
-        } catch (err) {
-          notify(err.message || "Failed to publish Google file.", "error");
-        }
-      }
-
-      async function pickGoogleMediaForInput(targetInputId) {
-        if (!window.googleMedia || !window.googleMedia.getGoogleAccessToken()) {
-          notify("Sign in with Google inside the 'Google Photos & Videos' tab first.", "info");
-          switchTab("media");
-          return;
-        }
-        try {
-          const picked = await window.googleMedia.openGoogleMediaPicker();
-          if (!picked) return;
-          const ok = await askConfirm(
-            "Use Google Photo Publicly",
-            `Update sharing permissions so website visitors can view "${picked.name}" and apply its URL?`
-          );
-          if (!ok) return;
-          const token = window.googleMedia.getGoogleAccessToken();
-          if (token) {
-            try {
-              await window.googleMedia.makeDriveFilePublic(token, picked.id);
-            } catch {}
-          }
-          const el = document.getElementById(targetInputId);
-          if (el) el.value = picked.displayUrl;
-          notify(`Applied Google Photo URL for "${picked.name}".`);
-        } catch (err) {
-          notify(err.message || "Could not pick Google photo.", "error");
-        }
-      }
-
-      async function renderAdminSiteMedia() {
-        const items = await window.db.fetchSiteMedia();
-        const badge = document.getElementById("sidebarMediaBadge");
-        const countLabel = document.getElementById("admPublishedMediaCount");
-        const grid = document.getElementById("adminSiteMediaGrid");
-        if (badge) badge.textContent = String(items.length);
-        if (countLabel) countLabel.textContent = `${items.length} Published`;
-        if (!grid) return;
-
-        if (items.length === 0) {
-          grid.innerHTML = `<p class="sm:col-span-2 lg:col-span-3 text-xs text-[#475569] italic py-6 text-center bg-[#F8FAFC] rounded-2xl border border-[#CBD5E1]">No uploaded Google photos or videos published yet. Use Section 1 (Images) or Section 2 (Videos) above to upload.</p>`;
-          return;
+        if (!window.googleMedia) {
+          notify("Google Workspace uploader is still initializing.", "error");
+          return "";
         }
 
-        grid.innerHTML = items
-          .map((m) => {
-            const isVid = m.mediaType === "video";
-            return `
-              <div class="p-3.5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-2.5 flex flex-col justify-between">
-                <div class="space-y-2">
-                  <div class="relative h-36 rounded-xl overflow-hidden bg-slate-900 border border-[#CBD5E1]">
-                    ${
-                      isVid && m.embedUrl
-                        ? `<iframe src="${esc(m.embedUrl)}" title="${esc(m.title)}" class="w-full h-full border-0" loading="lazy"></iframe>`
-                        : `<img src="${esc(m.url)}" alt="${esc(m.title)}" class="w-full h-full object-cover" />`
-                    }
-                    <span class="pointer-events-none absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${isVid ? "bg-[#073F27] text-[#F4B41A]" : "bg-white text-[#073F27]"}">${esc(m.mediaType)}</span>
-                    <span class="pointer-events-none absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-mono bg-black/75 text-white">${esc(m.section)}</span>
-                  </div>
-                  <h4 class="font-editorial text-base font-bold text-[#0F172A] truncate">${esc(m.title)}</h4>
-                  ${m.caption ? `<p class="text-[11px] text-[#334155] line-clamp-2">${esc(m.caption)}</p>` : ""}
-                </div>
-                <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-[#E2E8F0]">
-                  <a href="${esc(m.embedUrl || m.url)}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-[#073F27] hover:underline">Open File</a>
-                  <button type="button" onclick="deleteAdminSiteMedia('${esc(m.id)}')" class="px-2.5 py-1 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[11px] font-bold cursor-pointer">Delete</button>
-                </div>
-              </div>
-            `;
-          })
-          .join("");
-      }
-
-      async function deleteAdminSiteMedia(id) {
-        const items = window.db.getSiteMedia();
-        const target = items.find((m) => m.id === id);
-        if (!target) return;
-        const ok = await askConfirm(
-          "Delete Uploaded Media",
-          `Remove "${target.title}" from your website gallery & homepage${target.googleFileId && window.googleMedia?.getGoogleAccessToken() ? " AND permanently delete it from Google Drive?" : "?"}`
-        );
-        if (!ok) return;
-
-        if (target.googleFileId && window.googleMedia?.getGoogleAccessToken()) {
-          try {
-            await window.googleMedia.deleteGoogleDriveFile(target.googleFileId);
-          } catch {}
+        if (!window.googleMedia.getGoogleAccessToken()) {
+          const ok = await handleAdminGoogleSignIn(false);
+          if (!ok) return "";
         }
-        await window.db.deleteSiteMediaItem(id);
-        await renderAdminSiteMedia();
-        notify("Media item deleted cleanly.");
+
+        delete pendingDashboardUploads[fileInputId];
+        return await uploadOneFieldFile(file, urlInputId, statusId, previewImgId, customTitle);
       }
     </script>
   </body>
