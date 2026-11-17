@@ -14,6 +14,7 @@ import {
   type User,
 } from 'firebase/auth';
 import firebaseConfig from '../firebase-applet-config.json';
+import { supabase } from './supabase';
 
 export const SCOPES = [
   'https://www.googleapis.com/auth/drive.file',
@@ -21,6 +22,7 @@ export const SCOPES = [
 
 export const DEFAULT_WORKSPACE_EMAIL = 'maleham06@gmail.com';
 const WORKSPACE_EMAIL_PREF_KEY = 'sonnenpfad_workspace_email';
+const WORKSPACE_SETTINGS_ROW_ID = 'workspace_config';
 const MEDIA_FOLDER_NAME = 'Sonnenpfad Safaris Media';
 
 const app: FirebaseApp = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
@@ -58,6 +60,80 @@ export function setPreferredWorkspaceEmail(email: string): string {
     localStorage.setItem(WORKSPACE_EMAIL_PREF_KEY, clean);
   } catch {}
   return clean;
+}
+
+export async function fetchPreferredWorkspaceEmail(): Promise<string> {
+  try {
+    const { data, error } = await supabase
+      .from('settings')
+      .select('email')
+      .eq('id', WORKSPACE_SETTINGS_ROW_ID)
+      .maybeSingle();
+
+    if (!error && data && data.email && String(data.email).includes('@')) {
+      return setPreferredWorkspaceEmail(String(data.email));
+    }
+  } catch {}
+  return getPreferredWorkspaceEmail();
+}
+
+export async function savePreferredWorkspaceEmail(
+  email: string
+): Promise<{ email: string; cloudSynced: boolean; error?: string }> {
+  const clean = setPreferredWorkspaceEmail(email);
+  try {
+    const { error } = await supabase.from('settings').upsert({
+      id: WORKSPACE_SETTINGS_ROW_ID,
+      email: clean,
+      updated_at: new Date().toISOString(),
+    });
+    if (!error) {
+      return { email: clean, cloudSynced: true };
+    }
+    return { email: clean, cloudSynced: false, error: error.message };
+  } catch (err: any) {
+    return { email: clean, cloudSynced: false, error: err?.message || 'Cloud sync error' };
+  }
+}
+
+function extractDriveFileId(url: string): string | null {
+  if (!url) return null;
+  let match = url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
+  if (match) return match[1];
+  match = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (match) return match[1];
+  match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (match && url.includes('drive.google.com')) return match[1];
+  return null;
+}
+
+export function handleMediaImgError(
+  imgEl: HTMLImageElement | null,
+  fallbackSrc = './assets/images/hero-savannah.jpg'
+): void {
+  if (!imgEl) return;
+  const currentSrc = imgEl.getAttribute('src') || '';
+  const step = imgEl.dataset.fallbackStep || '0';
+  const driveId = extractDriveFileId(currentSrc);
+
+  if (driveId && step === '0') {
+    imgEl.dataset.fallbackStep = '1';
+    imgEl.referrerPolicy = 'no-referrer';
+    imgEl.src = `https://drive.google.com/thumbnail?id=${encodeURIComponent(driveId)}&sz=w1600`;
+    return;
+  }
+
+  if (driveId && step === '1') {
+    imgEl.dataset.fallbackStep = '2';
+    imgEl.referrerPolicy = 'no-referrer';
+    imgEl.src = `https://drive.google.com/uc?export=view&id=${encodeURIComponent(driveId)}`;
+    return;
+  }
+
+  if (step !== 'done' && currentSrc !== fallbackSrc) {
+    imgEl.dataset.fallbackStep = 'done';
+    imgEl.src = fallbackSrc;
+  }
 }
 
 export function buildPermanentGoogleUrls(fileId: string, mimeType: string, fallbackThumb?: string) {
@@ -112,7 +188,7 @@ export async function googleSignIn(preferredEmail?: string): Promise<{ user: Use
     cachedAccessToken = credential.accessToken;
     currentUser = result.user;
     if (result.user.email) {
-      setPreferredWorkspaceEmail(result.user.email);
+      await savePreferredWorkspaceEmail(result.user.email);
     }
     return { user: result.user, accessToken: cachedAccessToken };
   } finally {

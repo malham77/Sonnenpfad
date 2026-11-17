@@ -554,6 +554,8 @@ function normalizeAssetPath(url?: string, fallback = "./assets/images/hero-savan
 }
 
 const SITE_MEDIA_PREFIX = "__site_media__|";
+const SHOP_PRODUCT_MIRROR_PREFIX = "__shop_prod__";
+const SHOP_PRODUCT_MIRROR_MARKER = "__shop_product__";
 
 function isSiteMediaRow(row: any): boolean {
   if (!row) return false;
@@ -561,6 +563,18 @@ function isSiteMediaRow(row: any): boolean {
     String(row.id || "").startsWith("smedia-") ||
     String(row.views || "").startsWith(SITE_MEDIA_PREFIX)
   );
+}
+
+function isShopMirrorRow(row: any): boolean {
+  if (!row) return false;
+  return (
+    String(row.id || "").startsWith(SHOP_PRODUCT_MIRROR_PREFIX) ||
+    String(row.views || "") === SHOP_PRODUCT_MIRROR_MARKER
+  );
+}
+
+function isInternalSyncRow(row: any): boolean {
+  return isSiteMediaRow(row) || isShopMirrorRow(row);
 }
 
 const DEFAULT_TIKTOKS: TikTokItem[] = [
@@ -684,6 +698,56 @@ function mapProductRow(d: any): ShopProduct {
   };
 }
 
+function toShopMirrorRow(p: ShopProduct) {
+  return {
+    id: SHOP_PRODUCT_MIRROR_PREFIX + p.id,
+    title: p.name,
+    video_url: p.category,
+    thumbnail: p.image,
+    views: SHOP_PRODUCT_MIRROR_MARKER,
+    likes: JSON.stringify({
+      ...p,
+      image: normalizeAssetPath(p.image, "./assets/images/safari-gear.jpg"),
+    }),
+  };
+}
+
+function mapShopMirrorRow(d: any): ShopProduct | null {
+  if (!d) return null;
+  try {
+    if (d.likes && String(d.likes).trim().startsWith("{")) {
+      const parsed = JSON.parse(d.likes);
+      if (parsed && parsed.name) {
+        return {
+          ...parsed,
+          id: String(parsed.id || String(d.id || "").replace(SHOP_PRODUCT_MIRROR_PREFIX, "")),
+          price: Number(parsed.price) || 0,
+          originalPrice: parsed.originalPrice ? Number(parsed.originalPrice) : undefined,
+          rating: Number(parsed.rating) || 5,
+          reviewsCount: Number(parsed.reviewsCount) || 0,
+          inStock: parsed.inStock !== false,
+          image: normalizeAssetPath(parsed.image || d.thumbnail, "./assets/images/safari-gear.jpg"),
+        };
+      }
+    }
+  } catch {}
+  return {
+    id: String(d.id || "").replace(SHOP_PRODUCT_MIRROR_PREFIX, ""),
+    name: d.title || "Sonnenpfad Expedition Item",
+    origin: "East Africa",
+    category: (d.video_url || "Expedition Gear") as ShopProduct["category"],
+    price: 0,
+    weight: "Standard",
+    rating: 5,
+    reviewsCount: 0,
+    image: normalizeAssetPath(d.thumbnail, "./assets/images/safari-gear.jpg"),
+    inStock: true,
+    flavorNotes: [],
+    description: "",
+    likesCount: 0,
+  };
+}
+
 function mapReviewRow(d: any): CustomerReview {
   return {
     id: d.id,
@@ -763,15 +827,35 @@ export const db = {
         );
       }
 
-      if (productsRes.status === "fulfilled" && !productsRes.value.error && productsRes.value.data?.length) {
-        localStorage.setItem(
-          "sonnenpfad_shop_products",
-          JSON.stringify(productsRes.value.data.map(mapProductRow))
-        );
+      const mirroredProductRows: ShopProduct[] =
+        tiktoksRes.status === "fulfilled" && !tiktoksRes.value.error && Array.isArray(tiktoksRes.value.data)
+          ? (tiktoksRes.value.data as any[])
+              .filter((d) => isShopMirrorRow(d))
+              .map(mapShopMirrorRow)
+              .filter((p): p is ShopProduct => Boolean(p))
+          : [];
+
+      const nativeProductsOk =
+        productsRes.status === "fulfilled" && !productsRes.value.error && Array.isArray(productsRes.value.data);
+
+      if (mirroredProductRows.length > 0 && (!nativeProductsOk || (productsRes.value.data?.length || 0) === 0)) {
+        localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(mirroredProductRows));
+      } else if (nativeProductsOk && productsRes.value.data!.length > 0) {
+        const nativeMapped = productsRes.value.data!.map(mapProductRow);
+        if (mirroredProductRows.length > 0) {
+          const mirrorMap = new Map(mirroredProductRows.map((p) => [p.id, p]));
+          const combined = [
+            ...mirroredProductRows,
+            ...nativeMapped.filter((np) => !mirrorMap.has(np.id)),
+          ];
+          localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(combined));
+        } else {
+          localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(nativeMapped));
+        }
       }
 
       if (tiktoksRes.status === "fulfilled" && !tiktoksRes.value.error && tiktoksRes.value.data) {
-        const reelRows = (tiktoksRes.value.data as any[]).filter((d) => !isSiteMediaRow(d));
+        const reelRows = (tiktoksRes.value.data as any[]).filter((d) => !isInternalSyncRow(d));
         if (reelRows.length > 0) {
           const mappedTt = reelRows.map((d: any) => ({
             id: d.id,
@@ -914,14 +998,49 @@ export const db = {
 
   async getProducts(): Promise<ShopProduct[]> {
     try {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (!error && data && data.length > 0) {
-        const mapped = data.map(mapProductRow);
-        localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(mapped));
-        return mapped;
+      const [nativeRes, mirrorRes] = await Promise.allSettled([
+        supabase.from("products").select("*").order("created_at", { ascending: false }),
+        supabase
+          .from("tiktoks")
+          .select("*")
+          .like("id", `${SHOP_PRODUCT_MIRROR_PREFIX}%`)
+          .order("created_at", { ascending: false }),
+      ]);
+
+      const nativeOk =
+        nativeRes.status === "fulfilled" && !nativeRes.value.error && Array.isArray(nativeRes.value.data);
+      const nativeList = nativeOk ? nativeRes.value.data!.map(mapProductRow) : [];
+
+      const mirrorOk =
+        mirrorRes.status === "fulfilled" && !mirrorRes.value.error && Array.isArray(mirrorRes.value.data);
+      const mirrorList = mirrorOk
+        ? (mirrorRes.value.data as any[])
+            .map(mapShopMirrorRow)
+            .filter((p): p is ShopProduct => Boolean(p))
+        : [];
+
+      if (mirrorList.length > 0 && (!nativeOk || nativeList.length === 0)) {
+        localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(mirrorList));
+        return mirrorList;
+      }
+
+      if (nativeOk && nativeList.length > 0) {
+        if (mirrorList.length > 0) {
+          const mirrorMap = new Map(mirrorList.map((p) => [p.id, p]));
+          const merged = [
+            ...mirrorList,
+            ...nativeList.filter((np) => !mirrorMap.has(np.id)),
+          ];
+          localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(merged));
+          return merged;
+        }
+        localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(nativeList));
+        return nativeList;
+      }
+
+      if (mirrorList.length > 0) {
+        localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(mirrorList));
+        return mirrorList;
       }
     } catch {}
 
@@ -938,43 +1057,95 @@ export const db = {
     localStorage.setItem("sonnenpfad_shop_products", JSON.stringify(items));
   },
 
-  async addProduct(item: Omit<ShopProduct, "id"> & { id?: string }) {
+  async addProduct(item: Omit<ShopProduct, "id"> & { id?: string }): Promise<ShopProduct & { cloudSynced?: boolean }> {
     const id = item.id || "prod-" + Date.now();
-    const completeItem: ShopProduct = { ...item, id };
+    const completeItem: ShopProduct & { cloudSynced?: boolean } = { ...item, id };
     const existingBefore = await this.getProducts();
     const deduped = [completeItem, ...existingBefore.filter((p) => p.id !== completeItem.id)];
 
+    let nativeSynced = false;
+    let mirrorSynced = false;
+
     try {
-      const { count } = await supabase
+      const { count, error: countErr } = await supabase
         .from("products")
         .select("id", { count: "exact", head: true });
-      if (!count || count === 0) {
-        await supabase.from("products").upsert(deduped.map(toProductRow));
-      } else {
-        await supabase.from("products").upsert(toProductRow(completeItem));
+      if (!countErr) {
+        if (!count || count === 0) {
+          const { error: upsertAllErr } = await supabase.from("products").upsert(deduped.map(toProductRow));
+          nativeSynced = !upsertAllErr;
+        } else {
+          const { error: upsertOneErr } = await supabase.from("products").upsert(toProductRow(completeItem));
+          nativeSynced = !upsertOneErr;
+        }
+      }
+    } catch {}
+
+    try {
+      const { count: mirrorCount, error: mirrorCountErr } = await supabase
+        .from("tiktoks")
+        .select("id", { count: "exact", head: true })
+        .like("id", `${SHOP_PRODUCT_MIRROR_PREFIX}%`);
+      if (!mirrorCountErr) {
+        if (!mirrorCount || mirrorCount === 0) {
+          const { error: mirrorAllErr } = await supabase.from("tiktoks").upsert(deduped.map(toShopMirrorRow));
+          mirrorSynced = !mirrorAllErr;
+        } else {
+          const { error: mirrorOneErr } = await supabase.from("tiktoks").upsert(toShopMirrorRow(completeItem));
+          mirrorSynced = !mirrorOneErr;
+        }
       }
     } catch {}
 
     await this.saveProducts(deduped);
     hydrateLiveSiteContent();
+    completeItem.cloudSynced = nativeSynced || mirrorSynced;
     return completeItem;
   },
 
-  async deleteProduct(id: string) {
+  async deleteProduct(id: string): Promise<{ ok: boolean; cloudSynced: boolean }> {
     const existingBefore = await this.getProducts();
     const filtered = existingBefore.filter((p) => p.id !== id);
+    let nativeOk = false;
+    let mirrorOk = false;
+
     try {
-      const { count } = await supabase
+      const { count, error: countErr } = await supabase
         .from("products")
         .select("id", { count: "exact", head: true });
-      if ((!count || count === 0) && filtered.length > 0) {
-        await supabase.from("products").upsert(filtered.map(toProductRow));
-      } else {
-        await supabase.from("products").delete().eq("id", id);
+      if (!countErr) {
+        if ((!count || count === 0) && filtered.length > 0) {
+          const { error } = await supabase.from("products").upsert(filtered.map(toProductRow));
+          nativeOk = !error;
+        } else {
+          const { error } = await supabase.from("products").delete().eq("id", id);
+          nativeOk = !error;
+        }
       }
     } catch {}
+
+    try {
+      const { count: mirrorCount, error: mirrorCountErr } = await supabase
+        .from("tiktoks")
+        .select("id", { count: "exact", head: true })
+        .like("id", `${SHOP_PRODUCT_MIRROR_PREFIX}%`);
+      if (!mirrorCountErr) {
+        if ((!mirrorCount || mirrorCount === 0) && filtered.length > 0) {
+          const { error } = await supabase.from("tiktoks").upsert(filtered.map(toShopMirrorRow));
+          mirrorOk = !error;
+        } else {
+          const { error } = await supabase
+            .from("tiktoks")
+            .delete()
+            .eq("id", SHOP_PRODUCT_MIRROR_PREFIX + id);
+          mirrorOk = !error;
+        }
+      }
+    } catch {}
+
     await this.saveProducts(filtered);
     hydrateLiveSiteContent();
+    return { ok: true, cloudSynced: nativeOk || mirrorOk };
   },
 
   async getOrders(): Promise<CoffeeOrder[]> {
@@ -1761,7 +1932,7 @@ export const db = {
       if (stored) {
         const parsed: TikTokItem[] = JSON.parse(stored);
         return parsed
-          .filter((t) => !isSiteMediaRow(t))
+          .filter((t) => !isInternalSyncRow(t))
           .map((t) => ({ ...t, thumbnail: normalizeAssetPath(t.thumbnail, "./assets/images/bwindi-gorilla.jpg") }));
       }
     } catch {}
@@ -1775,7 +1946,7 @@ export const db = {
         .select("*")
         .order("created_at", { ascending: false });
       if (!error && data) {
-        const reelRows = data.filter((d: any) => !isSiteMediaRow(d));
+        const reelRows = data.filter((d: any) => !isInternalSyncRow(d));
         if (reelRows.length > 0) {
           const mapped: TikTokItem[] = reelRows.map((d: any) => ({
             id: d.id,
@@ -1896,8 +2067,11 @@ export const db = {
           likes_count: p.likesCount || 0,
         }))
       );
-      if (error) errors.push(`products: ${error.message}`);
+      const { error: mirrorErr } = await supabase.from("tiktoks").upsert(products.map(toShopMirrorRow));
+      if (error && mirrorErr) errors.push(`products: ${error.message}`);
     }
+
+    await googleMedia.savePreferredWorkspaceEmail(googleMedia.getPreferredWorkspaceEmail());
 
     if (tiktoks.length > 0) {
       const { error } = await supabase.from("tiktoks").upsert(
@@ -2262,11 +2436,11 @@ export async function hydrateLiveSiteContent() {
             `Hello Sonnenpfad Safaris, I am inquiring about the ${saf.title} (${priceStr}).`
           );
           return `
-            <article class="bg-white ${saf.isFlagship ? "border-2 border-[#073F27] shadow-md relative" : "border border-[#CBD5E1] shadow-sm hover:border-[#073F27]"} rounded-3xl overflow-hidden flex flex-col justify-between transition-all">
+            <article class="min-w-0 bg-white ${saf.isFlagship ? "border-2 border-[#073F27] shadow-md relative" : "border border-[#CBD5E1] shadow-sm hover:border-[#073F27]"} rounded-3xl overflow-hidden flex flex-col justify-between transition-all">
               ${saf.isFlagship ? `<div class="absolute top-3 left-3 bg-[#073F27] text-[#F4B41A] text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full z-10">Flagship Circuit</div>` : ""}
               <div>
                 <div class="relative h-60 w-full overflow-hidden bg-[#F1F5F9]">
-                  <img src="${escapeHtml(saf.image)}" alt="${escapeHtml(saf.altText || saf.title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
+                  <img src="${escapeHtml(saf.image)}" alt="${escapeHtml(saf.altText || saf.title)}" loading="lazy" referrerpolicy="no-referrer" onerror="window.handleMediaImgError&&window.handleMediaImgError(this,'./assets/images/hero-savannah.jpg')" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
                   <div class="absolute bottom-3 left-3 flex flex-wrap items-center gap-2 pr-3">
                     <span class="bg-[#073F27] px-2.5 py-1 text-white font-bold text-xs rounded-full">${escapeHtml(saf.duration)}</span>
                     <span class="bg-white px-2.5 py-1 text-[#0F172A] font-bold text-xs rounded-full border border-[#CBD5E1] font-mono">${escapeHtml(priceStr)}</span>
@@ -2276,19 +2450,19 @@ export async function hydrateLiveSiteContent() {
                     <span class="like-count font-mono font-bold text-[11px]" data-like-id="${escapeHtml(saf.id)}">${likes}</span>
                   </button>
                 </div>
-                <div class="p-6 space-y-2">
+                <div class="p-5 sm:p-6 space-y-2">
                   <span class="text-xs text-[#7C4D00] font-bold block">${escapeHtml(saf.destinationsFormatted || (saf.destinations || []).join(" · "))}</span>
                   <h3 class="font-editorial text-2xl font-bold text-[#0F172A]">${escapeHtml(saf.title)}</h3>
                   <p class="text-xs text-[#334155] leading-relaxed line-clamp-3">${escapeHtml(saf.overview)}</p>
                 </div>
               </div>
-              <div class="p-6 pt-3 border-t border-[#E2E8F0] space-y-3">
+              <div class="p-5 sm:p-6 pt-3 border-t border-[#E2E8F0] space-y-3">
                 <button type="button" onclick="openItemFeedbackModal('${escapeHtml(saf.id)}', '${escapeHtml(saf.title).replace(/'/g, "\\'")}', 'safari')" class="text-xs font-bold text-[#073F27] hover:underline cursor-pointer block text-left">
                   Comments &amp; Traveller Notes (<span data-comment-count-id="${escapeHtml(saf.id)}">${db.getCommentCount(saf.id)}</span>)
                 </button>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <a href="safaris.html" class="btn-glass-forest w-full text-xs py-2.5 px-3 text-center justify-center">View Itinerary</a>
-                  <a href="https://wa.me/${waDigits}?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="btn-glass-gold w-full text-xs py-2.5 px-3 text-center justify-center">Inquire Tour</a>
+                <div class="flex flex-wrap gap-2.5">
+                  <a href="safaris.html" class="btn-glass-forest flex-1 min-w-[130px] text-xs py-2.5 px-3 text-center justify-center">View Itinerary</a>
+                  <a href="https://wa.me/${waDigits}?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="btn-glass-gold flex-1 min-w-[130px] text-xs py-2.5 px-3 text-center justify-center">Inquire Tour</a>
                 </div>
               </div>
             </article>
@@ -2321,12 +2495,12 @@ export async function hydrateLiveSiteContent() {
         .map((item) => {
           const likes = db.getItemLikeCount(item.id, item.likesCount || 0);
           return `
-            <article class="p-5 bg-white border border-[#CBD5E1] rounded-3xl flex flex-col justify-between hover:border-[#073F27] transition-all duration-300 shadow-sm">
+            <article class="min-w-0 p-5 bg-white border border-[#CBD5E1] rounded-3xl flex flex-col justify-between hover:border-[#073F27] transition-all duration-300 shadow-sm">
               <div>
                 <div class="relative h-52 w-full overflow-hidden rounded-2xl mb-4 bg-[#F1F5F9]">
-                  <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.altText || item.name)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
+                  <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.altText || item.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="window.handleMediaImgError&&window.handleMediaImgError(this,'./assets/images/safari-gear.jpg')" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
                   ${item.isSale ? `<span class="absolute top-3 left-3 bg-[#073F27] text-[#F4B41A] text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full">Featured Offer</span>` : ""}
-                  <span class="absolute bottom-3 left-3 bg-white/95 text-[#0F172A] text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-lg border border-[#CBD5E1]">${escapeHtml(item.weight || item.origin)}</span>
+                  <span class="absolute bottom-3 left-3 bg-white/95 text-[#0F172A] text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-lg border border-[#CBD5E1] max-w-[calc(100%-1.5rem)] truncate">${escapeHtml(item.weight || item.origin)}</span>
                 </div>
 
                 <div class="space-y-2">
@@ -2353,7 +2527,7 @@ export async function hydrateLiveSiteContent() {
                     <span class="like-count font-mono font-bold" data-like-id="${escapeHtml(item.id)}">${likes}</span>
                   </button>
 
-                  <button type="button" onclick="openItemFeedbackModal('${escapeHtml(item.id)}', '${escapeHtml(item.name).replace(/'/g, "\\'")}', 'product')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-[#073F27] text-xs font-bold transition-colors cursor-pointer whitespace-nowrap">
+                  <button type="button" onclick="openItemFeedbackModal('${escapeHtml(item.id)}', '${escapeHtml(item.name).replace(/'/g, "\\'")}', 'product')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-[#073F27] text-xs font-bold transition-colors cursor-pointer min-w-0">
                     <span>Comments (<span data-comment-count-id="${escapeHtml(item.id)}">${db.getCommentCount(item.id)}</span>)</span>
                   </button>
                 </div>
@@ -2441,7 +2615,7 @@ export async function hydrateLiveSiteContent() {
           (tt) => `
           <a href="${escapeHtml(tt.videoUrl)}" target="_blank" rel="noopener noreferrer" class="group bg-white border border-[#CBD5E1] rounded-3xl overflow-hidden shadow-md hover:border-[#7C4D00] transition-all flex flex-col justify-between">
             <div class="relative aspect-[9/16] w-full overflow-hidden bg-[#0F172A]">
-              <img src="${escapeHtml(tt.thumbnail)}" alt="${escapeHtml(tt.title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src="${escapeHtml(tt.thumbnail)}" alt="${escapeHtml(tt.title)}" loading="lazy" referrerpolicy="no-referrer" onerror="window.handleMediaImgError&&window.handleMediaImgError(this,'./assets/images/bwindi-gorilla.jpg')" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
               <div class="absolute inset-0 flex items-center justify-center">
                 <div class="w-14 h-14 rounded-full bg-[#073F27]/95 border-2 border-[#F4B41A] text-[#F4B41A] flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform" aria-hidden="true">
@@ -2468,6 +2642,9 @@ export async function hydrateLiveSiteContent() {
 
   syncLikeButtonsUI();
   updateSectionCommentBadges();
+  try {
+    window.dispatchEvent(new CustomEvent("sonnenpfad:data-updated"));
+  } catch {}
 }
 
 // =========================================================================
@@ -2951,6 +3128,7 @@ if (typeof window !== "undefined") {
   (window as any).hydrateLiveSiteContent = hydrateLiveSiteContent;
   (window as any).updateSectionCommentBadges = updateSectionCommentBadges;
   (window as any).googleMedia = googleMedia;
+  (window as any).handleMediaImgError = googleMedia.handleMediaImgError;
 }
 
 function bootSonnenpfadSite() {

@@ -71,6 +71,20 @@ CREATE TABLE IF NOT EXISTS public.products (
   created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS origin TEXT;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'Specialty Coffee';
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS price BIGINT DEFAULT 0;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS original_price BIGINT;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS weight TEXT;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS rating NUMERIC DEFAULT 5;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS reviews_count INT DEFAULT 0;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS image TEXT DEFAULT './assets/images/safari-gear.jpg';
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS is_sale BOOLEAN DEFAULT false;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS in_stock BOOLEAN DEFAULT true;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS flavor_notes TEXT[] DEFAULT '{}';
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS likes_count INT DEFAULT 0;
+
 -- 3. Customer Orders Table
 CREATE TABLE IF NOT EXISTS public.orders (
   id TEXT PRIMARY KEY,
@@ -132,11 +146,13 @@ CREATE TABLE IF NOT EXISTS public.settings (
   map_embed_url TEXT,
   admin_passcode TEXT DEFAULT 'sonnenpfad2026',
   moderation_mode TEXT DEFAULT 'auto',
+  workspace_email TEXT DEFAULT 'maleham06@gmail.com',
   updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS admin_passcode TEXT DEFAULT 'sonnenpfad2026';
 ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS moderation_mode TEXT DEFAULT 'auto';
+ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS workspace_email TEXT DEFAULT 'maleham06@gmail.com';
 
 -- 7. TikTok Video Feed Table
 CREATE TABLE IF NOT EXISTS public.tiktoks (

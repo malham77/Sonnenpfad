@@ -100,7 +100,7 @@
       </div>
     </div>
 
-    <main id="main-content" tabindex="-1" class="pt-32 pb-24 max-w-7xl mx-auto px-6">
+    <main id="main-content" tabindex="-1" class="pt-36 sm:pt-32 pb-24 max-w-7xl mx-auto px-6">
       <div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
         <span class="text-xs font-bold tracking-[0.2em] uppercase text-[#7C4D00] block">Bespoke Expeditions</span>
         <h1 class="font-editorial text-4xl sm:text-6xl font-bold text-[#0F172A]">
@@ -111,11 +111,11 @@
         </p>
       </div>
 
-      <div id="safarisContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+      <div id="safarisContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 [&>*:last-child:nth-child(odd)]:md:col-span-2 [&>*:last-child:nth-child(odd)]:lg:col-span-1"></div>
     </main>
 
     <footer class="bg-[#F1F5F9] border-t-2 border-[#CBD5E1] py-14 text-[#0F172A]">
-      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
+      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
         <div class="space-y-3">
           <span class="font-editorial text-lg font-bold text-[#0F172A] block">SONNENPFAD SAFARIS UGANDA LTD</span>
           <p class="text-xs text-[#334155] leading-relaxed">Plot 14 Entebbe Road, Kampala, Uganda. Registered East Africa tour operator.</p>
@@ -167,11 +167,11 @@
           container.innerHTML = items
             .map(
               (s) => `
-            <article class="bg-white border ${s.isFlagship ? "border-2 border-[#073F27]" : "border-[#CBD5E1]"} rounded-3xl overflow-hidden shadow-sm flex flex-col justify-between hover:border-[#073F27] transition-all relative">
+            <article class="min-w-0 bg-white border ${s.isFlagship ? "border-2 border-[#073F27]" : "border-[#CBD5E1]"} rounded-3xl overflow-hidden shadow-sm flex flex-col justify-between hover:border-[#073F27] transition-all relative">
               ${s.isFlagship ? `<div class="absolute top-3 left-3 bg-[#073F27] text-[#F4B41A] text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full z-10">Flagship Expedition</div>` : ""}
               <div>
                 <div class="relative h-64 w-full overflow-hidden bg-[#F1F5F9]">
-                  <img src="${esc(s.image)}" alt="${esc(s.altText || s.title)}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" loading="lazy" />
+                  <img src="${esc(s.image)}" alt="${esc(s.altText || s.title)}" referrerpolicy="no-referrer" onerror="window.handleMediaImgError&&window.handleMediaImgError(this,'./assets/images/hero-savannah.jpg')" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" loading="lazy" />
                   <div class="absolute bottom-3 left-3 flex flex-wrap items-center gap-2">
                     <span class="bg-[#073F27] px-3 py-1 text-white font-bold text-xs rounded-full">${esc(s.duration)}</span>
                     <span class="bg-white px-3 py-1 text-[#0F172A] font-bold text-xs rounded-full border border-[#CBD5E1] font-mono">${esc(s.formattedPriceUGX || "UGX " + Number(s.priceUGX).toLocaleString("en-US"))}</span>
@@ -194,7 +194,7 @@
                     <span class="like-count font-mono font-bold" data-like-id="${esc(s.id)}">${window.db && window.db.getItemLikeCount ? window.db.getItemLikeCount(s.id, s.likesCount || 0) : Number(s.likesCount || 0)}</span>
                   </button>
 
-                  <button type="button" onclick="openItemFeedbackModal('${esc(s.id)}', '${esc(s.title).replace(/'/g, "\\'")}', 'safari')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-[#073F27] text-xs font-bold transition-colors cursor-pointer whitespace-nowrap">
+                  <button type="button" onclick="openItemFeedbackModal('${esc(s.id)}', '${esc(s.title).replace(/'/g, "\\'")}', 'safari')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-[#073F27] text-xs font-bold transition-colors cursor-pointer min-w-0">
                     <span>Guest Comments (<span data-comment-count-id="${esc(s.id)}">${window.db && window.db.getCommentCount ? window.db.getCommentCount(s.id) : 0}</span>)</span>
                   </button>
                 </div>
@@ -215,6 +215,8 @@
         if (!(await loadAndRender())) {
           setTimeout(loadAndRender, 300);
         }
+
+        window.addEventListener("sonnenpfad:data-updated", loadAndRender);
       });
     </script>
   </body>

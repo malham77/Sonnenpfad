@@ -252,8 +252,8 @@
               </p>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2.5 shrink-0">
-              <div class="flex items-center gap-1.5">
+            <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
+              <div class="flex items-center gap-1.5 flex-1 sm:flex-initial min-w-0">
                 <label for="admWorkspaceEmailInput" class="sr-only">Google Workspace Email</label>
                 <input
                   id="admWorkspaceEmailInput"
@@ -261,8 +261,16 @@
                   value="maleham06@gmail.com"
                   placeholder="maleham06@gmail.com"
                   onchange="handleWorkspaceEmailPrefChange(this.value)"
-                  class="w-52 sm:w-60 bg-[#F8FAFC] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-medium"
+                  class="flex-1 min-w-0 w-full sm:w-56 bg-[#F8FAFC] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-medium"
                 />
+                <button
+                  id="admSaveWorkspaceEmailBtn"
+                  type="button"
+                  onclick="handleSaveWorkspaceEmail()"
+                  class="px-3 py-2 rounded-xl bg-[#073F27] hover:bg-[#0A5233] text-white text-xs font-bold cursor-pointer whitespace-nowrap shrink-0"
+                >
+                  Save Email
+                </button>
               </div>
 
               <div id="admGoogleSignInWrap">
@@ -433,7 +441,7 @@
                   <h4 class="text-xs font-bold uppercase text-[#7C4D00] tracking-wider">Cloud Table Verification (9 Tables)</h4>
                   <span id="supabaseDiagStatus" class="text-[11px] text-[#334155] font-medium">Click "Test Live Ping" to scan tables</span>
                 </div>
-                <div id="supabaseTableGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-2 text-[11px]">
+                <div id="supabaseTableGrid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-9 gap-2 text-[11px]">
                   <div class="p-2 bg-white rounded-xl border border-[#CBD5E1] text-center">
                     <span class="text-[#475569] block text-[10px] font-mono">safaris</span>
                     <span id="tblStatus-safaris" class="font-mono text-[#7C4D00] font-bold">Checking</span>
@@ -621,7 +629,7 @@
                     <span id="ttThumbUploadStatus" class="text-[11px] font-mono font-bold text-[#073F27]">Ready</span>
                   </div>
                   <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                    <img id="ttThumbPreviewImg" src="./assets/images/bwindi-gorilla.jpg" alt="TikTok reel thumbnail preview" class="w-16 h-16 rounded-xl object-cover border border-[#CBD5E1] shrink-0 bg-[#F1F5F9]" />
+                    <img id="ttThumbPreviewImg" src="./assets/images/bwindi-gorilla.jpg" alt="TikTok reel thumbnail preview" referrerpolicy="no-referrer" onerror="window.handleMediaImgError&&window.handleMediaImgError(this,'./assets/images/bwindi-gorilla.jpg')" class="w-16 h-16 rounded-xl object-cover border border-[#CBD5E1] shrink-0 bg-[#F1F5F9]" />
                     <div class="flex-1 space-y-2 min-w-0">
                       <div class="flex flex-wrap items-center gap-2">
                         <input id="ttThumbFile" type="file" accept="image/*" onchange="handleDashboardImageFileSelect('ttThumbFile', 'ttThumbInput', 'ttThumbUploadStatus', 'ttThumbPreviewImg')" class="flex-1 min-w-0 bg-[#F8FAFC] border border-[#94A3B8] rounded-xl px-3 py-1.5 text-xs text-[#0F172A] file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-[#073F27] file:text-white file:font-bold file:text-xs cursor-pointer" />
@@ -663,8 +671,8 @@
                   </button>
                 </div>
                 <input id="editProdId" type="hidden" value="" />
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                  <div class="sm:col-span-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                  <div class="md:col-span-2">
                     <label for="addProdName" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Product Title *</label>
                     <input id="addProdName" type="text" required placeholder="e.g. Safari Trekking Pole Set" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
@@ -685,7 +693,7 @@
                   </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                   <div>
                     <label for="addProdOrigPrice" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Compare Price (Optional)</label>
                     <input id="addProdOrigPrice" type="number" step="100" min="0" placeholder="e.g. 150000" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-mono" />
@@ -694,7 +702,7 @@
                     <label for="addProdOrigin" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Origin / Spec Label</label>
                     <input id="addProdOrigin" type="text" placeholder="e.g. Mount Elgon / Canvas" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
-                  <div>
+                  <div class="md:col-span-2 xl:col-span-1">
                     <label for="addProdWeight" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Weight / Sizing</label>
                     <input id="addProdWeight" type="text" placeholder="e.g. 500g / Standard" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
@@ -707,7 +715,7 @@
                     <span id="addProdUploadStatus" class="text-[11px] font-mono font-bold text-[#073F27]">Ready</span>
                   </div>
                   <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                    <img id="addProdImagePreviewImg" src="./assets/images/safari-gear.jpg" alt="Product image preview" class="w-16 h-16 rounded-xl object-cover border border-[#CBD5E1] shrink-0 bg-[#F1F5F9]" />
+                    <img id="addProdImagePreviewImg" src="./assets/images/safari-gear.jpg" alt="Product image preview" referrerpolicy="no-referrer" onerror="window.handleMediaImgError&&window.handleMediaImgError(this,'./assets/images/safari-gear.jpg')" class="w-16 h-16 rounded-xl object-cover border border-[#CBD5E1] shrink-0 bg-[#F1F5F9]" />
                     <div class="flex-1 space-y-2 min-w-0">
                       <div class="flex flex-wrap items-center gap-2">
                         <input id="addProdImageFile" type="file" accept="image/*" onchange="handleDashboardImageFileSelect('addProdImageFile', 'addProdImage', 'addProdUploadStatus', 'addProdImagePreviewImg')" class="flex-1 min-w-0 bg-[#F8FAFC] border border-[#94A3B8] rounded-xl px-3 py-1.5 text-xs text-[#0F172A] file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-[#073F27] file:text-white file:font-bold file:text-xs cursor-pointer" />
@@ -760,7 +768,7 @@
                   </button>
                 </div>
                 <input id="editSafId" type="hidden" value="" />
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                   <div>
                     <label for="addSafTitle" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Safari Title *</label>
                     <input id="addSafTitle" type="text" required placeholder="e.g. 4-Day Kidepo Valley Wilderness" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
@@ -769,7 +777,7 @@
                     <label for="addSafDuration" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Duration *</label>
                     <input id="addSafDuration" type="text" required placeholder="e.g. 4 Days / 3 Nights" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
                   </div>
-                  <div>
+                  <div class="md:col-span-2 xl:col-span-1">
                     <label for="addSafPrice" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Price in UGX *</label>
                     <input id="addSafPrice" type="number" required step="10000" min="50000" placeholder="6200000" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] font-mono" />
                   </div>
@@ -787,7 +795,7 @@
                     <span id="addSafUploadStatus" class="text-[11px] font-mono font-bold text-[#073F27]">Ready</span>
                   </div>
                   <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                    <img id="addSafImagePreviewImg" src="./assets/images/bwindi-gorilla.jpg" alt="Safari cover image preview" class="w-16 h-16 rounded-xl object-cover border border-[#CBD5E1] shrink-0 bg-[#F1F5F9]" />
+                    <img id="addSafImagePreviewImg" src="./assets/images/bwindi-gorilla.jpg" alt="Safari cover image preview" referrerpolicy="no-referrer" onerror="window.handleMediaImgError&&window.handleMediaImgError(this,'./assets/images/bwindi-gorilla.jpg')" class="w-16 h-16 rounded-xl object-cover border border-[#CBD5E1] shrink-0 bg-[#F1F5F9]" />
                     <div class="flex-1 space-y-2 min-w-0">
                       <div class="flex flex-wrap items-center gap-2">
                         <input id="addSafImageFile" type="file" accept="image/*" onchange="handleDashboardImageFileSelect('addSafImageFile', 'addSafImage', 'addSafUploadStatus', 'addSafImagePreviewImg')" class="flex-1 min-w-0 bg-[#F8FAFC] border border-[#94A3B8] rounded-xl px-3 py-1.5 text-xs text-[#0F172A] file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-[#073F27] file:text-white file:font-bold file:text-xs cursor-pointer" />
@@ -1261,7 +1269,7 @@
           syncModerationControls();
         }
 
-        initAdminGoogleAuth();
+        await initAdminGoogleAuth();
 
         await Promise.all([
           renderTiktokList(),
@@ -1317,7 +1325,7 @@
             (tt) => `
           <div class="p-3 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl flex flex-col justify-between space-y-2">
             <div class="relative h-44 rounded-xl overflow-hidden bg-slate-900">
-              <img src="${esc(tt.thumbnail)}" alt="${esc(tt.title)}" class="w-full h-full object-cover" />
+              <img src="${esc(tt.thumbnail)}" alt="${esc(tt.title)}" referrerpolicy="no-referrer" onerror="window.handleMediaImgError&&window.handleMediaImgError(this,'./assets/images/bwindi-gorilla.jpg')" class="w-full h-full object-cover" />
               <span class="absolute top-2 left-2 bg-black/80 text-[10px] text-white keep-white px-2 py-0.5 rounded font-mono">${esc(tt.views || "TikTok Reel")}</span>
             </div>
             <h4 class="text-xs font-bold text-[#0F172A] line-clamp-2">${esc(tt.title)}</h4>
@@ -1436,7 +1444,7 @@
             (p) => `
           <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl flex items-center justify-between gap-3">
             <div class="flex items-center gap-3 overflow-hidden min-w-0">
-              <img src="${esc(p.image)}" alt="${esc(p.name)}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#CBD5E1]" />
+              <img src="${esc(p.image)}" alt="${esc(p.name)}" referrerpolicy="no-referrer" onerror="window.handleMediaImgError&&window.handleMediaImgError(this,'./assets/images/safari-gear.jpg')" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#CBD5E1]" />
               <div class="min-w-0">
                 <span class="text-[9px] uppercase tracking-wider text-[#7C4D00] font-bold block">${esc(p.category)}</span>
                 <h4 class="font-editorial text-base font-bold text-[#0F172A] truncate">${esc(p.name)}</h4>
@@ -1479,7 +1487,7 @@
           return;
         }
 
-        await window.db.addProduct({
+        const saved = await window.db.addProduct({
           id: editId || undefined,
           name,
           category,
@@ -1497,7 +1505,14 @@
           flavorNotes: existing ? existing.flavorNotes : [],
         });
 
-        notify(editId ? `Updated "${name}" live across Shop & Homepage.` : `Published "${name}" (UGX ${price.toLocaleString("en-US")}).`);
+        notify(
+          saved && saved.cloudSynced
+            ? editId
+              ? `Updated "${name}" live across all devices.`
+              : `Published "${name}" (UGX ${price.toLocaleString("en-US")}) live across all devices.`
+            : `Saved "${name}" locally — check connectivity or click Sync Cloud Now.`,
+          saved && saved.cloudSynced ? "success" : "info"
+        );
         resetProductForm();
         await renderShopList();
       }
@@ -1505,9 +1520,9 @@
       async function deleteProduct(id) {
         const ok = await askConfirm("Delete Shop Product", "Remove this product from the live Expedition Shop and homepage?");
         if (!ok) return;
-        await window.db.deleteProduct(id);
+        const res = await window.db.deleteProduct(id);
         await renderShopList();
-        notify("Product deleted from catalog.");
+        notify(res && res.cloudSynced ? "Product deleted across all devices." : "Product removed locally.", "success");
       }
 
       function resetSafariForm() {
@@ -1561,7 +1576,7 @@
             (s) => `
           <div class="p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 overflow-hidden min-w-0">
-              <img src="${esc(s.image)}" alt="${esc(s.title)}" class="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#CBD5E1]" />
+              <img src="${esc(s.image)}" alt="${esc(s.title)}" referrerpolicy="no-referrer" onerror="window.handleMediaImgError&&window.handleMediaImgError(this,'./assets/images/hero-savannah.jpg')" class="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#CBD5E1]" />
               <div class="min-w-0">
                 <span class="text-[10px] text-[#475569] font-semibold block">${esc(s.duration)}</span>
                 <h4 class="font-editorial text-base font-bold text-[#0F172A] truncate">${esc(s.title)}</h4>
@@ -2278,10 +2293,32 @@
       // =========================================================================
       const pendingDashboardUploads = {};
 
-      function handleWorkspaceEmailPrefChange(emailVal) {
-        if (window.googleMedia && emailVal) {
-          window.googleMedia.setPreferredWorkspaceEmail(emailVal);
+      async function handleWorkspaceEmailPrefChange(emailVal) {
+        if (!window.googleMedia || !emailVal) return;
+        const clean = emailVal.trim();
+        if (!clean || !clean.includes("@")) return;
+        await window.googleMedia.savePreferredWorkspaceEmail(clean);
+        syncAdminGoogleAuthUI(window.googleMedia.getCurrentGoogleUser(), Boolean(window.googleMedia.getGoogleAccessToken()));
+      }
+
+      async function handleSaveWorkspaceEmail() {
+        const input = document.getElementById("admWorkspaceEmailInput");
+        const btn = document.getElementById("admSaveWorkspaceEmailBtn");
+        const clean = input ? input.value.trim() : "";
+        if (!clean || !clean.includes("@")) {
+          notify("Please enter a valid Google Workspace email address.", "error");
+          return;
         }
+        if (btn) btn.disabled = true;
+        const res = await window.googleMedia.savePreferredWorkspaceEmail(clean);
+        if (btn) btn.disabled = false;
+        syncAdminGoogleAuthUI(window.googleMedia.getCurrentGoogleUser(), Boolean(window.googleMedia.getGoogleAccessToken()));
+        notify(
+          res.cloudSynced
+            ? `Assigned Google Workspace email (${res.email}) saved across all devices.`
+            : `Assigned email (${res.email}) saved locally.`,
+          res.cloudSynced ? "success" : "info"
+        );
       }
 
       function syncImagePreviewFromUrl(urlInputId, previewImgId, fallbackSrc) {
@@ -2289,6 +2326,8 @@
         const img = document.getElementById(previewImgId);
         if (!img) return;
         const val = input ? input.value.trim() : "";
+        img.referrerPolicy = "no-referrer";
+        img.dataset.fallbackStep = "0";
         img.src = val || fallbackSrc || "./assets/images/bwindi-gorilla.jpg";
       }
 
@@ -2302,7 +2341,7 @@
 
         const connected = Boolean(user && hasToken);
         const savedPref = window.googleMedia ? window.googleMedia.getPreferredWorkspaceEmail() : "maleham06@gmail.com";
-        if (emailInput && !emailInput.value.trim()) {
+        if (emailInput && document.activeElement !== emailInput) {
           emailInput.value = savedPref;
         }
 
@@ -2311,7 +2350,7 @@
 
         if (connected && user) {
           const verifiedEmail = user.email || savedPref;
-          if (emailInput) emailInput.value = verifiedEmail;
+          if (emailInput && document.activeElement !== emailInput) emailInput.value = verifiedEmail;
           if (badge) badge.textContent = "Verified: " + verifiedEmail;
           if (statusPill) {
             statusPill.textContent = "Connected (" + verifiedEmail + ")";
@@ -2325,12 +2364,14 @@
         }
       }
 
-      function initAdminGoogleAuth() {
+      async function initAdminGoogleAuth() {
         if (!window.googleMedia) return;
+        const remotePref = await window.googleMedia.fetchPreferredWorkspaceEmail();
         const emailInput = document.getElementById("admWorkspaceEmailInput");
         if (emailInput) {
-          emailInput.value = window.googleMedia.getPreferredWorkspaceEmail();
+          emailInput.value = remotePref;
         }
+        syncAdminGoogleAuthUI(window.googleMedia.getCurrentGoogleUser(), Boolean(window.googleMedia.getGoogleAccessToken()));
         window.googleMedia.initGoogleAuth(
           (u) => syncAdminGoogleAuthUI(u, true),
           (u) => syncAdminGoogleAuthUI(u, Boolean(window.googleMedia.getGoogleAccessToken()))
@@ -2341,14 +2382,16 @@
         if (!window.googleMedia) return false;
         const emailInput = document.getElementById("admWorkspaceEmailInput");
         const preferred = emailInput ? emailInput.value.trim() : "";
-        if (preferred) window.googleMedia.setPreferredWorkspaceEmail(preferred);
+        if (preferred && preferred.includes("@")) {
+          await window.googleMedia.savePreferredWorkspaceEmail(preferred);
+        }
         try {
           const res = await window.googleMedia.googleSignIn(preferred || undefined);
           syncAdminGoogleAuthUI(res.user, true);
           notify(
             (isSwitch ? "Switched Google Workspace account to " : "Verified Google Workspace account ") +
               (res.user.email || preferred || "Google Drive") +
-              ". Any image uploaded in your forms will save automatically."
+              ". Assigned email saved across all devices."
           );
           return true;
         } catch (err) {
