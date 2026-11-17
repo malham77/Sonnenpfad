@@ -10,6 +10,7 @@ import {
   SUPABASE_URL,
   SUPABASE_DB_URL,
 } from "./supabase";
+import * as googleMedia from "./googleMedia";
 
 export interface SafariPackage {
   id: string;
@@ -116,6 +117,20 @@ export interface TikTokItem {
   thumbnail: string;
   views: string;
   likes: string;
+}
+
+export interface SiteMediaItem {
+  id: string;
+  title: string;
+  caption?: string;
+  mediaType: "image" | "video";
+  section: "all" | "gallery" | "hero" | "homepage" | "safaris" | "shop";
+  url: string;
+  embedUrl?: string;
+  thumbnailUrl?: string;
+  googleFileId?: string;
+  mimeType?: string;
+  createdAt: string;
 }
 
 export interface DeletionRequest {
@@ -552,6 +567,57 @@ function normalizeAssetPath(url?: string, fallback = "./assets/images/hero-savan
   return raw;
 }
 
+const SITE_MEDIA_PREFIX = "__site_media__|";
+const SITE_MEDIA_STORAGE_KEY = "sonnenpfad_site_media";
+
+function isSiteMediaRow(row: any): boolean {
+  if (!row) return false;
+  return (
+    String(row.id || "").startsWith("smedia-") ||
+    String(row.views || "").startsWith(SITE_MEDIA_PREFIX)
+  );
+}
+
+function mapSiteMediaRow(d: any): SiteMediaItem {
+  const parts = String(d.views || "").split("|");
+  const rawType = parts[1] === "video" ? "video" : "image";
+  const rawSection = (parts[2] || "all") as SiteMediaItem["section"];
+  const googleFileId = parts[3] || "";
+  const embedUrl = parts[4] || "";
+  const mimeType = parts[5] || "";
+  return {
+    id: String(d.id || "smedia-" + Date.now()),
+    title: String(d.title || "Safari Field Media"),
+    caption: String(d.likes || ""),
+    mediaType: rawType,
+    section: rawSection,
+    url: String(d.video_url || d.thumbnail || ""),
+    embedUrl: embedUrl || (googleFileId ? `https://drive.google.com/file/d/${encodeURIComponent(googleFileId)}/preview` : ""),
+    thumbnailUrl: String(d.thumbnail || d.video_url || ""),
+    googleFileId,
+    mimeType,
+    createdAt: String(d.created_at || new Date().toISOString()),
+  };
+}
+
+function toSiteMediaRow(item: SiteMediaItem) {
+  return {
+    id: item.id,
+    title: item.title,
+    video_url: item.url,
+    thumbnail: item.thumbnailUrl || item.url,
+    views: [
+      "__site_media__",
+      item.mediaType,
+      item.section || "all",
+      item.googleFileId || "",
+      item.embedUrl || "",
+      item.mimeType || "",
+    ].join("|"),
+    likes: item.caption || "",
+  };
+}
+
 const DEFAULT_TIKTOKS: TikTokItem[] = [
   {
     id: "tt-1",
@@ -607,6 +673,48 @@ function mapSafariRow(d: any): SafariPackage {
     isFlagship: Boolean(d.is_flagship),
     likesCount: Number(d.likes_count) || 0,
     itinerary: d.itinerary || [],
+  };
+}
+
+function toSafariRow(s: SafariPackage) {
+  return {
+    id: s.id,
+    title: s.title,
+    duration: s.duration,
+    duration_days: s.durationDays,
+    destinations: s.destinations,
+    destinations_formatted: s.destinationsFormatted,
+    price_ugx: s.priceUGX,
+    formatted_price_ugx: s.formattedPriceUGX,
+    image: s.image,
+    overview: s.overview,
+    highlights: s.highlights,
+    included: s.included,
+    excluded: s.excluded,
+    accommodation_level: s.accommodationLevel,
+    is_flagship: s.isFlagship || false,
+    likes_count: s.likesCount || 0,
+    itinerary: s.itinerary || [],
+  };
+}
+
+function toProductRow(p: ShopProduct) {
+  return {
+    id: p.id,
+    name: p.name,
+    origin: p.origin,
+    category: p.category,
+    price: p.price,
+    original_price: p.originalPrice || null,
+    weight: p.weight,
+    rating: p.rating,
+    reviews_count: p.reviewsCount,
+    image: p.image,
+    is_sale: p.isSale || false,
+    in_stock: p.inStock,
+    description: p.description,
+    flavor_notes: p.flavorNotes || [],
+    likes_count: p.likesCount || 0,
   };
 }
 
@@ -717,16 +825,27 @@ export const db = {
         );
       }
 
-      if (tiktoksRes.status === "fulfilled" && !tiktoksRes.value.error && tiktoksRes.value.data?.length) {
-        const mappedTt = tiktoksRes.value.data.map((d: any) => ({
-          id: d.id,
-          title: d.title,
-          videoUrl: d.video_url,
-          thumbnail: normalizeAssetPath(d.thumbnail, "./assets/images/bwindi-gorilla.jpg"),
-          views: d.views || "Official Clip",
-          likes: d.likes || "TikTok Reel",
-        }));
-        localStorage.setItem("sonnenpfad_tiktoks", JSON.stringify(mappedTt));
+      if (tiktoksRes.status === "fulfilled" && !tiktoksRes.value.error && tiktoksRes.value.data) {
+        const allRows = tiktoksRes.value.data as any[];
+        const reelRows = allRows.filter((d) => !isSiteMediaRow(d));
+        const mediaRows = allRows.filter((d) => isSiteMediaRow(d));
+
+        if (reelRows.length > 0) {
+          const mappedTt = reelRows.map((d: any) => ({
+            id: d.id,
+            title: d.title,
+            videoUrl: d.video_url,
+            thumbnail: normalizeAssetPath(d.thumbnail, "./assets/images/bwindi-gorilla.jpg"),
+            views: d.views || "Official Clip",
+            likes: d.likes || "TikTok Reel",
+          }));
+          localStorage.setItem("sonnenpfad_tiktoks", JSON.stringify(mappedTt));
+        }
+
+        localStorage.setItem(
+          SITE_MEDIA_STORAGE_KEY,
+          JSON.stringify(mediaRows.map(mapSiteMediaRow))
+        );
       }
 
       if (reviewsRes.status === "fulfilled" && !reviewsRes.value.error && reviewsRes.value.data) {
@@ -820,43 +939,38 @@ export const db = {
   async addSafari(item: Omit<SafariPackage, "id"> & { id?: string }) {
     const id = item.id || "saf-" + Date.now();
     const completeItem: SafariPackage = { ...item, id };
+    const existingBefore = await this.getSafaris();
+    const deduped = [completeItem, ...existingBefore.filter((s) => s.id !== completeItem.id)];
 
     try {
-      await supabase.from("safaris").upsert({
-        id: completeItem.id,
-        title: completeItem.title,
-        duration: completeItem.duration,
-        duration_days: completeItem.durationDays,
-        destinations: completeItem.destinations,
-        destinations_formatted: completeItem.destinationsFormatted,
-        price_ugx: completeItem.priceUGX,
-        formatted_price_ugx: completeItem.formattedPriceUGX,
-        image: completeItem.image,
-        overview: completeItem.overview,
-        highlights: completeItem.highlights,
-        included: completeItem.included,
-        excluded: completeItem.excluded,
-        accommodation_level: completeItem.accommodationLevel,
-        is_flagship: completeItem.isFlagship || false,
-        likes_count: completeItem.likesCount || 0,
-        itinerary: completeItem.itinerary || [],
-      });
+      const { count } = await supabase
+        .from("safaris")
+        .select("id", { count: "exact", head: true });
+      if (!count || count === 0) {
+        await supabase.from("safaris").upsert(deduped.map(toSafariRow));
+      } else {
+        await supabase.from("safaris").upsert(toSafariRow(completeItem));
+      }
     } catch {}
 
-    const existing = await this.getSafaris();
-    const deduped = [completeItem, ...existing.filter((s) => s.id !== completeItem.id)];
     await this.saveSafaris(deduped);
     hydrateLiveSiteContent();
     return completeItem;
   },
 
   async deleteSafari(id: string) {
+    const existingBefore = await this.getSafaris();
+    const filtered = existingBefore.filter((s) => s.id !== id);
     try {
-      await supabase.from("safaris").delete().eq("id", id);
+      const { count } = await supabase
+        .from("safaris")
+        .select("id", { count: "exact", head: true });
+      if ((!count || count === 0) && filtered.length > 0) {
+        await supabase.from("safaris").upsert(filtered.map(toSafariRow));
+      } else {
+        await supabase.from("safaris").delete().eq("id", id);
+      }
     } catch {}
-    const storedRaw = localStorage.getItem("sonnenpfad_safaris");
-    const current: SafariPackage[] = storedRaw ? JSON.parse(storedRaw) : await this.getSafaris();
-    const filtered = current.filter((s) => s.id !== id);
     await this.saveSafaris(filtered);
     hydrateLiveSiteContent();
   },
@@ -890,41 +1004,38 @@ export const db = {
   async addProduct(item: Omit<ShopProduct, "id"> & { id?: string }) {
     const id = item.id || "prod-" + Date.now();
     const completeItem: ShopProduct = { ...item, id };
+    const existingBefore = await this.getProducts();
+    const deduped = [completeItem, ...existingBefore.filter((p) => p.id !== completeItem.id)];
 
     try {
-      await supabase.from("products").upsert({
-        id: completeItem.id,
-        name: completeItem.name,
-        origin: completeItem.origin,
-        category: completeItem.category,
-        price: completeItem.price,
-        original_price: completeItem.originalPrice || null,
-        weight: completeItem.weight,
-        rating: completeItem.rating,
-        reviews_count: completeItem.reviewsCount,
-        image: completeItem.image,
-        is_sale: completeItem.isSale || false,
-        in_stock: completeItem.inStock,
-        description: completeItem.description,
-        flavor_notes: completeItem.flavorNotes || [],
-        likes_count: completeItem.likesCount || 0,
-      });
+      const { count } = await supabase
+        .from("products")
+        .select("id", { count: "exact", head: true });
+      if (!count || count === 0) {
+        await supabase.from("products").upsert(deduped.map(toProductRow));
+      } else {
+        await supabase.from("products").upsert(toProductRow(completeItem));
+      }
     } catch {}
 
-    const existing = await this.getProducts();
-    const deduped = [completeItem, ...existing.filter((p) => p.id !== completeItem.id)];
     await this.saveProducts(deduped);
     hydrateLiveSiteContent();
     return completeItem;
   },
 
   async deleteProduct(id: string) {
+    const existingBefore = await this.getProducts();
+    const filtered = existingBefore.filter((p) => p.id !== id);
     try {
-      await supabase.from("products").delete().eq("id", id);
+      const { count } = await supabase
+        .from("products")
+        .select("id", { count: "exact", head: true });
+      if ((!count || count === 0) && filtered.length > 0) {
+        await supabase.from("products").upsert(filtered.map(toProductRow));
+      } else {
+        await supabase.from("products").delete().eq("id", id);
+      }
     } catch {}
-    const storedRaw = localStorage.getItem("sonnenpfad_shop_products");
-    const current: ShopProduct[] = storedRaw ? JSON.parse(storedRaw) : await this.getProducts();
-    const filtered = current.filter((p) => p.id !== id);
     await this.saveProducts(filtered);
     hydrateLiveSiteContent();
   },
@@ -1712,7 +1823,9 @@ export const db = {
       const stored = localStorage.getItem("sonnenpfad_tiktoks");
       if (stored) {
         const parsed: TikTokItem[] = JSON.parse(stored);
-        return parsed.map((t) => ({ ...t, thumbnail: normalizeAssetPath(t.thumbnail, "./assets/images/bwindi-gorilla.jpg") }));
+        return parsed
+          .filter((t) => !isSiteMediaRow(t))
+          .map((t) => ({ ...t, thumbnail: normalizeAssetPath(t.thumbnail, "./assets/images/bwindi-gorilla.jpg") }));
       }
     } catch {}
     return DEFAULT_TIKTOKS;
@@ -1724,17 +1837,22 @@ export const db = {
         .from("tiktoks")
         .select("*")
         .order("created_at", { ascending: false });
-      if (!error && data && data.length > 0) {
-        const mapped: TikTokItem[] = data.map((d: any) => ({
-          id: d.id,
-          title: d.title,
-          videoUrl: d.video_url,
-          thumbnail: normalizeAssetPath(d.thumbnail, "./assets/images/bwindi-gorilla.jpg"),
-          views: d.views || "Official Clip",
-          likes: d.likes || "TikTok Reel",
-        }));
-        localStorage.setItem("sonnenpfad_tiktoks", JSON.stringify(mapped));
-        return mapped;
+      if (!error && data) {
+        const reelRows = data.filter((d: any) => !isSiteMediaRow(d));
+        const mediaRows = data.filter((d: any) => isSiteMediaRow(d));
+        localStorage.setItem(SITE_MEDIA_STORAGE_KEY, JSON.stringify(mediaRows.map(mapSiteMediaRow)));
+        if (reelRows.length > 0) {
+          const mapped: TikTokItem[] = reelRows.map((d: any) => ({
+            id: d.id,
+            title: d.title,
+            videoUrl: d.video_url,
+            thumbnail: normalizeAssetPath(d.thumbnail, "./assets/images/bwindi-gorilla.jpg"),
+            views: d.views || "Official Clip",
+            likes: d.likes || "TikTok Reel",
+          }));
+          localStorage.setItem("sonnenpfad_tiktoks", JSON.stringify(mapped));
+          return mapped;
+        }
       }
     } catch {}
     return this.getTiktoks();
@@ -1768,11 +1886,69 @@ export const db = {
     hydrateLiveSiteContent();
   },
 
+  getSiteMedia(): SiteMediaItem[] {
+    try {
+      const raw = localStorage.getItem(SITE_MEDIA_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {}
+    return [];
+  },
+
+  async fetchSiteMedia(): Promise<SiteMediaItem[]> {
+    try {
+      const { data, error } = await supabase
+        .from("tiktoks")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) {
+        const mediaItems = data.filter((d: any) => isSiteMediaRow(d)).map(mapSiteMediaRow);
+        localStorage.setItem(SITE_MEDIA_STORAGE_KEY, JSON.stringify(mediaItems));
+        return mediaItems;
+      }
+    } catch {}
+    return this.getSiteMedia();
+  },
+
+  async addSiteMediaItem(
+    input: Omit<SiteMediaItem, "id" | "createdAt"> & { id?: string; createdAt?: string }
+  ): Promise<SiteMediaItem> {
+    const rawId = input.id || "smedia-" + Date.now();
+    const id = rawId.startsWith("smedia-") ? rawId : "smedia-" + rawId;
+    const item: SiteMediaItem = {
+      ...input,
+      id,
+      createdAt: input.createdAt || new Date().toISOString(),
+    };
+
+    try {
+      await supabase.from("tiktoks").upsert(toSiteMediaRow(item));
+    } catch {}
+
+    const existing = this.getSiteMedia().filter((m) => m.id !== item.id);
+    const updated = [item, ...existing];
+    localStorage.setItem(SITE_MEDIA_STORAGE_KEY, JSON.stringify(updated));
+    hydrateLiveSiteContent();
+    return item;
+  },
+
+  async deleteSiteMediaItem(id: string): Promise<void> {
+    try {
+      await supabase.from("tiktoks").delete().eq("id", id);
+    } catch {}
+    const filtered = this.getSiteMedia().filter((m) => m.id !== id);
+    localStorage.setItem(SITE_MEDIA_STORAGE_KEY, JSON.stringify(filtered));
+    hydrateLiveSiteContent();
+  },
+
   async syncAllToSupabase() {
     const safaris = await this.getSafaris();
     const products = await this.getProducts();
     const settings = this.getSettings();
     const tiktoks = this.getTiktoks();
+    const siteMedia = this.getSiteMedia();
     const reviews = await this.getReviews(true);
     const activePass = localStorage.getItem("sonnenpfad_admin_pw") || "sonnenpfad2026";
 
@@ -1846,17 +2022,20 @@ export const db = {
       if (error) errors.push(`products: ${error.message}`);
     }
 
-    if (tiktoks.length > 0) {
-      const { error } = await supabase.from("tiktoks").upsert(
-        tiktoks.map((t) => ({
-          id: t.id,
-          title: t.title,
-          video_url: t.videoUrl,
-          thumbnail: t.thumbnail,
-          views: t.views,
-          likes: t.likes,
-        }))
-      );
+    const combinedTiktokRows = [
+      ...tiktoks.map((t) => ({
+        id: t.id,
+        title: t.title,
+        video_url: t.videoUrl,
+        thumbnail: t.thumbnail,
+        views: t.views,
+        likes: t.likes,
+      })),
+      ...siteMedia.map(toSiteMediaRow),
+    ];
+
+    if (combinedTiktokRows.length > 0) {
+      const { error } = await supabase.from("tiktoks").upsert(combinedTiktokRows);
       if (error) errors.push(`tiktoks: ${error.message}`);
     }
 
@@ -1977,6 +2156,35 @@ const HERO_SLIDES = [
   },
 ];
 
+function getActiveHeroSlides() {
+  const uploadedHeroImages = db
+    .getSiteMedia()
+    .filter((m) => m.mediaType === "image" && (m.section === "hero" || m.section === "all"))
+    .slice(0, 4)
+    .map((m) => ({
+      image: m.url,
+      alt: m.title,
+      kicker: "Live From Google Photos · Sonnenpfad Field Archive",
+      tag: "Uganda & East Africa · Recent Expedition Dispatch",
+      headline: m.title,
+      subtext:
+        m.caption ||
+        "Uploaded directly from our field team across Uganda's national parks and highland coffee estates.",
+      ctaLabel: "View Field Gallery",
+      ctaHref: "gallery.html",
+      shortLabel: m.title.slice(0, 18),
+    }));
+
+  const defaultLabeled = HERO_SLIDES.map((s, idx) => ({
+    ...s,
+    shortLabel: idx === 0 ? "1. Savannah" : idx === 1 ? "2. Bwindi Gorillas" : "3. Murchison Nile",
+  }));
+
+  return [...uploadedHeroImages, ...defaultLabeled];
+}
+
+let heroSlidesUpdater: (() => void) | null = null;
+
 export function initHeroShowcase() {
   const heroBg = document.getElementById("heroBg") as HTMLImageElement | null;
   const heroKicker = document.getElementById("heroKicker");
@@ -1991,13 +2199,37 @@ export function initHeroShowcase() {
 
   if (!heroBg || !heroHeadline) return;
 
+  let activeSlides = getActiveHeroSlides();
   let index = 0;
   let paused = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let intervalId: number | null = null;
 
+  function rebuildDotButtons() {
+    if (!dotsContainer) return;
+    dotsContainer.innerHTML = activeSlides
+      .map(
+        (slide, idx) =>
+          `<button type="button" role="tab" aria-selected="${idx === index ? "true" : "false"}" class="${
+            idx === index
+              ? "px-3.5 py-1.5 rounded-full text-[11px] font-extrabold bg-[#F4B41A] text-[#042617] border-2 border-white shadow-md transition-all cursor-pointer"
+              : "px-3.5 py-1.5 rounded-full text-[11px] font-bold bg-[#042617]/90 text-white border border-white/60 hover:bg-[#073F27] transition-all cursor-pointer"
+          }">${escapeHtml(slide.shortLabel || `Slide ${idx + 1}`)}</button>`
+      )
+      .join("");
+
+    dotsContainer.querySelectorAll("button").forEach((btn, idx) => {
+      btn.addEventListener("click", () => {
+        renderSlide(idx);
+        startTimer();
+      });
+    });
+  }
+
   function renderSlide(nextIdx: number) {
-    index = (nextIdx + HERO_SLIDES.length) % HERO_SLIDES.length;
-    const slide = HERO_SLIDES[index];
+    activeSlides = getActiveHeroSlides();
+    if (activeSlides.length === 0) return;
+    index = (nextIdx + activeSlides.length) % activeSlides.length;
+    const slide = activeSlides[index];
 
     if (heroBg) {
       heroBg.style.opacity = "0.25";
@@ -2018,17 +2250,21 @@ export function initHeroShowcase() {
     }
 
     if (dotsContainer) {
-      const buttons = dotsContainer.querySelectorAll("button");
-      buttons.forEach((b, i) => {
-        b.setAttribute("aria-selected", i === index ? "true" : "false");
-        if (i === index) {
-          b.className =
-            "px-3.5 py-1.5 rounded-full text-[11px] font-extrabold bg-[#F4B41A] text-[#042617] border-2 border-white shadow-md transition-all cursor-pointer";
-        } else {
-          b.className =
-            "px-3.5 py-1.5 rounded-full text-[11px] font-bold bg-[#042617]/90 text-white border border-white/60 hover:bg-[#073F27] transition-all cursor-pointer";
-        }
-      });
+      if (dotsContainer.querySelectorAll("button").length !== activeSlides.length) {
+        rebuildDotButtons();
+      } else {
+        const buttons = dotsContainer.querySelectorAll("button");
+        buttons.forEach((b, i) => {
+          b.setAttribute("aria-selected", i === index ? "true" : "false");
+          if (i === index) {
+            b.className =
+              "px-3.5 py-1.5 rounded-full text-[11px] font-extrabold bg-[#F4B41A] text-[#042617] border-2 border-white shadow-md transition-all cursor-pointer";
+          } else {
+            b.className =
+              "px-3.5 py-1.5 rounded-full text-[11px] font-bold bg-[#042617]/90 text-white border border-white/60 hover:bg-[#073F27] transition-all cursor-pointer";
+          }
+        });
+      }
     }
   }
 
@@ -2038,6 +2274,12 @@ export function initHeroShowcase() {
       intervalId = window.setInterval(() => renderSlide(index + 1), 6500);
     }
   }
+
+  heroSlidesUpdater = () => {
+    activeSlides = getActiveHeroSlides();
+    rebuildDotButtons();
+    renderSlide(0);
+  };
 
   if (heroPrevBtn) {
     heroPrevBtn.addEventListener("click", () => {
@@ -2064,14 +2306,7 @@ export function initHeroShowcase() {
     });
   }
 
-  if (dotsContainer) {
-    dotsContainer.querySelectorAll("button").forEach((btn, idx) => {
-      btn.addEventListener("click", () => {
-        renderSlide(idx);
-        startTimer();
-      });
-    });
-  }
+  rebuildDotButtons();
 
   // Keyboard arrow navigation when focused inside hero controls
   const heroSection = heroHeadline.closest("section");
@@ -2218,9 +2453,9 @@ export async function hydrateLiveSiteContent() {
                     <span class="bg-[#073F27] px-2.5 py-1 text-white font-bold text-xs rounded-full">${escapeHtml(saf.duration)}</span>
                     <span class="bg-white px-2.5 py-1 text-[#0F172A] font-bold text-xs rounded-full border border-[#CBD5E1] font-mono">${escapeHtml(priceStr)}</span>
                   </div>
-                  <button type="button" onclick="handleLikeClick(this, '${escapeHtml(saf.id)}')" aria-label="Like ${escapeHtml(saf.title)}" class="absolute top-3 right-3 px-2.5 py-1.5 rounded-full bg-white hover:bg-[#F1F5F9] text-slate-700 flex items-center gap-1.5 text-xs shadow border border-[#CBD5E1] cursor-pointer">
-                    <svg class="w-3.5 h-3.5 fill-current text-rose-600" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                    <span class="like-count font-mono font-bold text-[#0F172A] text-[11px]" data-like-id="${escapeHtml(saf.id)}">${likes}</span>
+                  <button type="button" onclick="handleLikeClick(this, '${escapeHtml(saf.id)}')" aria-pressed="${localStorage.getItem("sonnenpfad_user_liked_" + saf.id) === "true" ? "true" : "false"}" aria-label="Like ${escapeHtml(saf.title)}" class="like-btn ${localStorage.getItem("sonnenpfad_user_liked_" + saf.id) === "true" ? "is-liked" : ""} absolute top-3 right-3 px-2.5 py-1.5 rounded-full flex items-center gap-1.5 text-xs shadow cursor-pointer">
+                    <svg class="like-heart-icon w-3.5 h-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <span class="like-count font-mono font-bold text-[11px]" data-like-id="${escapeHtml(saf.id)}">${likes}</span>
                   </button>
                 </div>
                 <div class="p-6 space-y-2">
@@ -2295,9 +2530,9 @@ export async function hydrateLiveSiteContent() {
 
               <div class="pt-4 border-t border-[#E2E8F0] mt-4 space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <button type="button" onclick="handleLikeClick(this, '${escapeHtml(item.id)}')" aria-label="Like ${escapeHtml(item.name)}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-slate-700 transition-colors cursor-pointer shrink-0">
-                    <svg class="w-4 h-4 fill-current text-rose-600" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                    <span class="like-count font-mono font-bold text-[#0F172A]" data-like-id="${escapeHtml(item.id)}">${likes}</span>
+                  <button type="button" onclick="handleLikeClick(this, '${escapeHtml(item.id)}')" aria-pressed="${localStorage.getItem("sonnenpfad_user_liked_" + item.id) === "true" ? "true" : "false"}" aria-label="Like ${escapeHtml(item.name)}" class="like-btn ${localStorage.getItem("sonnenpfad_user_liked_" + item.id) === "true" ? "is-liked" : ""} flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors cursor-pointer shrink-0">
+                    <svg class="like-heart-icon w-4 h-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <span class="like-count font-mono font-bold" data-like-id="${escapeHtml(item.id)}">${likes}</span>
                   </button>
 
                   <button type="button" onclick="openItemFeedbackModal('${escapeHtml(item.id)}', '${escapeHtml(item.name).replace(/'/g, "\\'")}', 'product')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-[#073F27] text-xs font-bold transition-colors cursor-pointer whitespace-nowrap">
@@ -2316,13 +2551,8 @@ export async function hydrateLiveSiteContent() {
     }
   }
 
-  // 4) Sync Likes Badges & Section Comment Counts On Any Rendered Card
-  document.querySelectorAll<HTMLElement>(".like-count[data-like-id]").forEach((el) => {
-    const itemId = el.getAttribute("data-like-id");
-    if (itemId) {
-      el.textContent = String(db.getItemLikeCount(itemId, Number(el.textContent) || 0));
-    }
-  });
+  // 4) Sync Likes Badges & White/Red Like Button States & Section Comment Counts
+  syncLikeButtonsUI();
   updateSectionCommentBadges();
 
   // 5) Hydrate Homepage Reviews Grid with ONLY approved public reviews (Featured first)
@@ -2417,6 +2647,161 @@ export async function hydrateLiveSiteContent() {
         .join("");
     }
   }
+
+  // 7) Hydrate Google Photos & Drive Uploaded Images & Videos Automatically Across Homepage & Gallery
+  const siteMedia = db.getSiteMedia();
+
+  const homeMediaSection = document.getElementById("homeUploadedMediaSection");
+  const homeMediaPhotosGrid = document.getElementById("homeUploadedPhotosGrid");
+  const homeMediaVideosGrid = document.getElementById("homeUploadedVideosGrid");
+  const homePhotosWrap = document.getElementById("homeUploadedPhotosWrap");
+  const homeVideosWrap = document.getElementById("homeUploadedVideosWrap");
+
+  if (homeMediaSection && (homeMediaPhotosGrid || homeMediaVideosGrid)) {
+    const homeItems = siteMedia.filter(
+      (m) => m.section === "all" || m.section === "homepage" || m.section === "hero" || m.section === "gallery"
+    );
+    const homeImages = homeItems.filter((m) => m.mediaType === "image");
+    const homeVideos = homeItems.filter((m) => m.mediaType === "video");
+
+    if (homeItems.length === 0) {
+      homeMediaSection.classList.add("hidden");
+    } else {
+      homeMediaSection.classList.remove("hidden");
+      if (homePhotosWrap && homeMediaPhotosGrid) {
+        homePhotosWrap.classList.toggle("hidden", homeImages.length === 0);
+        homeMediaPhotosGrid.innerHTML = homeImages.slice(0, 6).map(renderUploadedMediaCard).join("");
+      }
+      if (homeVideosWrap && homeMediaVideosGrid) {
+        homeVideosWrap.classList.toggle("hidden", homeVideos.length === 0);
+        homeMediaVideosGrid.innerHTML = homeVideos.slice(0, 4).map(renderUploadedMediaCard).join("");
+      }
+    }
+  }
+
+  const galleryMediaSection = document.getElementById("galleryUploadedSection");
+  const galleryMediaGrid = document.getElementById("galleryUploadedGrid");
+  if (galleryMediaSection && galleryMediaGrid) {
+    renderGalleryUploadedMedia();
+  }
+
+  if (heroSlidesUpdater) {
+    heroSlidesUpdater();
+  }
+
+  syncLikeButtonsUI();
+  updateSectionCommentBadges();
+}
+
+let activeGalleryMediaFilter: "all" | "image" | "video" = "all";
+
+export function setGalleryMediaFilter(filter: "all" | "image" | "video") {
+  activeGalleryMediaFilter = filter;
+  (["all", "image", "video"] as const).forEach((k) => {
+    const btn = document.getElementById("galFilter-" + k);
+    if (!btn) return;
+    if (k === filter) {
+      btn.className = "px-4 py-2 rounded-full text-xs font-bold bg-[#073F27] text-white border border-[#073F27] cursor-pointer";
+    } else {
+      btn.className = "px-4 py-2 rounded-full text-xs font-bold bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer";
+    }
+  });
+  renderGalleryUploadedMedia();
+}
+
+function renderGalleryUploadedMedia() {
+  const galleryMediaSection = document.getElementById("galleryUploadedSection");
+  const galleryMediaGrid = document.getElementById("galleryUploadedGrid");
+  const countBadge = document.getElementById("galleryUploadedCounts");
+  if (!galleryMediaSection || !galleryMediaGrid) return;
+
+  const allItems = db.getSiteMedia();
+  const imgCount = allItems.filter((m) => m.mediaType === "image").length;
+  const vidCount = allItems.filter((m) => m.mediaType === "video").length;
+
+  if (countBadge) {
+    countBadge.textContent = `${imgCount} Photos · ${vidCount} Videos`;
+  }
+
+  const filtered = allItems.filter((m) => {
+    if (activeGalleryMediaFilter === "all") return true;
+    return m.mediaType === activeGalleryMediaFilter;
+  });
+
+  if (filtered.length === 0) {
+    galleryMediaGrid.innerHTML = `
+      <div class="sm:col-span-2 lg:col-span-3 p-8 bg-white border border-[#CBD5E1] rounded-3xl text-center space-y-2">
+        <p class="text-sm font-bold text-[#0F172A]">No Google Photos or Videos Published Here Yet</p>
+        <p class="text-xs text-[#334155]">Use the Image Upload or Video Upload section above (or inside Owner Admin) to publish field photos and videos directly from Google.</p>
+      </div>
+    `;
+  } else {
+    galleryMediaGrid.innerHTML = filtered.map(renderUploadedMediaCard).join("");
+    updateSectionCommentBadges();
+  }
+}
+
+function renderUploadedMediaCard(item: SiteMediaItem): string {
+  const commentCount = db.getCommentCount(item.id);
+  const sectionLabelMap: Record<string, string> = {
+    all: "Featured Everywhere",
+    hero: "Homepage Hero & Gallery",
+    homepage: "Homepage Showcase",
+    gallery: "Field Gallery",
+    safaris: "Safari Packages",
+    shop: "Expedition Shop",
+  };
+  const badgeLabel = sectionLabelMap[item.section] || "Field Archive";
+
+  if (item.mediaType === "video") {
+    const isDrivePreview = Boolean(item.embedUrl && item.embedUrl.includes("drive.google.com"));
+    const mediaPlayerHtml = isDrivePreview
+      ? `<iframe src="${escapeHtml(item.embedUrl)}" title="${escapeHtml(item.title)}" allow="autoplay; fullscreen" allowfullscreen loading="lazy" class="w-full h-full border-0"></iframe>`
+      : `<video controls playsinline preload="metadata" poster="${escapeHtml(item.thumbnailUrl || "")}" class="w-full h-full object-cover"><source src="${escapeHtml(item.url)}" /></video>`;
+
+    return `
+      <article class="bg-white border border-[#CBD5E1] rounded-3xl overflow-hidden shadow-sm flex flex-col justify-between p-4 space-y-3">
+        <div class="space-y-3">
+          <div class="relative aspect-video w-full overflow-hidden rounded-2xl bg-[#042617] border border-[#CBD5E1]">
+            ${mediaPlayerHtml}
+            <span class="pointer-events-none absolute top-2.5 left-2.5 bg-[#073F27]/95 text-[#F4B41A] text-[10px] font-bold uppercase px-2.5 py-1 rounded-full border border-[#F4B41A]/50">Video</span>
+          </div>
+          <div class="space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-[#7C4D00] block">${escapeHtml(badgeLabel)}</span>
+            <h3 class="font-editorial text-xl font-bold text-[#0F172A] line-clamp-2">${escapeHtml(item.title)}</h3>
+            ${item.caption ? `<p class="text-xs text-[#334155] leading-relaxed">${escapeHtml(item.caption)}</p>` : ""}
+          </div>
+        </div>
+        <div class="pt-2 border-t border-[#E2E8F0] flex items-center justify-between gap-2">
+          <button type="button" onclick="openItemFeedbackModal('${escapeHtml(item.id)}', '${escapeHtml(item.title).replace(/'/g, "\\'")}', 'gallery')" class="py-2 px-3 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-xs font-bold text-[#073F27] cursor-pointer">
+            Comments (<span data-comment-count-id="${escapeHtml(item.id)}">${commentCount}</span>)
+          </button>
+          <a href="${escapeHtml(item.embedUrl || item.url)}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-[#7C4D00] hover:underline whitespace-nowrap">Open Player</a>
+        </div>
+      </article>
+    `;
+  }
+
+  return `
+    <figure class="bg-white border border-[#CBD5E1] rounded-3xl overflow-hidden shadow-sm space-y-3 p-4 flex flex-col justify-between">
+      <div class="space-y-3">
+        <div class="relative h-60 w-full overflow-hidden rounded-2xl bg-[#F1F5F9]">
+          <img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+          <span class="absolute top-2.5 left-2.5 bg-white/95 text-[#073F27] border border-[#CBD5E1] text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full">Photo</span>
+        </div>
+        <figcaption class="space-y-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#7C4D00] block">${escapeHtml(badgeLabel)}</span>
+          <h3 class="font-editorial text-xl font-bold text-[#0F172A]">${escapeHtml(item.title)}</h3>
+          ${item.caption ? `<p class="text-xs text-[#334155]">${escapeHtml(item.caption)}</p>` : ""}
+        </figcaption>
+      </div>
+      <div class="pt-2 border-t border-[#E2E8F0]">
+        <button type="button" onclick="openItemFeedbackModal('${escapeHtml(item.id)}', '${escapeHtml(item.title).replace(/'/g, "\\'")}', 'gallery')" class="w-full py-2 px-3 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-xs font-bold text-[#073F27] cursor-pointer">
+          Comments (<span data-comment-count-id="${escapeHtml(item.id)}">${commentCount}</span>)
+        </button>
+      </div>
+    </figure>
+  `;
 }
 
 // =========================================================================
@@ -2853,19 +3238,31 @@ export async function openItemFeedbackModal(
   }
 }
 
+export function syncLikeButtonsUI() {
+  document.querySelectorAll<HTMLElement>(".like-count[data-like-id]").forEach((el) => {
+    const itemId = el.getAttribute("data-like-id");
+    if (!itemId) return;
+    el.textContent = String(db.getItemLikeCount(itemId, Number(el.textContent) || 0));
+    const btn = el.closest("button");
+    if (btn) {
+      btn.classList.add("like-btn");
+      const isLiked = localStorage.getItem("sonnenpfad_user_liked_" + itemId) === "true";
+      btn.classList.toggle("is-liked", isLiked);
+      btn.setAttribute("aria-pressed", String(isLiked));
+    }
+  });
+}
+
 export async function handleLikeClick(btnEl: HTMLElement, itemId: string) {
+  btnEl.classList.add("like-btn");
   const result = await db.toggleLike(itemId);
   const countEl = btnEl.querySelector(".like-count");
   if (countEl) {
     countEl.textContent = String(result.count);
   }
-  if (result.liked) {
-    btnEl.classList.add("text-rose-700", "border-rose-400");
-    btnEl.classList.remove("text-slate-700");
-  } else {
-    btnEl.classList.remove("text-rose-700", "border-rose-400");
-    btnEl.classList.add("text-slate-700");
-  }
+  btnEl.classList.toggle("is-liked", result.liked);
+  btnEl.setAttribute("aria-pressed", String(result.liked));
+  syncLikeButtonsUI();
 }
 
 // Attach globally to window for standalone multi-page HTML pages
@@ -2881,11 +3278,14 @@ if (typeof window !== "undefined") {
   (window as any).handleLikeClick = handleLikeClick;
   (window as any).handleCardLike = (itemId: string, btnEl: HTMLElement) =>
     handleLikeClick(btnEl, itemId);
+  (window as any).syncLikeButtonsUI = syncLikeButtonsUI;
   (window as any).formatUGX = formatUGX;
   (window as any).escapeHtml = escapeHtml;
   (window as any).showToast = showToast;
   (window as any).hydrateLiveSiteContent = hydrateLiveSiteContent;
   (window as any).updateSectionCommentBadges = updateSectionCommentBadges;
+  (window as any).googleMedia = googleMedia;
+  (window as any).setGalleryMediaFilter = setGalleryMediaFilter;
 }
 
 function bootSonnenpfadSite() {

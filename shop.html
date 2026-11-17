@@ -446,9 +446,9 @@
 
             <div class="pt-4 border-t border-[#E2E8F0] mt-4 space-y-3">
               <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
-                <button type="button" onclick="handleLikeClick(this, '${esc(item.id)}')" aria-label="Like ${esc(item.name)}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-slate-700 transition-colors cursor-pointer shrink-0">
-                  <svg class="w-4 h-4 fill-current text-rose-600" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                  <span class="like-count font-mono font-bold text-[#0F172A]" data-like-id="${esc(item.id)}">${window.db && window.db.getItemLikeCount ? window.db.getItemLikeCount(item.id, item.likesCount || 0) : Number(item.likesCount || 0)}</span>
+                <button type="button" onclick="handleLikeClick(this, '${esc(item.id)}')" aria-pressed="${localStorage.getItem("sonnenpfad_user_liked_" + item.id) === "true" ? "true" : "false"}" aria-label="Like ${esc(item.name)}" class="like-btn ${localStorage.getItem("sonnenpfad_user_liked_" + item.id) === "true" ? "is-liked" : ""} flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-colors cursor-pointer shrink-0">
+                  <svg class="like-heart-icon w-4 h-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  <span class="like-count font-mono font-bold" data-like-id="${esc(item.id)}">${window.db && window.db.getItemLikeCount ? window.db.getItemLikeCount(item.id, item.likesCount || 0) : Number(item.likesCount || 0)}</span>
                 </button>
 
                 <button type="button" onclick="openItemFeedbackModal('${esc(item.id)}', '${esc(item.name).replace(/'/g, "\\'")}', 'product')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-[#073F27] text-xs font-bold transition-colors cursor-pointer whitespace-nowrap">
@@ -464,6 +464,7 @@
         `
           )
           .join("");
+        if (window.syncLikeButtonsUI) window.syncLikeButtonsUI();
         if (window.updateSectionCommentBadges) window.updateSectionCommentBadges();
       }
 

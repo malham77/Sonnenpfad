@@ -301,6 +301,57 @@ nav a {
 }
 
 /* ============================================================
+   LIKE BUTTON STATE: WHITE BEFORE LIKING -> RED AFTER LIKING
+   ============================================================ */
+
+.like-btn {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1.5px solid #CBD5E1 !important;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.14s ease;
+}
+
+.like-btn:hover {
+  background-color: #F8FAFC !important;
+  border-color: #94A3B8 !important;
+}
+
+.like-btn svg,
+.like-btn .like-heart-icon {
+  fill: #FFFFFF !important;
+  stroke: #334155 !important;
+  stroke-width: 2;
+  color: #334155 !important;
+}
+
+.like-btn .like-count {
+  color: #0F172A !important;
+}
+
+.like-btn.is-liked {
+  background-color: #E11D48 !important;
+  border-color: #BE123C !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px -2px rgba(225, 29, 72, 0.35);
+}
+
+.like-btn.is-liked:hover {
+  background-color: #BE123C !important;
+  border-color: #9F1239 !important;
+}
+
+.like-btn.is-liked svg,
+.like-btn.is-liked .like-heart-icon {
+  fill: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+.like-btn.is-liked .like-count {
+  color: #FFFFFF !important;
+}
+
+/* ============================================================
    MOTION & ACCESSIBILITY (PREFERS-REDUCED-MOTION COMPLIANCE)
    ============================================================ */
 
@@ -321,3 +372,99 @@ nav a {
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================
+   OFFICIAL GOOGLE SIGN-IN BUTTON (.gsi-material-button)
+   ============================================================ */
+
+.gsi-material-button {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-appearance: none;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #747775;
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #1f1f1f;
+  cursor: pointer;
+  font-family: "Plus Jakarta Sans", Roboto, arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  height: 40px;
+  letter-spacing: 0.25px;
+  outline: none;
+  overflow: hidden;
+  padding: 0 14px;
+  position: relative;
+  text-align: center;
+  transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: auto;
+  max-width: 400px;
+  min-width: min-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gsi-material-button .gsi-material-button-icon {
+  height: 20px;
+  margin-right: 10px;
+  min-width: 20px;
+  width: 20px;
+}
+
+.gsi-material-button .gsi-material-button-content-wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  height: 100%;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+}
+
+.gsi-material-button .gsi-material-button-contents {
+  flex-grow: 1;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+}
+
+.gsi-material-button .gsi-material-button-state {
+  transition: opacity 0.218s;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.gsi-material-button:disabled {
+  cursor: default;
+  background-color: #ffffff61;
+  border-color: #1f1f1f1f;
+}
+
+.gsi-material-button:disabled .gsi-material-button-contents,
+.gsi-material-button:disabled .gsi-material-button-icon {
+  opacity: 38%;
+}
+
+.gsi-material-button:not(:disabled):hover {
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+}
+
+.gsi-material-button:not(:disabled):hover .gsi-material-button-state {
+  background-color: #001d35;
+  opacity: 8%;
+}
+

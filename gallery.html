@@ -106,9 +106,170 @@
         <p class="text-xs sm:text-sm text-[#334155]">
           Proprietary licensed East African wildlife imagery showcasing our Ugandan national park routes and coffee origin highlands. Watch short field video updates on our official <a href="https://www.tiktok.com/@kisacathy1900" target="_blank" rel="noopener noreferrer" class="font-bold text-[#073F27] underline">TikTok (@kisacathy1900)</a>.
         </p>
+        <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
+          <button type="button" onclick="toggleGalleryUploadStudio()" class="btn-glass-gold text-xs py-2.5 px-5 cursor-pointer">
+            <span>Upload Photos &amp; Videos (Google Photos)</span>
+          </button>
+          <a href="admin.html" class="btn-glass-dark text-xs py-2.5 px-5">
+            <span>Manage Media in Admin Portal</span>
+          </a>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- GOOGLE PHOTOS & DRIVE UPLOAD STUDIO (Two Distinct Sections: Images & Videos) -->
+      <section id="galleryMediaStudio" class="hidden bg-white border-2 border-[#CBD5E1] rounded-3xl p-6 sm:p-8 shadow-lg space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#CBD5E1] pb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-widest text-[#7C4D00] block">Google Photos &amp; Drive Connector</span>
+            <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A] mt-0.5">Upload Images or Videos to Your Website</h2>
+            <p class="text-xs text-[#334155] mt-1">Sign in with Google to upload directly to your Google Drive &amp; Photos workspace and display automatically across the website.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <div id="galGoogleSignInWrap">
+              <button type="button" onclick="handleGalleryGoogleSignIn()" class="gsi-material-button">
+                <div class="gsi-material-button-state"></div>
+                <div class="gsi-material-button-content-wrapper">
+                  <div class="gsi-material-button-icon">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="display: block;">
+                      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                      <path fill="none" d="M0 0h48v48H0z"></path>
+                    </svg>
+                  </div>
+                  <span class="gsi-material-button-contents">Sign in with Google</span>
+                </div>
+              </button>
+            </div>
+            <div id="galGoogleSignedInWrap" class="hidden flex flex-wrap items-center gap-2">
+              <span id="galGoogleUserBadge" class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-300 text-xs font-bold text-[#073F27]">Connected</span>
+              <button type="button" onclick="handleGalleryBrowseGoogle()" class="px-3.5 py-2 rounded-full bg-[#073F27] text-white text-xs font-bold cursor-pointer">Browse Google Photos</button>
+              <button type="button" onclick="handleGalleryPickGoogle()" class="px-3.5 py-2 rounded-full bg-[#F1F5F9] border border-[#CBD5E1] text-[#0F172A] text-xs font-bold cursor-pointer">Open Picker</button>
+              <button type="button" onclick="handleGalleryGoogleSignOut()" class="px-3 py-2 rounded-full bg-red-50 border border-red-200 text-red-800 text-xs font-bold cursor-pointer">Sign Out</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- SECTION 1: UPLOAD IMAGE -->
+          <form onsubmit="handleGalleryMediaUpload(event, 'image')" class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-[#CBD5E1] pb-2">
+              <div>
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#7C4D00] block">Section 1 · Photography</span>
+                <h3 class="font-editorial text-xl font-bold text-[#0F172A]">Upload Safari or Product Image</h3>
+              </div>
+              <span class="px-2.5 py-1 rounded-full bg-white border border-[#CBD5E1] text-[10px] font-bold text-[#073F27]">JPG · PNG · WEBP</span>
+            </div>
+            <div>
+              <label for="galImgTitle" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Photo Title *</label>
+              <input id="galImgTitle" type="text" required placeholder="e.g. Morning Mist Over Bwindi Canopy" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="galImgPlacement" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Display Location</label>
+                <select id="galImgPlacement" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]">
+                  <option value="all">Homepage &amp; Gallery (Everywhere)</option>
+                  <option value="hero">Homepage Hero Slideshow + Gallery</option>
+                  <option value="gallery">Gallery Only</option>
+                </select>
+              </div>
+              <div>
+                <label for="galImgCaption" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Short Caption</label>
+                <input id="galImgCaption" type="text" placeholder="Optional field location notes" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+              </div>
+            </div>
+            <div>
+              <label for="galImgFile" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Select Image File *</label>
+              <input id="galImgFile" type="file" accept="image/*" required class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#073F27] file:text-white file:font-bold file:text-xs cursor-pointer" />
+            </div>
+            <div id="galImgProgressWrap" class="hidden space-y-1">
+              <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div id="galImgProgressBar" class="h-full bg-[#073F27] transition-all" style="width: 0%"></div>
+              </div>
+              <span id="galImgProgressText" class="text-[11px] font-mono text-[#073F27] block">Preparing upload...</span>
+            </div>
+            <button id="galImgSubmitBtn" type="submit" class="btn-glass-gold w-full justify-center py-2.5 text-xs font-extrabold">
+              Upload Image to Google Photos &amp; Publish
+            </button>
+          </form>
+
+          <!-- SECTION 2: UPLOAD VIDEO -->
+          <form onsubmit="handleGalleryMediaUpload(event, 'video')" class="p-5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-[#CBD5E1] pb-2">
+              <div>
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#7C4D00] block">Section 2 · Field Motion</span>
+                <h3 class="font-editorial text-xl font-bold text-[#0F172A]">Upload Safari Video</h3>
+              </div>
+              <span class="px-2.5 py-1 rounded-full bg-white border border-[#CBD5E1] text-[10px] font-bold text-[#073F27]">MP4 · MOV · WEBM</span>
+            </div>
+            <div>
+              <label for="galVidTitle" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Video Title *</label>
+              <input id="galVidTitle" type="text" required placeholder="e.g. Victoria Nile Boat Launch Approach" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="galVidPlacement" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Display Location</label>
+                <select id="galVidPlacement" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]">
+                  <option value="all">Homepage &amp; Gallery (Everywhere)</option>
+                  <option value="homepage">Homepage Videos Showcase</option>
+                  <option value="gallery">Gallery Only</option>
+                </select>
+              </div>
+              <div>
+                <label for="galVidCaption" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Short Caption</label>
+                <input id="galVidCaption" type="text" placeholder="Optional expedition context" class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A]" />
+              </div>
+            </div>
+            <div>
+              <label for="galVidFile" class="block text-[11px] font-bold uppercase text-[#7C4D00] mb-1">Select Video File *</label>
+              <input id="galVidFile" type="file" accept="video/*" required class="w-full bg-white border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#073F27] file:text-white file:font-bold file:text-xs cursor-pointer" />
+            </div>
+            <div id="galVidProgressWrap" class="hidden space-y-1">
+              <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div id="galVidProgressBar" class="h-full bg-[#073F27] transition-all" style="width: 0%"></div>
+              </div>
+              <span id="galVidProgressText" class="text-[11px] font-mono text-[#073F27] block">Preparing video upload...</span>
+            </div>
+            <button id="galVidSubmitBtn" type="submit" class="btn-glass-forest w-full justify-center py-2.5 text-xs font-extrabold">
+              Upload Video to Google Photos &amp; Publish
+            </button>
+          </form>
+        </div>
+
+        <div id="galGoogleBrowserBox" class="hidden pt-4 border-t border-[#CBD5E1] space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#073F27]">Your Google Photos &amp; Drive Library</h3>
+            <span id="galGoogleBrowserCount" class="text-xs font-mono text-[#475569]">0 items</span>
+          </div>
+          <div id="galGoogleBrowserGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 max-h-96 overflow-y-auto pr-1"></div>
+        </div>
+      </section>
+
+      <!-- AUTOMATICALLY DISPLAYED UPLOADED PHOTOS & VIDEOS FROM GOOGLE -->
+      <section id="galleryUploadedSection" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#CBD5E1] pb-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#7C4D00] block">Google Photos &amp; Video Feed</span>
+            <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A]">Live Uploaded Photos &amp; Videos</h2>
+            <p id="galleryUploadedCounts" class="text-xs font-mono text-[#073F27] mt-0.5">0 Photos · 0 Videos</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filter uploaded media by type">
+            <button id="galFilter-all" type="button" onclick="setGalleryMediaFilter('all')" class="px-4 py-2 rounded-full text-xs font-bold bg-[#073F27] text-white border border-[#073F27] cursor-pointer">All Media</button>
+            <button id="galFilter-image" type="button" onclick="setGalleryMediaFilter('image')" class="px-4 py-2 rounded-full text-xs font-bold bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer">Photos Only</button>
+            <button id="galFilter-video" type="button" onclick="setGalleryMediaFilter('video')" class="px-4 py-2 rounded-full text-xs font-bold bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#F1F5F9] cursor-pointer">Videos Only</button>
+          </div>
+        </div>
+
+        <div id="galleryUploadedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+      </section>
+
+      <div class="space-y-4">
+        <div class="border-b border-[#CBD5E1] pb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#7C4D00] block">Signature Archive</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-[#0F172A]">National Park Highlights</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         <figure class="bg-white border border-[#CBD5E1] rounded-3xl overflow-hidden shadow-sm space-y-3 p-4">
           <img src="./assets/images/bwindi-gorilla.jpg" alt="Silverback mountain gorilla resting among emerald ferns in Bwindi Impenetrable Forest, Uganda" loading="lazy" class="w-full h-60 object-cover rounded-2xl" />
           <figcaption class="space-y-1">
@@ -192,6 +353,7 @@
             </button>
           </div>
         </figure>
+        </div>
       </div>
 
       <section class="p-6 bg-white border border-[#CBD5E1] rounded-3xl text-xs text-[#334155] space-y-1">
@@ -199,6 +361,21 @@
         <p>All visual assets presented across Sonnenpfad Safaris Uganda Ltd are commercially licensed royalty-free digital artwork or official brand media (logo asset) hosted locally with no unauthorized third-party stock hotlinks.</p>
       </section>
     </main>
+
+    <!-- IN-PAGE CONFIRMATION MODAL FOR GOOGLE MEDIA ACTIONS -->
+    <div id="galConfirmModal" role="dialog" aria-modal="true" class="hidden fixed inset-0 z-[90] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-white border-2 border-[#CBD5E1] rounded-3xl p-6 shadow-2xl space-y-4">
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-[#7C4D00] block">Confirm Google Media Action</span>
+          <h3 id="galConfirmTitle" class="font-editorial text-xl font-bold text-[#0F172A]">Publish File Publicly?</h3>
+          <p id="galConfirmMsg" class="text-xs text-[#334155]">Please confirm.</p>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="resolveGalConfirm(false)" class="px-4 py-2 rounded-xl bg-[#F1F5F9] border border-[#CBD5E1] text-xs font-bold text-[#0F172A] cursor-pointer">Cancel</button>
+          <button type="button" onclick="resolveGalConfirm(true)" class="px-4 py-2 rounded-xl bg-[#073F27] text-xs font-bold text-white cursor-pointer">Confirm</button>
+        </div>
+      </div>
+    </div>
 
     <footer class="bg-[#F1F5F9] border-t-2 border-[#CBD5E1] py-14 text-[#0F172A]">
       <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -241,5 +418,213 @@
     </footer>
 
     <script defer src="./assets/site-bundle.js"></script>
+    <script>
+      let galConfirmResolve = null;
+      let galGoogleCache = [];
+
+      function askGalConfirm(title, message) {
+        return new Promise((resolve) => {
+          galConfirmResolve = resolve;
+          document.getElementById("galConfirmTitle").textContent = title;
+          document.getElementById("galConfirmMsg").textContent = message;
+          document.getElementById("galConfirmModal").classList.remove("hidden");
+        });
+      }
+
+      function resolveGalConfirm(accepted) {
+        document.getElementById("galConfirmModal").classList.add("hidden");
+        if (galConfirmResolve) {
+          const fn = galConfirmResolve;
+          galConfirmResolve = null;
+          fn(accepted);
+        }
+      }
+
+      function syncGalAuthUI(user, hasToken) {
+        const signInWrap = document.getElementById("galGoogleSignInWrap");
+        const signedInWrap = document.getElementById("galGoogleSignedInWrap");
+        const badge = document.getElementById("galGoogleUserBadge");
+        if (!signInWrap || !signedInWrap) return;
+        const connected = Boolean(user && hasToken);
+        signInWrap.classList.toggle("hidden", connected);
+        signedInWrap.classList.toggle("hidden", !connected);
+        if (badge && user) {
+          badge.textContent = "Google: " + (user.email || user.displayName || "Connected");
+        }
+      }
+
+      function toggleGalleryUploadStudio() {
+        const panel = document.getElementById("galleryMediaStudio");
+        if (!panel) return;
+        panel.classList.toggle("hidden");
+        if (!panel.classList.contains("hidden") && window.googleMedia) {
+          window.googleMedia.initGoogleAuth(
+            (u) => syncGalAuthUI(u, true),
+            (u) => syncGalAuthUI(u, Boolean(window.googleMedia.getGoogleAccessToken()))
+          );
+          panel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      async function handleGalleryGoogleSignIn() {
+        try {
+          const res = await window.googleMedia.googleSignIn();
+          syncGalAuthUI(res.user, true);
+          if (window.showToast) window.showToast("Signed in with Google. You can now upload images and videos.");
+        } catch (err) {
+          if (window.showToast) window.showToast(err.message || "Google Sign-In cancelled.", "error");
+        }
+      }
+
+      async function handleGalleryGoogleSignOut() {
+        await window.googleMedia.googleSignOut();
+        syncGalAuthUI(null, false);
+        document.getElementById("galGoogleBrowserBox").classList.add("hidden");
+        if (window.showToast) window.showToast("Signed out from Google.", "info");
+      }
+
+      async function handleGalleryMediaUpload(e, kind) {
+        e.preventDefault();
+        if (!window.googleMedia || !window.googleMedia.getGoogleAccessToken()) {
+          if (window.showToast) window.showToast("Please click Sign in with Google first.", "info");
+          return;
+        }
+
+        const isVid = kind === "video";
+        const titleEl = document.getElementById(isVid ? "galVidTitle" : "galImgTitle");
+        const captionEl = document.getElementById(isVid ? "galVidCaption" : "galImgCaption");
+        const placeEl = document.getElementById(isVid ? "galVidPlacement" : "galImgPlacement");
+        const fileEl = document.getElementById(isVid ? "galVidFile" : "galImgFile");
+        const progWrap = document.getElementById(isVid ? "galVidProgressWrap" : "galImgProgressWrap");
+        const progBar = document.getElementById(isVid ? "galVidProgressBar" : "galImgProgressBar");
+        const progText = document.getElementById(isVid ? "galVidProgressText" : "galImgProgressText");
+        const submitBtn = document.getElementById(isVid ? "galVidSubmitBtn" : "galImgSubmitBtn");
+
+        const file = fileEl.files && fileEl.files[0];
+        if (!file) {
+          if (window.showToast) window.showToast("Please select a file first.", "error");
+          return;
+        }
+
+        const title = titleEl.value.trim();
+        const caption = captionEl.value.trim();
+        const section = placeEl.value || "all";
+
+        submitBtn.disabled = true;
+        progWrap.classList.remove("hidden");
+        progBar.style.width = "10%";
+        progText.textContent = isVid ? "Uploading video to Google..." : "Uploading image to Google...";
+
+        try {
+          const uploaded = await window.googleMedia.uploadFileToGoogleMedia(file, title, (pct) => {
+            progBar.style.width = pct + "%";
+            progText.textContent = "Uploading: " + pct + "%";
+          });
+
+          progText.textContent = "Publishing to website...";
+          await window.db.addSiteMediaItem({
+            title,
+            caption,
+            mediaType: isVid ? "video" : "image",
+            section,
+            url: uploaded.displayUrl,
+            embedUrl: uploaded.embedUrl,
+            thumbnailUrl: uploaded.thumbnailLink,
+            googleFileId: uploaded.id,
+            mimeType: uploaded.mimeType,
+          });
+
+          titleEl.value = "";
+          captionEl.value = "";
+          fileEl.value = "";
+          progBar.style.width = "100%";
+          progText.textContent = "Published live!";
+          if (window.showToast) window.showToast(title + " uploaded to Google & displayed on your website.");
+        } catch (err) {
+          if (window.showToast) window.showToast(err.message || "Upload failed.", "error");
+        } finally {
+          submitBtn.disabled = false;
+          setTimeout(() => progWrap.classList.add("hidden"), 1800);
+        }
+      }
+
+      async function handleGalleryBrowseGoogle() {
+        try {
+          const data = await window.googleMedia.listGooglePhotosAndMedia();
+          galGoogleCache = [...data.images, ...data.videos];
+          const box = document.getElementById("galGoogleBrowserBox");
+          const count = document.getElementById("galGoogleBrowserCount");
+          const grid = document.getElementById("galGoogleBrowserGrid");
+          box.classList.remove("hidden");
+          count.textContent = data.images.length + " Photos · " + data.videos.length + " Videos";
+          const esc = window.escapeHtml || ((s) => String(s || ""));
+          grid.innerHTML =
+            galGoogleCache.length === 0
+              ? '<p class="col-span-4 text-xs text-[#475569] italic">No images or videos found in your Google Photos/Drive yet.</p>'
+              : galGoogleCache
+                  .map(
+                    (f) => `
+                  <div class="p-2.5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-xl space-y-2 flex flex-col justify-between">
+                    <div>
+                      <div class="relative h-24 rounded-lg overflow-hidden bg-slate-200">
+                        <img src="${esc(f.thumbnailLink || f.displayUrl)}" alt="${esc(f.name)}" class="w-full h-full object-cover" />
+                        <span class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/75 text-white text-[9px] font-bold uppercase">${esc(f.mediaType)}</span>
+                      </div>
+                      <p class="text-[11px] font-bold text-[#0F172A] truncate mt-1.5">${esc(f.name)}</p>
+                    </div>
+                    <button type="button" onclick="publishExistingGoogleMedia('${esc(f.id)}')" class="w-full py-1.5 rounded-lg bg-[#073F27] text-white text-[10px] font-bold cursor-pointer">Display on Site</button>
+                  </div>
+                `
+                  )
+                  .join("");
+        } catch (err) {
+          if (window.showToast) window.showToast(err.message || "Unable to list Google Photos.", "error");
+        }
+      }
+
+      async function handleGalleryPickGoogle() {
+        try {
+          const picked = await window.googleMedia.openGoogleMediaPicker();
+          if (!picked) return;
+          galGoogleCache = [picked, ...galGoogleCache.filter((x) => x.id !== picked.id)];
+          await publishExistingGoogleMedia(picked.id);
+        } catch (err) {
+          if (window.showToast) window.showToast(err.message || "Could not open Google Picker.", "error");
+        }
+      }
+
+      async function publishExistingGoogleMedia(fileId) {
+        const f = galGoogleCache.find((x) => x.id === fileId);
+        if (!f) return;
+        const ok = await askGalConfirm(
+          "Publish Google Media to Website",
+          'Set "' + f.name + '" sharing to public reader and publish it on your Gallery and Homepage?'
+        );
+        if (!ok) return;
+
+        try {
+          const token = window.googleMedia.getGoogleAccessToken();
+          if (token) {
+            try {
+              await window.googleMedia.makeDriveFilePublic(token, f.id);
+            } catch {}
+          }
+          await window.db.addSiteMediaItem({
+            title: f.name.replace(/\.[^.]+$/, ""),
+            caption: "Featured from Google Photos & Drive",
+            mediaType: f.mediaType,
+            section: "all",
+            url: f.displayUrl,
+            embedUrl: f.embedUrl,
+            thumbnailUrl: f.thumbnailLink,
+            googleFileId: f.id,
+            mimeType: f.mimeType,
+          });
+          if (window.showToast) window.showToast("Published \"" + f.name + "\" to website.");
+        } catch (err) {
+          if (window.showToast) window.showToast(err.message || "Could not publish file.", "error");
+        }
+      }
+    </script>
   </body>
 </html>
